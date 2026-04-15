@@ -1,10 +1,10 @@
-
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Star, ShieldCheck, Zap, Heart, Eye } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Trophy, Star, ShieldCheck, Zap, Heart, Eye, Book } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
 
 export default function AchievementsPage() {
   const badges = [
@@ -19,9 +19,9 @@ export default function AchievementsPage() {
     },
     {
       id: 2,
-      name: "Story Weaver",
-      description: "Wrote 5 stories with AI Buddy",
-      icon: BookOpen,
+      name: "Journal Genius",
+      description: "Logged 5 diary entries with Buddy",
+      icon: Book,
       color: "bg-purple-500",
       earned: true,
       progress: 100,
@@ -72,7 +72,7 @@ export default function AchievementsPage() {
           const Icon = badge.icon;
           return (
             <Card key={badge.id} className={cn(
-              "rounded-[2.5rem] border-2 transition-all kid-card-hover relative overflow-hidden",
+              "rounded-[2.5rem] border-2 transition-all hover:scale-105 relative overflow-hidden",
               badge.earned ? "border-accent/40 bg-white" : "border-muted bg-muted/5 opacity-70"
             )}>
               <CardContent className="p-8 flex flex-col items-center text-center space-y-4">
@@ -113,6 +113,3 @@ export default function AchievementsPage() {
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";
-import { BookOpen } from "lucide-react";

@@ -1,10 +1,9 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy } from "lucide-react";
+import { Eye, Book, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
@@ -15,7 +14,7 @@ import { Badge } from "@/components/ui/badge";
 const DATA = [
   { name: 'Video', mins: 45, color: '#FF0000' },
   { name: 'Study', mins: 120, color: '#CFE467' },
-  { name: 'Stories', mins: 30, color: '#4FB0C6' },
+  { name: 'Diary', mins: 30, color: '#A855F7' },
 ];
 
 export default function KidDashboard() {
@@ -169,15 +168,15 @@ export default function KidDashboard() {
               </Card>
             </Link>
 
-            <Link href="/kid/story-chain">
-              <Card className="rounded-3xl border-2 border-transparent hover:border-accent/40 transition-all kid-card-hover cursor-pointer group">
+            <Link href="/kid/diary">
+              <Card className="rounded-3xl border-2 border-transparent hover:border-purple-400/40 transition-all kid-card-hover cursor-pointer group">
                 <CardHeader className="flex flex-row items-center space-x-4">
-                  <div className="p-4 bg-accent/10 rounded-2xl group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                    <BookOpen className="h-8 w-8" />
+                  <div className="p-4 bg-purple-100 rounded-2xl group-hover:bg-purple-500 group-hover:text-white transition-colors">
+                    <Book className="h-8 w-8" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl">Story Time</CardTitle>
-                    <p className="text-sm text-muted-foreground">Write a tale with AI Buddy</p>
+                    <CardTitle className="text-xl">Diary Buddy</CardTitle>
+                    <p className="text-sm text-muted-foreground">Chat about your amazing day</p>
                   </div>
                 </CardHeader>
               </Card>
@@ -200,9 +199,9 @@ export default function KidDashboard() {
               </div>
               <div className="flex-shrink-0 flex flex-col items-center gap-2">
                  <div className="p-4 bg-purple-500 rounded-2xl text-white shadow-md">
-                   <BookOpen className="h-8 w-8" />
+                   <Book className="h-8 w-8" />
                  </div>
-                 <span className="text-[10px] font-bold text-center">Story<br/>Weaver</span>
+                 <span className="text-[10px] font-bold text-center">Journal<br/>Genius</span>
               </div>
               <div className="flex-shrink-0 flex flex-col items-center gap-2 opacity-30">
                  <div className="p-4 bg-gray-200 rounded-2xl text-gray-500">

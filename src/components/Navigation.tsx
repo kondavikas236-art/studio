@@ -1,9 +1,8 @@
-
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ShieldCheck, Gamepad2, BookOpen, BarChart3, Settings, Trophy } from "lucide-react";
+import { User, ShieldCheck, Gamepad2, Book, BarChart3, Settings, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -14,7 +13,7 @@ export function Navigation() {
   const kidLinks = [
     { href: "/kid/dashboard", label: "My Hub", icon: Gamepad2 },
     { href: "/kid/eye-health", label: "Eye Care", icon: ShieldCheck },
-    { href: "/kid/story-chain", label: "Stories", icon: BookOpen },
+    { href: "/kid/diary", label: "Diary", icon: Book },
     { href: "/kid/achievements", label: "Rewards", icon: Trophy },
   ];
 

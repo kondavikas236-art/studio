@@ -1,17 +1,17 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2 } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
-import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
@@ -66,7 +66,7 @@ export default function ParentDashboard() {
       parentId: user.uid,
       name: newChildName,
       dateOfBirth: newChildDob,
-      avatarUrl: "https://picsum.photos/seed/avatar-new/200/200",
+      avatarUrl: `https://picsum.photos/seed/${Math.random()}/200/200`,
       dailyScreenTimeLimitMinutes: 120,
       gamingTimeLimitMinutes: 60
     });
@@ -74,6 +74,12 @@ export default function ParentDashboard() {
     setNewChildName("");
     setNewChildDob("");
     setIsAddOpen(false);
+  };
+
+  const handleDeleteChild = (childId: string) => {
+    if (!db || !user) return;
+    const childRef = doc(db, "parentProfiles", user.uid, "childProfiles", childId);
+    deleteDocumentNonBlocking(childRef);
   };
 
   return (
@@ -172,7 +178,7 @@ export default function ParentDashboard() {
               <CardTitle className="text-2xl font-black">Good</CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="text-xs font-bold text-blue-500">Highest in Learning apps</div>
+               <div className="text-xs font-bold text-blue-500">Highest during learning</div>
             </CardContent>
           </Card>
 
@@ -243,19 +249,48 @@ export default function ParentDashboard() {
                 <CardTitle>Child Profiles</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
+                <div className="space-y-4">
                   {children.map((child) => (
-                    <div key={child.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+                    <div key={child.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl hover:bg-muted/30 transition-colors">
                       <div className="flex items-center gap-3">
-                        <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full border-2 border-primary/20" />
+                        <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full border-2 border-primary/20 object-cover" />
                         <div>
                           <p className="font-bold text-lg">{child.name}</p>
-                          <p className="text-xs text-muted-foreground">Age {calculateAge(child.dateOfBirth)} • Explorer</p>
+                          <p className="text-xs text-muted-foreground font-semibold">Age {calculateAge(child.dateOfBirth)} • Explorer</p>
                         </div>
                       </div>
-                      <Link href="/parent/settings">
-                        <Button variant="ghost" size="sm">Configure</Button>
-                      </Link>
+                      <div className="flex items-center gap-2">
+                        <Link href="/parent/settings">
+                          <Button variant="ghost" size="icon" className="rounded-full">
+                            <Settings className="h-4 w-4" />
+                          </Button>
+                        </Link>
+                        
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="ghost" size="icon" className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent className="rounded-[2.5rem]">
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Remove Explorer?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                Are you sure you want to remove {child.name}? This will permanently delete their progress and settings.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
+                              <AlertDialogAction 
+                                onClick={() => handleDeleteChild(child.id)}
+                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
+                              >
+                                Delete Explorer
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
+                      </div>
                     </div>
                   ))}
                 </div>

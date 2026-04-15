@@ -41,6 +41,9 @@ export default function EyeHealthPage() {
     } else if (timer === 0 && activeMission) {
       setIsDone(true);
       setActiveMission(null);
+      
+      // Notify the system that a break was completed
+      window.dispatchEvent(new CustomEvent('mindful-play:break-completed'));
     }
     return () => clearInterval(interval);
   }, [activeMission, timer]);

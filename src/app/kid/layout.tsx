@@ -20,6 +20,8 @@ export default function KidLayout({
   const [isBugModeActive, setIsBugModeActive] = useState(false);
 
   useEffect(() => {
+    let bugTimer: NodeJS.Timeout;
+
     const checkSettings = () => {
       const settingsStr = localStorage.getItem('parent-settings');
       if (settingsStr) {
@@ -29,17 +31,32 @@ export default function KidLayout({
           if (settings.enableBugDeterrent) {
              // In prototype: minutes are scaled to seconds (e.g. 20m = 20s)
              const triggerDelayMs = (settings.eyeBreakInterval || 20) * 1000;
-             const timer = setTimeout(() => {
+             bugTimer = setTimeout(() => {
                setIsBugModeActive(true);
              }, triggerDelayMs);
-             return () => clearTimeout(timer);
           }
         } catch (e) {
           console.error("Failed to parse settings", e);
         }
       }
     };
+
     checkSettings();
+
+    // Listen for break-completed events to stop the bugs
+    const handleBreakCompleted = () => {
+      setIsBugModeActive(false);
+      // Restart the cycle if the user stays on the page
+      if (bugTimer) clearTimeout(bugTimer);
+      checkSettings();
+    };
+
+    window.addEventListener('mindful-play:break-completed', handleBreakCompleted);
+
+    return () => {
+      if (bugTimer) clearTimeout(bugTimer);
+      window.removeEventListener('mindful-play:break-completed', handleBreakCompleted);
+    };
   }, []);
 
   return (

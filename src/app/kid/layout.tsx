@@ -8,7 +8,6 @@ import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePathname } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
 
@@ -54,19 +53,25 @@ export default function KidLayout({
       bugTimerRef.current = null;
     }
 
-    const settingsStr = localStorage.getItem('parent-settings');
-    if (settingsStr) {
+    const savedSettings = localStorage.getItem('parent-settings');
+    let settings = { enableBugDeterrent: true, eyeBreakInterval: 20 }; // Default for testing
+    
+    if (savedSettings) {
       try {
-        const settings = JSON.parse(settingsStr);
-        if (settings.enableBugDeterrent) {
-          const intervalSeconds = (settings.eyeBreakInterval || 20);
-          bugTimerRef.current = setTimeout(() => {
-            setIsBugModeActive(true);
-          }, intervalSeconds * 1000);
-        }
+        settings = JSON.parse(savedSettings);
       } catch (e) {
         console.error("Failed to parse settings", e);
       }
+    } else {
+      // Initialize default settings for testing if none exist
+      localStorage.setItem('parent-settings', JSON.stringify(settings));
+    }
+
+    if (settings.enableBugDeterrent) {
+      const intervalSeconds = settings.eyeBreakInterval || 20;
+      bugTimerRef.current = setTimeout(() => {
+        setIsBugModeActive(true);
+      }, intervalSeconds * 1000);
     }
   };
 

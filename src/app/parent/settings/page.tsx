@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,8 +6,9 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock } from "lucide-react";
+import { ShieldAlert, Bug, Bell, Clock, Mail } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 
 export default function ParentSettings() {
@@ -15,6 +17,8 @@ export default function ParentSettings() {
     enableBugDeterrent: false,
     eyeBreakInterval: 20,
     notificationsEnabled: true,
+    receiveWeeklyReportEmail: false,
+    weeklyReportDayOfWeek: "Monday",
   });
 
   useEffect(() => {
@@ -28,7 +32,7 @@ export default function ParentSettings() {
     localStorage.setItem('parent-settings', JSON.stringify(settings));
     toast({
       title: "Settings Saved!",
-      description: "Child device policies have been updated.",
+      description: "Child device policies and email alert preferences have been updated.",
     });
   };
 
@@ -59,6 +63,49 @@ export default function ParentSettings() {
               max={360} 
               step={15} 
             />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-none shadow-sm">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <Mail className="h-5 w-5 text-primary" />
+              <CardTitle>Email Reports</CardTitle>
+            </div>
+            <CardDescription>Receive a weekly summary of digital wellness and activity.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-base font-bold">Weekly Report Email</Label>
+                <p className="text-sm text-muted-foreground">Get a detailed PDF report every week.</p>
+              </div>
+              <Switch 
+                checked={settings.receiveWeeklyReportEmail} 
+                onCheckedChange={(val) => setSettings({...settings, receiveWeeklyReportEmail: val})} 
+              />
+            </div>
+
+            {settings.receiveWeeklyReportEmail && (
+              <div className="pt-4 border-t space-y-4 animate-in fade-in slide-in-from-top-2">
+                <div className="space-y-2">
+                  <Label>Preferred Delivery Day</Label>
+                  <Select 
+                    value={settings.weeklyReportDayOfWeek} 
+                    onValueChange={(val) => setSettings({...settings, weeklyReportDayOfWeek: val})}
+                  >
+                    <SelectTrigger className="rounded-xl">
+                      <SelectValue placeholder="Select a day" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => (
+                        <SelectItem key={day} value={day}>{day}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 

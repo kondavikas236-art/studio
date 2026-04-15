@@ -1,9 +1,10 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings, History, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase";
@@ -15,21 +16,22 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
 
 const USAGE_DATA = [
-  { day: 'Mon', games: 45, education: 120, other: 15 },
-  { day: 'Tue', games: 60, education: 90, other: 20 },
-  { day: 'Wed', games: 30, education: 150, other: 10 },
-  { day: 'Thu', games: 90, education: 60, other: 30 },
-  { day: 'Fri', games: 120, education: 45, other: 40 },
-  { day: 'Sat', games: 180, education: 30, other: 60 },
-  { day: 'Sun', games: 150, education: 30, other: 45 },
+  { day: 'Mon', video: 45, education: 120, social: 15 },
+  { day: 'Tue', video: 60, education: 90, social: 20 },
+  { day: 'Wed', video: 30, education: 150, social: 10 },
+  { day: 'Thu', video: 90, education: 60, social: 30 },
+  { day: 'Fri', video: 120, education: 45, social: 40 },
+  { day: 'Sat', video: 180, education: 30, social: 60 },
+  { day: 'Sun', video: 150, education: 30, social: 45 },
 ];
 
 const chartConfig: ChartConfig = {
-  games: { label: "Gaming", color: "#2E8AB8" },
+  video: { label: "YouTube/Video", color: "#FF0000" },
   education: { label: "Educational", color: "#CFE467" },
-  other: { label: "Others", color: "#4FB0C6" },
+  social: { label: "Social Media", color: "#4FB0C6" },
 };
 
 function calculateAge(dobString: string): number {
@@ -92,8 +94,8 @@ export default function ParentDashboard() {
         <div className="flex gap-3">
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
-              <Button className="rounded-full">
-                <UserPlus className="mr-2 h-4 w-4" /> Add Children
+              <Button className="rounded-full h-12 px-6 font-bold">
+                <UserPlus className="mr-2 h-5 w-5" /> Add Children
               </Button>
             </DialogTrigger>
             <DialogContent className="rounded-[2.5rem]">
@@ -124,7 +126,7 @@ export default function ParentDashboard() {
                 </div>
               </div>
               <DialogFooter>
-                <Button onClick={handleAddChild} className="rounded-full w-full">Save Profile</Button>
+                <Button onClick={handleAddChild} className="rounded-full w-full h-12 font-bold">Save Profile</Button>
               </DialogFooter>
             </DialogContent>
           </Dialog>
@@ -173,12 +175,14 @@ export default function ParentDashboard() {
           <Card className="rounded-2xl border-none shadow-sm bg-white">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2">
-                <Smartphone className="h-4 w-4 text-blue-500" /> Focus Score
+                <Smartphone className="h-4 w-4 text-blue-500" /> System Active
               </CardDescription>
-              <CardTitle className="text-2xl font-black">Good</CardTitle>
+              <CardTitle className="text-2xl font-black">Healthy</CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="text-xs font-bold text-blue-500">Highest during learning</div>
+               <div className="text-xs font-bold text-blue-500 flex items-center gap-1">
+                 <Shield className="h-3 w-3" /> Background monitoring ON
+               </div>
             </CardContent>
           </Card>
 
@@ -190,7 +194,7 @@ export default function ParentDashboard() {
               <CardTitle className="text-2xl font-black">{children?.length > 0 ? "1 Active" : "0"}</CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="text-xs font-bold text-destructive">Gaming limit exceeded today</div>
+               <div className="text-xs font-bold text-destructive">YouTube limit reached today</div>
             </CardContent>
           </Card>
         </div>
@@ -198,10 +202,16 @@ export default function ParentDashboard() {
 
       {children && children.length > 0 && (
         <>
-          <Card className="rounded-3xl border-none shadow-sm bg-white">
-            <CardHeader>
-              <CardTitle>Usage Trends</CardTitle>
-              <CardDescription>Daily breakdown of activity categories across all children</CardDescription>
+          <Card className="rounded-3xl border-none shadow-sm bg-white overflow-hidden">
+            <CardHeader className="flex flex-row items-center justify-between">
+              <div>
+                <CardTitle>Global Usage Trends</CardTitle>
+                <CardDescription>Breakdown of cross-app activity including YouTube and Social Media</CardDescription>
+              </div>
+              <Badge variant="outline" className="rounded-full px-4 py-1 flex items-center gap-2">
+                <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
+                Live Monitoring
+              </Badge>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="week" className="w-full">
@@ -231,9 +241,9 @@ export default function ParentDashboard() {
                             />
                             <ChartTooltip content={<ChartTooltipContent />} />
                             <Legend iconType="circle" />
-                            <Bar dataKey="education" stackId="a" fill="var(--color-education)" radius={[0, 0, 0, 0]} />
-                            <Bar dataKey="games" stackId="a" fill="var(--color-games)" radius={[0, 0, 0, 0]} />
-                            <Bar dataKey="other" stackId="a" fill="var(--color-other)" radius={[4, 4, 0, 0]} />
+                            <Bar dataKey="education" stackId="a" fill="var(--color-education)" />
+                            <Bar dataKey="video" stackId="a" fill="var(--color-video)" />
+                            <Bar dataKey="social" stackId="a" fill="var(--color-social)" radius={[4, 4, 0, 0]} />
                           </BarChart>
                         </ResponsiveContainer>
                       </ChartContainer>
@@ -243,8 +253,8 @@ export default function ParentDashboard() {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="rounded-3xl border-none shadow-sm bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <Card className="rounded-3xl border-none shadow-sm bg-white lg:col-span-2">
               <CardHeader>
                 <CardTitle>Child Profiles</CardTitle>
               </CardHeader>
@@ -299,17 +309,38 @@ export default function ParentDashboard() {
 
             <Card className="rounded-3xl border-none shadow-sm bg-white">
               <CardHeader>
-                <CardTitle>Smart Suggestions</CardTitle>
-                <CardDescription>AI-driven observations for wellness</CardDescription>
+                <CardTitle className="flex items-center gap-2">
+                  <History className="h-5 w-5 text-primary" /> Block Log
+                </CardTitle>
+                <CardDescription>Recent app interventions</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 flex gap-4">
-                   <TrendingUp className="h-6 w-6 text-primary shrink-0" />
-                   <p className="text-sm">Children show <strong>20% better focus</strong> after taking an eye health break. Consider scheduling automated breaks every 45 mins.</p>
+                <div className="p-3 rounded-xl bg-destructive/5 flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                      <div className="p-2 bg-destructive/10 rounded-lg">
+                        <Lock className="h-4 w-4 text-destructive" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold">YouTube</p>
+                        <p className="text-[10px] text-muted-foreground">Blocked 12m ago</p>
+                      </div>
+                   </div>
+                   <Badge variant="destructive" className="text-[10px]">Time Up</Badge>
                 </div>
-                <div className="p-4 rounded-2xl bg-accent/10 border border-accent/20 flex gap-4">
-                   <AlertCircle className="h-6 w-6 text-accent-foreground shrink-0" />
-                   <p className="text-sm">Late-night usage detected. We suggest activating <strong>Wind-Down Mode</strong> at 7:30 PM in settings.</p>
+                <div className="p-3 rounded-xl bg-destructive/5 flex items-center justify-between">
+                   <div className="flex items-center gap-3">
+                      <div className="p-2 bg-destructive/10 rounded-lg">
+                        <Lock className="h-4 w-4 text-destructive" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-bold">TikTok</p>
+                        <p className="text-[10px] text-muted-foreground">Blocked 2h ago</p>
+                      </div>
+                   </div>
+                   <Badge variant="destructive" className="text-[10px]">Policy</Badge>
+                </div>
+                <div className="pt-4 border-t text-center">
+                   <p className="text-xs text-muted-foreground italic">"Enforcement active via local service."</p>
                 </div>
               </CardContent>
             </Card>

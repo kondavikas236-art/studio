@@ -8,11 +8,12 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2 } from "lucide-react";
+import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
-import { updateDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function ParentSettings() {
   const { user } = useUser();
@@ -32,6 +33,9 @@ export default function ParentSettings() {
     notificationsEnabled: true,
     receiveWeeklyReportEmail: false,
     weeklyReportDayOfWeek: "Monday",
+    backgroundMonitoring: true,
+    blockSocialMedia: true,
+    blockVideoApps: true,
   });
 
   useEffect(() => {
@@ -42,7 +46,6 @@ export default function ParentSettings() {
         weeklyReportDayOfWeek: parentProfile.weeklyReportDayOfWeek || "Monday",
       }));
     }
-    // Also check local storage for non-profile device settings
     const saved = localStorage.getItem('parent-settings');
     if (saved) {
       const parsed = JSON.parse(saved);
@@ -53,13 +56,11 @@ export default function ParentSettings() {
   const handleSave = () => {
     if (!parentRef) return;
 
-    // Save profile settings to Firestore
     updateDocumentNonBlocking(parentRef, {
       receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
       weeklyReportDayOfWeek: settings.weeklyReportDayOfWeek,
     });
 
-    // Save device-specific settings to localStorage
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 
     toast({
@@ -79,11 +80,47 @@ export default function ParentSettings() {
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       <div>
-        <h2 className="text-3xl font-extrabold tracking-tight">Control Center</h2>
+        <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+          Control Center <ShieldCheck className="text-primary h-8 w-8" />
+        </h2>
         <p className="text-muted-foreground">Configure boundaries and healthy habits for your family</p>
       </div>
 
+      <Alert className="bg-primary/5 border-primary/20 rounded-2xl">
+        <Smartphone className="h-4 w-4" />
+        <AlertTitle className="font-bold">Prototyping Note</AlertTitle>
+        <AlertDescription className="text-sm">
+          Background monitoring (YouTube, Social Media) is simulated in this prototype. In a production app, this would require a native device installation.
+        </AlertDescription>
+      </Alert>
+
       <div className="grid gap-6">
+        <Card className="rounded-3xl border-none shadow-sm">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <Smartphone className="h-5 w-5 text-primary" />
+              <CardTitle>App Enforcement</CardTitle>
+            </div>
+            <CardDescription>Select which app categories to monitor and restrict.</CardDescription>
+          </Header>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+              <Label className="font-bold">Monitor Video Apps (YouTube, Netflix)</Label>
+              <Switch 
+                checked={settings.blockVideoApps} 
+                onCheckedChange={(val) => setSettings({...settings, blockVideoApps: val})} 
+              />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+              <Label className="font-bold">Monitor Social Media (TikTok, Instagram)</Label>
+              <Switch 
+                checked={settings.blockSocialMedia} 
+                onCheckedChange={(val) => setSettings({...settings, blockSocialMedia: val})} 
+              />
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="rounded-3xl border-none shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
@@ -91,7 +128,7 @@ export default function ParentSettings() {
               <CardTitle>Daily Time Limits</CardTitle>
             </div>
             <CardDescription>Set the maximum allowed screen time per day.</CardDescription>
-          </CardHeader>
+          </Header>
           <CardContent className="space-y-6">
             <div className="flex justify-between items-center">
               <Label>Total Screen Time</Label>
@@ -178,7 +215,7 @@ export default function ParentSettings() {
               <CardTitle>Health Breaks</CardTitle>
             </div>
             <CardDescription>Configure frequency of eye health prompts.</CardDescription>
-          </CardHeader>
+          </Header>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <Label>Break Frequency (Minutes)</Label>
@@ -195,7 +232,7 @@ export default function ParentSettings() {
         </Card>
 
         <div className="flex justify-end gap-4">
-          <Button variant="ghost" onClick={() => window.location.reload()}>Discard Changes</Button>
+          <Button variant="ghost" onClick={() => window.location.reload()} className="rounded-full">Discard Changes</Button>
           <Button size="lg" className="rounded-full px-8 font-bold" onClick={handleSave}>Save Device Policy</Button>
         </div>
       </div>

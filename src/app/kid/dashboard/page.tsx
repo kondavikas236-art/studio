@@ -1,17 +1,19 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle, ShieldCheck } from "lucide-react";
+import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
 
 const DATA = [
-  { name: 'Game', mins: 45, color: '#2E8AB8' },
+  { name: 'Video', mins: 45, color: '#FF0000' },
   { name: 'Study', mins: 120, color: '#CFE467' },
   { name: 'Stories', mins: 30, color: '#4FB0C6' },
 ];
@@ -21,7 +23,6 @@ export default function KidDashboard() {
   const [breakSuggestion, setBreakSuggestion] = useState<SmartBreakPromptOutput | null>(null);
 
   useEffect(() => {
-    // Simulate low focus after 8 seconds
     const timer = setTimeout(async () => {
       setFocusValue(25);
       const output = await generateSmartBreakPrompt({
@@ -46,7 +47,21 @@ export default function KidDashboard() {
 
   return (
     <div className="space-y-8 pb-12">
-      {/* Eye Wellness Animation Header */}
+      <div className="flex justify-between items-center bg-white/50 backdrop-blur-md p-4 rounded-[2rem] border border-white shadow-sm">
+        <div className="flex items-center gap-3">
+          <div className="h-10 w-10 bg-primary/10 rounded-full flex items-center justify-center">
+            <Shield className="h-6 w-6 text-primary" />
+          </div>
+          <div>
+            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Protection</p>
+            <p className="text-sm font-bold text-foreground">Background Active</p>
+          </div>
+        </div>
+        <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100 rounded-full border-green-200">
+          Enforced
+        </Badge>
+      </div>
+
       <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-white to-primary/5 p-8 border-4 border-white shadow-2xl">
         <div className="flex flex-col items-center text-center space-y-6">
           <div className={cn(
@@ -60,7 +75,6 @@ export default function KidDashboard() {
               <Eye className="h-24 w-24" />
             </div>
             
-            {/* Visual background effect */}
             <div className={cn(
               "absolute inset-0 rounded-full blur-2xl opacity-20 transition-colors duration-700",
               isLowFocus ? "bg-destructive animate-pulse" : "bg-green-500"

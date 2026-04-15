@@ -32,10 +32,23 @@ const chartConfig: ChartConfig = {
   other: { label: "Others", color: "#4FB0C6" },
 };
 
+function calculateAge(dobString: string): number {
+  if (!dobString) return 0;
+  const birthDate = new Date(dobString);
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
 export default function ParentDashboard() {
   const { user } = useUser();
   const db = useFirestore();
   const [newChildName, setNewChildName] = useState("");
+  const [newChildDob, setNewChildDob] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
 
   const childrenQuery = useMemoFirebase(() => {
@@ -46,19 +59,20 @@ export default function ParentDashboard() {
   const { data: children, isLoading } = useCollection(childrenQuery);
 
   const handleAddChild = () => {
-    if (!db || !user || !newChildName.trim()) return;
+    if (!db || !user || !newChildName.trim() || !newChildDob) return;
 
     const colRef = collection(db, "parentProfiles", user.uid, "childProfiles");
     addDocumentNonBlocking(colRef, {
       parentId: user.uid,
       name: newChildName,
-      age: 8,
+      dateOfBirth: newChildDob,
       avatarUrl: "https://picsum.photos/seed/avatar-new/200/200",
       dailyScreenTimeLimitMinutes: 120,
       gamingTimeLimitMinutes: 60
     });
 
     setNewChildName("");
+    setNewChildDob("");
     setIsAddOpen(false);
   };
 
@@ -89,6 +103,16 @@ export default function ParentDashboard() {
                     placeholder="e.g. Alex" 
                     value={newChildName} 
                     onChange={(e) => setNewChildName(e.target.value)} 
+                    className="rounded-xl"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="dob">Date of Birth</Label>
+                  <Input 
+                    id="dob" 
+                    type="date"
+                    value={newChildDob} 
+                    onChange={(e) => setNewChildDob(e.target.value)} 
                     className="rounded-xl"
                   />
                 </div>
@@ -226,7 +250,7 @@ export default function ParentDashboard() {
                         <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full border-2 border-primary/20" />
                         <div>
                           <p className="font-bold text-lg">{child.name}</p>
-                          <p className="text-xs text-muted-foreground">Age {child.age} • Explorer</p>
+                          <p className="text-xs text-muted-foreground">Age {calculateAge(child.dateOfBirth)} • Explorer</p>
                         </div>
                       </div>
                       <Link href="/parent/settings">

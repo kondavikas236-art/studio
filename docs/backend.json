@@ -1,3 +1,4 @@
+
 {
   "entities": {
     "ParentProfile": {
@@ -63,9 +64,10 @@
           "type": "string",
           "description": "The name or nickname of the child."
         },
-        "age": {
-          "type": "number",
-          "description": "The age of the child."
+        "dateOfBirth": {
+          "type": "string",
+          "description": "The child's date of birth used to calculate their current age.",
+          "format": "date"
         },
         "avatarUrl": {
           "type": "string",
@@ -85,7 +87,7 @@
         "id",
         "parentId",
         "name",
-        "age"
+        "dateOfBirth"
       ]
     },
     "AppUsageSession": {

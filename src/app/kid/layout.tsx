@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navigation } from "@/components/Navigation";
@@ -9,15 +10,21 @@ import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { usePathname } from "next/navigation";
 
 export default function KidLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const pathname = usePathname();
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
   const [isBugModeActive, setIsBugModeActive] = useState(false);
   const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Cockroach mode is suppressed while in the Diary Buddy "Safe Zone"
+  const isSafeZone = pathname === "/kid/diary";
+  const shouldDisplayBugs = isBugModeActive && !isSafeZone;
 
   const checkSettingsAndSetTimer = () => {
     if (bugTimerRef.current) {
@@ -62,7 +69,7 @@ export default function KidLayout({
 
   return (
     <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative overflow-hidden">
-      <CockroachOverlay active={isBugModeActive} />
+      <CockroachOverlay active={shouldDisplayBugs} />
       
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">
         <div className="p-8">

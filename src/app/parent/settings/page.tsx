@@ -14,6 +14,7 @@ import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
 
 export default function ParentSettings() {
   const { user } = useUser();
@@ -33,6 +34,7 @@ export default function ParentSettings() {
     notificationsEnabled: true,
     receiveWeeklyReportEmail: false,
     weeklyReportDayOfWeek: "Monday",
+    weeklyReportSendTime: "09:00",
     backgroundMonitoring: true,
     blockSocialMedia: true,
     blockVideoApps: true,
@@ -44,12 +46,17 @@ export default function ParentSettings() {
         ...prev,
         receiveWeeklyReportEmail: parentProfile.receiveWeeklyReportEmail || false,
         weeklyReportDayOfWeek: parentProfile.weeklyReportDayOfWeek || "Monday",
+        weeklyReportSendTime: parentProfile.weeklyReportSendTime || "09:00",
       }));
     }
     const saved = localStorage.getItem('parent-settings');
     if (saved) {
-      const parsed = JSON.parse(saved);
-      setSettings(prev => ({ ...prev, ...parsed }));
+      try {
+        const parsed = JSON.parse(saved);
+        setSettings(prev => ({ ...prev, ...parsed }));
+      } catch (e) {
+        console.error("Failed to parse settings from local storage", e);
+      }
     }
   }, [parentProfile]);
 
@@ -59,6 +66,7 @@ export default function ParentSettings() {
     updateDocumentNonBlocking(parentRef, {
       receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
       weeklyReportDayOfWeek: settings.weeklyReportDayOfWeek,
+      weeklyReportSendTime: settings.weeklyReportSendTime,
     });
 
     localStorage.setItem('parent-settings', JSON.stringify(settings));
@@ -102,7 +110,7 @@ export default function ParentSettings() {
               <CardTitle>App Enforcement</CardTitle>
             </div>
             <CardDescription>Select which app categories to monitor and restrict.</CardDescription>
-          </Header>
+          </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
               <Label className="font-bold">Monitor Video Apps (YouTube, Netflix)</Label>
@@ -128,7 +136,7 @@ export default function ParentSettings() {
               <CardTitle>Daily Time Limits</CardTitle>
             </div>
             <CardDescription>Set the maximum allowed screen time per day.</CardDescription>
-          </Header>
+          </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-between items-center">
               <Label>Total Screen Time</Label>
@@ -165,21 +173,32 @@ export default function ParentSettings() {
 
             {settings.receiveWeeklyReportEmail && (
               <div className="pt-4 border-t space-y-4 animate-in fade-in slide-in-from-top-2">
-                <div className="space-y-2">
-                  <Label>Preferred Delivery Day</Label>
-                  <Select 
-                    value={settings.weeklyReportDayOfWeek} 
-                    onValueChange={(val) => setSettings({...settings, weeklyReportDayOfWeek: val})}
-                  >
-                    <SelectTrigger className="rounded-xl">
-                      <SelectValue placeholder="Select a day" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => (
-                        <SelectItem key={day} value={day}>{day}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Preferred Delivery Day</Label>
+                    <Select 
+                      value={settings.weeklyReportDayOfWeek} 
+                      onValueChange={(val) => setSettings({...settings, weeklyReportDayOfWeek: val})}
+                    >
+                      <SelectTrigger className="rounded-xl">
+                        <SelectValue placeholder="Select a day" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"].map(day => (
+                          <SelectItem key={day} value={day}>{day}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Delivery Time</Label>
+                    <Input 
+                      type="time" 
+                      value={settings.weeklyReportSendTime}
+                      onChange={(e) => setSettings({...settings, weeklyReportSendTime: e.target.value})}
+                      className="rounded-xl"
+                    />
+                  </div>
                 </div>
               </div>
             )}
@@ -215,7 +234,7 @@ export default function ParentSettings() {
               <CardTitle>Health Breaks</CardTitle>
             </div>
             <CardDescription>Configure frequency of eye health prompts.</CardDescription>
-          </Header>
+          </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <Label>Break Frequency (Minutes)</Label>

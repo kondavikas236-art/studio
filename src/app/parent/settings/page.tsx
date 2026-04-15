@@ -63,8 +63,6 @@ export default function ParentSettings() {
   const handleSave = () => {
     if (!parentRef || !user) return;
 
-    // Use setDocumentNonBlocking with merge: true to handle both initial creation and updates.
-    // Ensure the 'id' field is included as it's required by both the entity schema and security rules.
     setDocumentNonBlocking(parentRef, {
       id: user.uid,
       receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
@@ -215,14 +213,14 @@ export default function ParentSettings() {
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
               <Bug className="h-5 w-5 text-destructive" />
-              <CardTitle>Creative Deterrent (Bug Mode)</CardTitle>
+              <CardTitle>Cockroach mode</CardTitle>
             </div>
             <CardDescription>Enable visual "invasions" to encourage stopping usage when time is up.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-destructive/5 rounded-2xl border border-destructive/10">
               <div className="space-y-0.5">
-                <Label className="text-base font-bold">Invasive Bug Visuals</Label>
+                <Label className="text-base font-bold">Invasive Cockroach Visuals</Label>
                 <p className="text-sm text-muted-foreground">Cockroaches appear on screen when time limit is exceeded.</p>
               </div>
               <Switch 

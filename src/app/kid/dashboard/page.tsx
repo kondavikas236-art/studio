@@ -129,7 +129,8 @@ export default function KidDashboard() {
                   <p className="text-sm text-muted-foreground">Write a tale with AI Buddy</p>
                 </div>
               </CardHeader>
-            </Link>
+            </Card>
+          </Link>
         </div>
       </section>
 

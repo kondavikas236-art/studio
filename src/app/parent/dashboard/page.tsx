@@ -4,10 +4,10 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings, History, Lock } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings, History, Lock, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { useFirestore, useUser, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useState } from "react";
@@ -53,6 +53,13 @@ export default function ParentDashboard() {
   const [newChildDob, setNewChildDob] = useState("");
   const [isAddOpen, setIsAddOpen] = useState(false);
 
+  const parentRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, "parentProfiles", user.uid);
+  }, [db, user]);
+
+  const { data: parentProfile } = useDoc(parentRef);
+
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return collection(db, "parentProfiles", user.uid, "childProfiles");
@@ -62,6 +69,16 @@ export default function ParentDashboard() {
 
   const handleAddChild = () => {
     if (!db || !user || !newChildName.trim() || !newChildDob) return;
+    
+    // Revenue logic: Limit free users to 1 child
+    if (!parentProfile?.isPro && children && children.length >= 1) {
+      toast({
+        variant: "destructive",
+        title: "Child Limit Reached",
+        description: "Upgrade to Family Pro to add unlimited child profiles!",
+      });
+      return;
+    }
 
     const colRef = collection(db, "parentProfiles", user.uid, "childProfiles");
     addDocumentNonBlocking(colRef, {
@@ -92,6 +109,13 @@ export default function ParentDashboard() {
           <p className="text-muted-foreground">Monitoring wellness for {children?.length || 0} children</p>
         </div>
         <div className="flex gap-3">
+          {!parentProfile?.isPro && (
+            <Link href="/parent/billing">
+              <Button variant="outline" className="rounded-full h-12 px-6 font-bold border-primary text-primary bg-primary/5 hover:bg-primary/10">
+                <Sparkles className="mr-2 h-5 w-5" /> Go Pro
+              </Button>
+            </Link>
+          )}
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-full h-12 px-6 font-bold">
@@ -133,6 +157,25 @@ export default function ParentDashboard() {
         </div>
       </div>
 
+      {!parentProfile?.isPro && (
+        <Card className="rounded-[2.5rem] border-none bg-gradient-to-r from-primary to-blue-600 text-white shadow-xl overflow-hidden relative group">
+          <div className="absolute top-0 right-0 p-8 opacity-10 group-hover:scale-110 transition-transform">
+            <Zap className="h-32 w-32" />
+          </div>
+          <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div className="space-y-2">
+              <h3 className="text-2xl font-black italic">Unlock Unlimited Potential</h3>
+              <p className="font-bold opacity-90 max-w-lg">Get unlimited child profiles, advanced AI diary insights, and custom cockroach deterrent settings with Family Pro.</p>
+            </div>
+            <Link href="/parent/billing">
+              <Button className="bg-white text-primary hover:bg-white/90 rounded-full h-12 px-8 font-black text-lg">
+                Upgrade Now
+              </Button>
+            </Link>
+          </CardContent>
+        </Card>
+      )}
+
       {isLoading ? (
         <div className="flex h-48 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -155,7 +198,7 @@ export default function ParentDashboard() {
             </CardHeader>
             <CardContent>
               <div className="text-xs font-bold text-green-600 flex items-center">
-                <TrendingUp className="h-3 w-3 mr-1" /> 12% decrease from last week
+                <TrendingUp className="h-3 w-3 mr-1" /> 12% decrease
               </div>
             </CardContent>
           </Card>
@@ -181,7 +224,7 @@ export default function ParentDashboard() {
             </CardHeader>
             <CardContent>
                <div className="text-xs font-bold text-blue-500 flex items-center gap-1">
-                 <Shield className="h-3 w-3" /> Background monitoring ON
+                 <Shield className="h-3 w-3" /> Monitoring ON
                </div>
             </CardContent>
           </Card>
@@ -194,7 +237,7 @@ export default function ParentDashboard() {
               <CardTitle className="text-2xl font-black">{children?.length > 0 ? "1 Active" : "0"}</CardTitle>
             </CardHeader>
             <CardContent>
-               <div className="text-xs font-bold text-destructive">YouTube limit reached today</div>
+               <div className="text-xs font-bold text-destructive">Daily limit reached</div>
             </CardContent>
           </Card>
         </div>
@@ -206,7 +249,7 @@ export default function ParentDashboard() {
             <CardHeader className="flex flex-row items-center justify-between">
               <div>
                 <CardTitle>Global Usage Trends</CardTitle>
-                <CardDescription>Breakdown of cross-app activity including YouTube and Social Media</CardDescription>
+                <CardDescription>Breakdown of cross-app activity</CardDescription>
               </div>
               <Badge variant="outline" className="rounded-full px-4 py-1 flex items-center gap-2">
                 <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse" />
@@ -214,144 +257,54 @@ export default function ParentDashboard() {
               </Badge>
             </CardHeader>
             <CardContent>
-              <Tabs defaultValue="week" className="w-full">
-                <TabsList className="mb-6 bg-muted/50 p-1 rounded-xl">
-                  <TabsTrigger value="day" className="rounded-lg">Daily</TabsTrigger>
-                  <TabsTrigger value="week" className="rounded-lg">Weekly</TabsTrigger>
-                  <TabsTrigger value="month" className="rounded-lg">Monthly</TabsTrigger>
-                </TabsList>
-                <TabsContent value="week">
-                   <div className="h-[400px] w-full mt-4">
-                      <ChartContainer config={chartConfig} className="h-full w-full">
-                        <ResponsiveContainer width="100%" height="100%">
-                          <BarChart data={USAGE_DATA}>
-                            <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.3} />
-                            <XAxis 
-                              dataKey="day" 
-                              axisLine={false} 
-                              tickLine={false} 
-                              tick={{fontSize: 12, fontWeight: 500, fill: '#64748b'}} 
-                              dy={10}
-                            />
-                            <YAxis 
-                              axisLine={false} 
-                              tickLine={false} 
-                              tick={{fontSize: 12, fontWeight: 500, fill: '#64748b'}}
-                              dx={-10}
-                            />
-                            <ChartTooltip content={<ChartTooltipContent />} />
-                            <Legend iconType="circle" />
-                            <Bar dataKey="education" stackId="a" fill="var(--color-education)" />
-                            <Bar dataKey="video" stackId="a" fill="var(--color-video)" />
-                            <Bar dataKey="social" stackId="a" fill="var(--color-social)" radius={[4, 4, 0, 0]} />
-                          </BarChart>
-                        </ResponsiveContainer>
-                      </ChartContainer>
-                   </div>
-                </TabsContent>
-              </Tabs>
+              <div className="h-[300px] w-full mt-4">
+                  <ChartContainer config={chartConfig} className="h-full w-full">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={USAGE_DATA}>
+                        <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.3} />
+                        <XAxis dataKey="day" axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                        <YAxis axisLine={false} tickLine={false} tick={{fontSize: 12}} />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Legend iconType="circle" />
+                        <Bar dataKey="education" stackId="a" fill="var(--color-education)" />
+                        <Bar dataKey="video" stackId="a" fill="var(--color-video)" />
+                        <Bar dataKey="social" stackId="a" fill="var(--color-social)" radius={[4, 4, 0, 0]} />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </ChartContainer>
+              </div>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Card className="rounded-3xl border-none shadow-sm bg-white lg:col-span-2">
-              <CardHeader>
-                <CardTitle>Child Profiles</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {children.map((child) => (
-                    <div key={child.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl hover:bg-muted/30 transition-colors">
-                      <div className="flex items-center gap-3">
-                        <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full border-2 border-primary/20 object-cover" />
-                        <div>
-                          <p className="font-bold text-lg">{child.name}</p>
-                          <p className="text-xs text-muted-foreground font-semibold">Age {calculateAge(child.dateOfBirth)} • Explorer</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <Link href="/parent/settings">
-                          <Button variant="ghost" size="icon" className="rounded-full">
-                            <Settings className="h-4 w-4" />
-                          </Button>
-                        </Link>
-                        
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button variant="ghost" size="icon" className="rounded-full text-destructive hover:text-destructive hover:bg-destructive/10">
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent className="rounded-[2.5rem]">
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Remove Child Profile?</AlertDialogTitle>
-                              <AlertDialogHeader>
-                                <AlertDialogTitle>Remove Child Profile?</AlertDialogTitle>
-                                <AlertDialogDescription>
-                                  Are you sure you want to remove {child.name}? This will permanently delete their progress and settings.
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel className="rounded-full">Cancel</AlertDialogCancel>
-                                <AlertDialogAction 
-                                  onClick={() => handleDeleteChild(child.id)}
-                                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
-                                >
-                                  Delete Child
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogHeader>
-                          </AlertDialogContent>
-                        </AlertDialog>
+          <Card className="rounded-3xl border-none shadow-sm bg-white">
+            <CardHeader>
+              <CardTitle>Child Profiles</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {children.map((child) => (
+                  <div key={child.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+                    <div className="flex items-center gap-3">
+                      <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full object-cover" />
+                      <div>
+                        <p className="font-bold">{child.name}</p>
+                        <p className="text-xs text-muted-foreground font-semibold">Age {calculateAge(child.dateOfBirth)}</p>
                       </div>
                     </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="rounded-3xl border-none shadow-sm bg-white">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <History className="h-5 w-5 text-primary" /> Block Log
-                </CardTitle>
-                <CardDescription>Recent app interventions</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="p-3 rounded-xl bg-destructive/5 flex items-center justify-between">
-                   <div className="flex items-center gap-3">
-                      <div className="p-2 bg-destructive/10 rounded-lg">
-                        <Lock className="h-4 w-4 text-destructive" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold">YouTube</p>
-                        <p className="text-[10px] text-muted-foreground">Blocked 12m ago</p>
-                      </div>
-                   </div>
-                   <Badge variant="destructive" className="text-[10px]">Time Up</Badge>
-                </div>
-                <div className="p-3 rounded-xl bg-destructive/5 flex items-center justify-between">
-                   <div className="flex items-center gap-3">
-                      <div className="p-2 bg-destructive/10 rounded-lg">
-                        <Lock className="h-4 w-4 text-destructive" />
-                      </div>
-                      <div>
-                        <p className="text-sm font-bold">TikTok</p>
-                        <p className="text-[10px] text-muted-foreground">Blocked 2h ago</p>
-                      </div>
-                   </div>
-                   <Badge variant="destructive" className="text-[10px]">Policy</Badge>
-                </div>
-                <div className="pt-4 border-t text-center">
-                   <p className="text-xs text-muted-foreground italic">"Enforcement active via local service."</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                    <Link href="/parent/settings">
+                      <Button variant="ghost" size="icon" className="rounded-full">
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>
   );
 }
 
-import { History as HistoryIcon } from "lucide-react";
+import { toast } from "@/hooks/use-toast";

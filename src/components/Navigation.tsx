@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { User, ShieldCheck, Gamepad2, Book, BarChart3, Settings, Trophy, Lock } from "lucide-react";
+import { User, ShieldCheck, Gamepad2, Book, BarChart3, Settings, Trophy, Lock, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -21,6 +21,7 @@ export function Navigation() {
 
   const parentLinks = [
     { href: "/parent/dashboard", label: "Dashboard", icon: BarChart3 },
+    { href: "/parent/billing", label: "Billing", icon: CreditCard },
     { href: "/parent/settings", label: "Settings", icon: Settings },
   ];
 

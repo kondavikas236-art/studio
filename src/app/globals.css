@@ -96,3 +96,29 @@
 .animate-bug-skitter {
   animation: bug-skitter 0.5s infinite ease-in-out;
 }
+
+/* Eye Wellness Animations */
+@keyframes eye-jitter {
+  0%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
+  25% { transform: translate(2px, -2px); }
+  50% { transform: translate(-2px, 2px); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.8)); }
+  75% { transform: translate(2px, 2px); }
+}
+
+@keyframes eye-calm {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.3)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.7)); }
+}
+
+@keyframes eye-blink {
+  0%, 90%, 100% { transform: scaleY(1); }
+  95% { transform: scaleY(0.1); }
+}
+
+.animate-eye-strained {
+  animation: eye-jitter 0.3s infinite ease-in-out, eye-blink 4s infinite linear;
+}
+
+.animate-eye-healthy {
+  animation: eye-calm 3s infinite ease-in-out, eye-blink 6s infinite linear;
+}

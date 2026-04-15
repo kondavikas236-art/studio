@@ -1,10 +1,9 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle } from "lucide-react";
+import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle, ShieldCheck } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
@@ -22,9 +21,9 @@ export default function KidDashboard() {
   const [breakSuggestion, setBreakSuggestion] = useState<SmartBreakPromptOutput | null>(null);
 
   useEffect(() => {
-    // Simulate low energy after some time
+    // Simulate low focus after 8 seconds
     const timer = setTimeout(async () => {
-      setFocusValue(25); // Trigger low focus state
+      setFocusValue(25);
       const output = await generateSmartBreakPrompt({
         childName: "Alex",
         screenTimeMinutes: 195,
@@ -47,10 +46,47 @@ export default function KidDashboard() {
 
   return (
     <div className="space-y-8 pb-12">
+      {/* Eye Wellness Animation Header */}
+      <section className="relative overflow-hidden rounded-[3rem] bg-gradient-to-br from-white to-primary/5 p-8 border-4 border-white shadow-2xl">
+        <div className="flex flex-col items-center text-center space-y-6">
+          <div className={cn(
+            "p-8 rounded-full bg-white shadow-inner relative transition-all duration-700",
+            isLowFocus ? "ring-8 ring-destructive/20" : "ring-8 ring-accent/20"
+          )}>
+            <div className={cn(
+              "relative z-10 transition-colors duration-700",
+              isLowFocus ? "text-destructive animate-eye-strained" : "text-green-500 animate-eye-healthy"
+            )}>
+              <Eye className="h-24 w-24" />
+            </div>
+            
+            {/* Visual background effect */}
+            <div className={cn(
+              "absolute inset-0 rounded-full blur-2xl opacity-20 transition-colors duration-700",
+              isLowFocus ? "bg-destructive animate-pulse" : "bg-green-500"
+            )} />
+          </div>
+
+          <div className="space-y-2 max-w-lg">
+            <h2 className={cn(
+              "text-3xl font-black italic tracking-tight transition-colors duration-700",
+              isLowFocus ? "text-destructive" : "text-primary"
+            )}>
+              {isLowFocus ? "Eyes need a break!" : "Your eyes are feeling great!"}
+            </h2>
+            <p className="text-muted-foreground font-semibold">
+              {isLowFocus 
+                ? "They've been looking at the screen for a long time. Let's rest them!" 
+                : "Looking good, Explorer! Remember to blink often and look far away."}
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="space-y-4">
         <div className="flex justify-between items-end">
-          <h2 className="text-3xl font-black text-foreground flex items-center gap-2">
-            Daily Status <Sparkles className="text-accent-foreground h-8 w-8" />
+          <h2 className="text-2xl font-black text-foreground flex items-center gap-2">
+            My Focus Meter <Sparkles className="text-accent-foreground h-6 w-6" />
           </h2>
         </div>
 
@@ -58,7 +94,7 @@ export default function KidDashboard() {
           <Card className="rounded-[2.5rem] border-primary/20 overflow-hidden shadow-xl bg-white/80 backdrop-blur-sm">
             <CardContent className="p-8 space-y-8">
               <div className="max-w-3xl mx-auto">
-                <FocusMeter value={focusValue} label="Focus Meter" />
+                <FocusMeter value={focusValue} label="Current Energy" />
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
@@ -91,8 +127,8 @@ export default function KidDashboard() {
                     <AlertCircle className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-black text-destructive text-lg">Focus Level Critical!</h3>
-                    <p className="text-destructive/80 font-bold">Time for a real-world adventure to recharge your meter.</p>
+                    <h3 className="font-black text-destructive text-lg">Recharge Needed!</h3>
+                    <p className="text-destructive/80 font-bold">Try the 'Eye Gym' or look at the horizon for 20 seconds.</p>
                   </div>
                 </div>
               )}
@@ -108,10 +144,10 @@ export default function KidDashboard() {
             <Card className="rounded-3xl border-2 border-transparent hover:border-primary/40 transition-all kid-card-hover cursor-pointer group">
               <CardHeader className="flex flex-row items-center space-x-4">
                 <div className="p-4 bg-primary/10 rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors">
-                  <Eye className="h-8 w-8" />
+                  <ShieldCheck className="h-8 w-8" />
                 </div>
                 <div>
-                  <CardTitle className="text-xl">Eye Mission</CardTitle>
+                  <CardTitle className="text-xl">Eye Gym</CardTitle>
                   <p className="text-sm text-muted-foreground">Give your eyes a holiday</p>
                 </div>
               </CardHeader>
@@ -135,7 +171,7 @@ export default function KidDashboard() {
       </section>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold">Today&apos;s Play Mix</h2>
+        <h2 className="text-2xl font-bold">Today's Play Mix</h2>
         <Card className="rounded-3xl border-none shadow-lg bg-white/50">
           <CardContent className="p-6">
             <div className="h-[200px] w-full">

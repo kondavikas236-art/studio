@@ -1,16 +1,16 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Trophy, Lock, ShieldCheck } from "lucide-react";
+import { Trophy, Lock, ShieldCheck, Share2 } from "lucide-react";
 import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { usePathname } from "next/navigation";
+import { toast } from "@/hooks/use-toast";
 
 export default function KidLayout({
   children,
@@ -26,6 +26,28 @@ export default function KidLayout({
   const isSafeZone = pathname === "/kid/diary";
   const shouldDisplayBugs = isBugModeActive && !isSafeZone;
 
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Kidsyee - Eye & Brain Wellness',
+      text: 'Check out Kidsyee, the ultimate screen time guardian for kids!',
+      url: window.location.origin,
+    };
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      await navigator.clipboard.writeText(window.location.origin);
+      toast({
+        title: "Link Copied!",
+        description: "App link has been copied to your clipboard.",
+      });
+    }
+  };
+
   const checkSettingsAndSetTimer = () => {
     if (bugTimerRef.current) {
       clearTimeout(bugTimerRef.current);
@@ -36,9 +58,7 @@ export default function KidLayout({
     if (settingsStr) {
       try {
         const settings = JSON.parse(settingsStr);
-        // Cockroach mode only triggers if enabled by parent
         if (settings.enableBugDeterrent) {
-          // Scale minutes to seconds for prototype testing
           const intervalSeconds = (settings.eyeBreakInterval || 20);
           bugTimerRef.current = setTimeout(() => {
             setIsBugModeActive(true);
@@ -55,7 +75,6 @@ export default function KidLayout({
 
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
-      // Restart the timer after a successful break
       checkSettingsAndSetTimer();
     };
 
@@ -68,7 +87,7 @@ export default function KidLayout({
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative overflow-hidden">
+    <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative overflow-x-hidden">
       <CockroachOverlay active={shouldDisplayBugs} />
       
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">
@@ -82,44 +101,46 @@ export default function KidLayout({
         <Navigation />
       </div>
 
-      <main className="flex-1 flex flex-col h-screen overflow-auto">
-        <header className="flex justify-between items-center p-6 bg-white/50 backdrop-blur-md border-b sticky top-0 z-40">
+      <main className="flex-1 flex flex-col h-screen overflow-auto scrollbar-hide">
+        <header className="flex justify-between items-center p-5 bg-white/80 backdrop-blur-md border-b sticky top-0 z-40">
           <div className="flex items-center space-x-3">
-            <Avatar className="h-12 w-12 border-2 border-primary ring-4 ring-primary/5">
+            <Avatar className="h-10 w-10 border-2 border-primary ring-2 ring-primary/5">
               <AvatarImage src={avatar?.imageUrl} alt="Avatar" />
               <AvatarFallback>KY</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Explorer</p>
-              <p className="text-lg font-black tracking-tight">Alex Buddy</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Explorer</p>
+              <p className="text-base font-black tracking-tight leading-none">Alex Buddy</p>
             </div>
           </div>
           
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:flex bg-accent/20 px-4 py-2 rounded-full items-center space-x-2 border border-accent/30 shadow-sm">
-              <Trophy className="h-5 w-5 text-accent-foreground" />
-              <span className="font-black text-accent-foreground">1,240 pts</span>
+          <div className="flex items-center gap-2">
+            <div className="hidden xs:flex bg-accent/20 px-3 py-1.5 rounded-full items-center space-x-2 border border-accent/30 shadow-sm">
+              <Trophy className="h-4 w-4 text-accent-foreground" />
+              <span className="font-black text-xs text-accent-foreground">1.2k</span>
             </div>
             
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <Link href="/parent/dashboard">
-                    <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary">
-                      <Lock className="h-5 w-5" />
-                    </Button>
-                  </Link>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Parent Access</p>
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Link href="/parent/dashboard">
+              <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary">
+                <Lock className="h-5 w-5" />
+              </Button>
+            </Link>
           </div>
         </header>
         
-        <div className="p-6 max-w-5xl mx-auto w-full">
+        <div className="p-4 sm:p-6 max-w-5xl mx-auto w-full">
           {children}
+        </div>
+
+        {/* Floating Share FAB - Lower Left */}
+        <div className="fixed bottom-24 left-6 z-[60] md:bottom-6 md:left-72">
+          <Button 
+            onClick={handleShare} 
+            size="icon" 
+            className="h-14 w-14 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-primary text-white hover:scale-110 active:scale-90 transition-all flex items-center justify-center border-2 border-white/20"
+          >
+            <Share2 className="h-6 w-6" />
+          </Button>
         </div>
       </main>
 

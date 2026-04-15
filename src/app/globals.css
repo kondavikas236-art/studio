@@ -35,41 +35,43 @@
 @layer base {
   * {
     @apply border-border;
+    -webkit-tap-highlight-color: transparent;
   }
   body {
-    @apply bg-background text-foreground font-body;
+    @apply bg-background text-foreground font-body overflow-x-hidden;
+    overscroll-behavior-y: contain;
   }
 }
 
 /* Realistic Cockroach Animations */
 @keyframes bug-skitter {
   0% { transform: translate(0, 0) rotate(0deg); }
-  10% { transform: translate(5px, -5px) rotate(5deg); }
-  20% { transform: translate(-3px, 8px) rotate(-10deg); }
-  30% { transform: translate(12px, 2px) rotate(15deg); }
-  40% { transform: translate(-8px, -12px) rotate(-20deg); }
-  50% { transform: translate(15px, 15px) rotate(30deg); }
-  60% { transform: translate(-15px, 5px) rotate(-15deg); }
-  70% { transform: translate(8px, -15px) rotate(20deg); }
-  80% { transform: translate(-12px, 10px) rotate(-30deg); }
-  90% { transform: translate(5px, -8px) rotate(10deg); }
+  10% { transform: translate(8px, -8px) rotate(8deg); }
+  20% { transform: translate(-5px, 12px) rotate(-15deg); }
+  30% { transform: translate(18px, 4px) rotate(20deg); }
+  40% { transform: translate(-12px, -18px) rotate(-25deg); }
+  50% { transform: translate(22px, 22px) rotate(40deg); }
+  60% { transform: translate(-22px, 8px) rotate(-20deg); }
+  70% { transform: translate(12px, -22px) rotate(25deg); }
+  80% { transform: translate(-18px, 15px) rotate(-40deg); }
+  90% { transform: translate(8px, -12px) rotate(15deg); }
   100% { transform: translate(0, 0) rotate(0deg); }
 }
 
 @keyframes bug-roam {
-  0% { transform: translate(-10vw, -10vh) rotate(45deg); }
-  25% { transform: translate(110vw, 30vh) rotate(135deg); }
-  50% { transform: translate(50vw, 110vh) rotate(225deg); }
-  75% { transform: translate(-10vw, 60vh) rotate(315deg); }
-  100% { transform: translate(-10vw, -10vh) rotate(405deg); }
+  0% { transform: translate(-20vw, -20vh) rotate(45deg); }
+  25% { transform: translate(120vw, 40vh) rotate(135deg); }
+  50% { transform: translate(60vw, 120vh) rotate(225deg); }
+  75% { transform: translate(-20vw, 70vh) rotate(315deg); }
+  100% { transform: translate(-20vw, -20vh) rotate(405deg); }
 }
 
 .animate-bug-skitter {
-  animation: bug-skitter 0.5s infinite linear;
+  animation: bug-skitter 0.3s infinite linear;
 }
 
 .animate-bug-roam {
-  animation: bug-roam 15s infinite linear;
+  animation: bug-roam 10s infinite linear;
 }
 
 .scrollbar-hide::-webkit-scrollbar {
@@ -78,4 +80,20 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+.focus-meter-glow {
+  box-shadow: 0 0 20px rgba(25, 150, 197, 0.2);
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.kid-card-hover {
+  @apply transition-all duration-300;
+}
+.kid-card-hover:active {
+  @apply scale-95 opacity-80;
 }

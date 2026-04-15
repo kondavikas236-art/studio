@@ -12,14 +12,14 @@ export function Navigation() {
 
   const kidLinks = [
     { href: "/kid/dashboard", label: "My Hub", icon: Gamepad2 },
-    { href: "/kid/eye-health", label: "Eye Care", icon: ShieldCheck },
+    { href: "/kid/eye-health", label: "Eye Gym", icon: ShieldCheck },
     { href: "/kid/diary", label: "Diary", icon: Book },
     { href: "/kid/achievements", label: "Rewards", icon: Trophy },
   ];
 
   const parentLinks = [
     { href: "/parent/dashboard", label: "Dashboard", icon: BarChart3 },
-    { href: "/parent/settings", label: "Control Center", icon: Settings },
+    { href: "/parent/settings", label: "Settings", icon: Settings },
   ];
 
   const links = isKidPath ? kidLinks : isParentPath ? parentLinks : [];
@@ -27,28 +27,39 @@ export function Navigation() {
   if (links.length === 0) return null;
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t h-20 px-4 md:h-auto md:relative md:bg-transparent md:border-none md:p-6 z-50">
-      <div className="flex justify-around items-center h-full max-w-lg mx-auto md:flex-col md:items-start md:space-y-4">
-        {links.map((link) => {
-          const Icon = link.icon;
-          const active = pathname === link.href;
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={cn(
-                "flex flex-col items-center justify-center p-2 rounded-xl transition-all w-full md:flex-row md:justify-start md:space-x-3 md:px-4",
-                active 
-                  ? "text-primary bg-primary/10 font-bold" 
-                  : "text-muted-foreground hover:bg-muted"
-              )}
-            >
-              <Icon className={cn("h-6 w-6 md:h-5 md:w-5", active ? "scale-110" : "")} />
-              <span className="text-[10px] mt-1 md:text-sm md:mt-0">{link.label}</span>
-            </Link>
-          );
-        })}
-      </div>
+    <nav className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-lg border-t h-[72px] px-2 flex justify-around items-center z-50 shadow-[0_-4px_16px_rgba(0,0,0,0.05)] md:h-auto md:relative md:bg-transparent md:border-none md:p-6 md:flex-col md:items-start md:space-y-4">
+      {links.map((link) => {
+        const Icon = link.icon;
+        const active = pathname === link.href;
+        return (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={cn(
+              "flex flex-col items-center justify-center min-w-[64px] transition-all rounded-2xl py-2 md:flex-row md:justify-start md:space-x-4 md:px-6 md:w-full md:py-3",
+              active 
+                ? "text-primary md:bg-primary/10" 
+                : "text-muted-foreground hover:bg-muted/50"
+            )}
+          >
+            <div className={cn(
+              "p-1.5 rounded-full transition-all duration-300",
+              active ? "bg-primary/10 md:bg-transparent scale-110" : ""
+            )}>
+              <Icon className={cn("h-6 w-6 transition-transform", active ? "stroke-[2.5px]" : "stroke-2")} />
+            </div>
+            <span className={cn(
+              "text-[10px] mt-1 font-bold tracking-tight md:text-sm md:mt-0 transition-all",
+              active ? "opacity-100 scale-105" : "opacity-80"
+            )}>
+              {link.label}
+            </span>
+            {active && (
+              <div className="absolute bottom-1 w-1 h-1 bg-primary rounded-full md:hidden" />
+            )}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

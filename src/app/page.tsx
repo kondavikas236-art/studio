@@ -1,16 +1,21 @@
 
+"use client";
+
 import Link from "next/link";
-import { Gamepad2, ShieldCheck, HeartPulse, ChevronRight } from "lucide-react";
+import { Gamepad2, ShieldCheck, HeartPulse, ChevronRight, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useUser } from "@/firebase";
 
 export default function Home() {
+  const { user } = useUser();
+
   return (
     <div className="flex-1 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background overflow-hidden min-h-screen">
       <div className="text-center space-y-4 max-w-2xl mb-12 animate-in fade-in zoom-in duration-700">
         <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm">
           <HeartPulse className="h-14 w-14 text-primary" />
         </div>
-        <h1 className="text-6xl font-black tracking-tighter text-foreground md:text-8xl italic">
+        <h1 className="text-6xl font-black tracking-tighter text-foreground md:text-8xl italic leading-none">
           Mindful <span className="text-primary">Play</span>
         </h1>
         <p className="text-xl text-muted-foreground font-semibold max-w-lg mx-auto leading-relaxed">
@@ -37,7 +42,7 @@ export default function Home() {
           </div>
         </Link>
 
-        <Link href="/parent/dashboard" className="group">
+        <Link href={user ? "/parent/dashboard" : "/login"} className="group">
           <div className="h-full bg-card border-4 border-accent/20 p-10 rounded-[3rem] kid-card-hover flex flex-col items-center text-center space-y-8 relative overflow-hidden">
             <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                <ShieldCheck className="h-32 w-32 -mr-12 -mt-12" />
@@ -50,7 +55,7 @@ export default function Home() {
               <p className="text-muted-foreground font-medium text-lg">Manage limits, view insights, and keep them safe.</p>
             </div>
             <Button variant="secondary" size="lg" className="w-full rounded-full text-xl h-16 font-black shadow-xl group-hover:scale-105 transition-transform border-2 border-accent/20">
-              Parent Access <ShieldCheck className="ml-2 h-6 w-6" />
+              {user ? "Go to Dashboard" : "Secure Access"} <ShieldCheck className="ml-2 h-6 w-6" />
             </Button>
           </div>
         </Link>

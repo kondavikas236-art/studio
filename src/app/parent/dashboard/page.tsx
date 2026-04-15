@@ -1,11 +1,19 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2 } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { collection, doc } from "firebase/firestore";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { useState } from "react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 const USAGE_DATA = [
   { day: 'Mon', games: 45, education: 120, other: 15 },
@@ -24,164 +32,232 @@ const chartConfig: ChartConfig = {
 };
 
 export default function ParentDashboard() {
+  const { user } = useUser();
+  const db = useFirestore();
+  const [newChildName, setNewChildName] = useState("");
+  const [isAddOpen, setIsAddOpen] = useState(false);
+
+  const childrenQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return collection(db, "parentProfiles", user.uid, "childProfiles");
+  }, [db, user]);
+
+  const { data: children, isLoading } = useCollection(childrenQuery);
+
+  const handleAddChild = () => {
+    if (!db || !user || !newChildName.trim()) return;
+
+    const colRef = collection(db, "parentProfiles", user.uid, "childProfiles");
+    addDocumentNonBlocking(colRef, {
+      parentId: user.uid,
+      name: newChildName,
+      age: 8,
+      avatarUrl: "https://picsum.photos/seed/avatar-new/200/200",
+      dailyScreenTimeLimitMinutes: 120,
+      gamingTimeLimitMinutes: 60
+    });
+
+    setNewChildName("");
+    setIsAddOpen(false);
+  };
+
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold">Weekly Insights</h2>
-          <p className="text-muted-foreground">Monitoring Alex&apos;s digital wellness</p>
+          <h2 className="text-3xl font-extrabold tracking-tight">Family Insights</h2>
+          <p className="text-muted-foreground">Monitoring wellness for {children?.length || 0} explorers</p>
         </div>
         <div className="flex gap-3">
-          <Button variant="outline">Download PDF Report</Button>
-          <Button>Set New Limits</Button>
+          <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
+            <DialogTrigger asChild>
+              <Button className="rounded-full">
+                <UserPlus className="mr-2 h-4 w-4" /> Add Explorer
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="rounded-[2.5rem]">
+              <DialogHeader>
+                <DialogTitle>New Child Explorer</DialogTitle>
+                <DialogDescription>Add a profile to track screen time and healthy habits.</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-4">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Explorer Name</Label>
+                  <Input 
+                    id="name" 
+                    placeholder="e.g. Alex" 
+                    value={newChildName} 
+                    onChange={(e) => setNewChildName(e.target.value)} 
+                    className="rounded-xl"
+                  />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button onClick={handleAddChild} className="rounded-full w-full">Save Profile</Button>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card className="rounded-2xl border-none shadow-sm bg-white">
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <Clock className="h-4 w-4 text-primary" /> Daily Avg
-            </CardDescription>
-            <CardTitle className="text-2xl font-black">2h 45m</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xs font-bold text-green-600 flex items-center">
-              <TrendingUp className="h-3 w-3 mr-1" /> 12% decrease from last week
-            </div>
-          </CardContent>
+      {isLoading ? (
+        <div className="flex h-48 items-center justify-center">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        </div>
+      ) : children?.length === 0 ? (
+        <Card className="rounded-[2.5rem] border-dashed border-2 border-primary/20 p-12 text-center bg-primary/5">
+          <Shield className="h-12 w-12 text-primary/40 mx-auto mb-4" />
+          <h3 className="text-xl font-bold">No Explorers Yet</h3>
+          <p className="text-muted-foreground mb-6">Add your first child profile to start monitoring screen time.</p>
+          <Button variant="outline" onClick={() => setIsAddOpen(true)} className="rounded-full">Add Explorer Now</Button>
         </Card>
-        
-        <Card className="rounded-2xl border-none shadow-sm bg-white">
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-accent-foreground" /> Goal Progress
-            </CardDescription>
-            <CardTitle className="text-2xl font-black">85%</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="text-xs font-bold text-muted-foreground">Alex met limits 6/7 days</div>
-          </CardContent>
-        </Card>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Card className="rounded-2xl border-none shadow-sm bg-white">
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2">
+                <Clock className="h-4 w-4 text-primary" /> Daily Avg
+              </CardDescription>
+              <CardTitle className="text-2xl font-black">2h 45m</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-xs font-bold text-green-600 flex items-center">
+                <TrendingUp className="h-3 w-3 mr-1" /> 12% decrease from last week
+              </div>
+            </CardContent>
+          </Card>
+          
+          <Card className="rounded-2xl border-none shadow-sm bg-white">
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4 text-accent-foreground" /> Goal Progress
+              </CardDescription>
+              <CardTitle className="text-2xl font-black">85%</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="text-xs font-bold text-muted-foreground">Limits met 6/7 days</div>
+            </CardContent>
+          </Card>
 
-        <Card className="rounded-2xl border-none shadow-sm bg-white">
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <Smartphone className="h-4 w-4 text-blue-500" /> Focus Score
-            </CardDescription>
-            <CardTitle className="text-2xl font-black">Good</CardTitle>
-          </CardHeader>
-          <CardContent>
-             <div className="text-xs font-bold text-blue-500">Highest during math games</div>
-          </CardContent>
-        </Card>
+          <Card className="rounded-2xl border-none shadow-sm bg-white">
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2">
+                <Smartphone className="h-4 w-4 text-blue-500" /> Focus Score
+              </CardDescription>
+              <CardTitle className="text-2xl font-black">Good</CardTitle>
+            </CardHeader>
+            <CardContent>
+               <div className="text-xs font-bold text-blue-500">Highest in Learning apps</div>
+            </CardContent>
+          </Card>
 
-        <Card className="rounded-2xl border-none shadow-sm bg-white border-l-4 border-l-destructive">
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-destructive" /> Alerts
-            </CardDescription>
-            <CardTitle className="text-2xl font-black">1 Active</CardTitle>
-          </CardHeader>
-          <CardContent>
-             <div className="text-xs font-bold text-destructive">Gaming limit exceeded on Friday</div>
-          </CardContent>
-        </Card>
-      </div>
+          <Card className="rounded-2xl border-none shadow-sm bg-white border-l-4 border-l-destructive">
+            <CardHeader className="pb-2">
+              <CardDescription className="flex items-center gap-2">
+                <AlertCircle className="h-4 w-4 text-destructive" /> Active Alerts
+              </CardDescription>
+              <CardTitle className="text-2xl font-black">{children?.length > 0 ? "1 Active" : "0"}</CardTitle>
+            </CardHeader>
+            <CardContent>
+               <div className="text-xs font-bold text-destructive">Gaming limit exceeded today</div>
+            </CardContent>
+          </Card>
+        </div>
+      )}
 
-      <Card className="rounded-3xl border-none shadow-sm bg-white">
-        <CardHeader>
-          <CardTitle>Usage Trends</CardTitle>
-          <CardDescription>Daily breakdown of activity categories</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="week" className="w-full">
-            <TabsList className="mb-6 bg-muted/50 p-1 rounded-xl">
-              <TabsTrigger value="day" className="rounded-lg">Daily</TabsTrigger>
-              <TabsTrigger value="week" className="rounded-lg">Weekly</TabsTrigger>
-              <TabsTrigger value="month" className="rounded-lg">Monthly</TabsTrigger>
-            </TabsList>
-            <TabsContent value="week">
-               <div className="h-[400px] w-full mt-4">
-                  <ChartContainer config={chartConfig} className="h-full w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={USAGE_DATA}>
-                        <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.3} />
-                        <XAxis 
-                          dataKey="day" 
-                          axisLine={false} 
-                          tickLine={false} 
-                          tick={{fontSize: 12, fontWeight: 500, fill: '#64748b'}} 
-                          dy={10}
-                        />
-                        <YAxis 
-                          axisLine={false} 
-                          tickLine={false} 
-                          tick={{fontSize: 12, fontWeight: 500, fill: '#64748b'}}
-                          dx={-10}
-                        />
-                        <ChartTooltip content={<ChartTooltipContent />} />
-                        <Legend iconType="circle" />
-                        <Bar dataKey="education" stackId="a" fill="var(--color-education)" radius={[0, 0, 0, 0]} />
-                        <Bar dataKey="games" stackId="a" fill="var(--color-games)" radius={[0, 0, 0, 0]} />
-                        <Bar dataKey="other" stackId="a" fill="var(--color-other)" radius={[4, 4, 0, 0]} />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </ChartContainer>
-               </div>
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-      </Card>
+      {children && children.length > 0 && (
+        <>
+          <Card className="rounded-3xl border-none shadow-sm bg-white">
+            <CardHeader>
+              <CardTitle>Usage Trends</CardTitle>
+              <CardDescription>Daily breakdown of activity categories across all explorers</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Tabs defaultValue="week" className="w-full">
+                <TabsList className="mb-6 bg-muted/50 p-1 rounded-xl">
+                  <TabsTrigger value="day" className="rounded-lg">Daily</TabsTrigger>
+                  <TabsTrigger value="week" className="rounded-lg">Weekly</TabsTrigger>
+                  <TabsTrigger value="month" className="rounded-lg">Monthly</TabsTrigger>
+                </TabsList>
+                <TabsContent value="week">
+                   <div className="h-[400px] w-full mt-4">
+                      <ChartContainer config={chartConfig} className="h-full w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <BarChart data={USAGE_DATA}>
+                            <CartesianGrid vertical={false} strokeDasharray="3 3" opacity={0.3} />
+                            <XAxis 
+                              dataKey="day" 
+                              axisLine={false} 
+                              tickLine={false} 
+                              tick={{fontSize: 12, fontWeight: 500, fill: '#64748b'}} 
+                              dy={10}
+                            />
+                            <YAxis 
+                              axisLine={false} 
+                              tickLine={false} 
+                              tick={{fontSize: 12, fontWeight: 500, fill: '#64748b'}}
+                              dx={-10}
+                            />
+                            <ChartTooltip content={<ChartTooltipContent />} />
+                            <Legend iconType="circle" />
+                            <Bar dataKey="education" stackId="a" fill="var(--color-education)" radius={[0, 0, 0, 0]} />
+                            <Bar dataKey="games" stackId="a" fill="var(--color-games)" radius={[0, 0, 0, 0]} />
+                            <Bar dataKey="other" stackId="a" fill="var(--color-other)" radius={[4, 4, 0, 0]} />
+                          </BarChart>
+                        </ResponsiveContainer>
+                      </ChartContainer>
+                   </div>
+                </TabsContent>
+              </Tabs>
+            </CardContent>
+          </Card>
 
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="rounded-3xl border-none shadow-sm bg-white">
-          <CardHeader>
-            <CardTitle>Top Apps</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {[
-                { name: 'Duolingo', category: 'Education', time: '1h 20m', color: 'bg-green-500' },
-                { name: 'Roblox', category: 'Gaming', time: '45m', color: 'bg-red-500' },
-                { name: 'Minecraft', category: 'Gaming', time: '30m', color: 'bg-primary' },
-                { name: 'Khan Academy', category: 'Education', time: '25m', color: 'bg-blue-400' },
-              ].map((app) => (
-                <div key={app.name} className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className={`h-10 w-10 rounded-xl ${app.color} opacity-20 flex items-center justify-center font-bold text-xs`}>
-                      {app.name[0]}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <Card className="rounded-3xl border-none shadow-sm bg-white">
+              <CardHeader>
+                <CardTitle>Child Profiles</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-6">
+                  {children.map((child) => (
+                    <div key={child.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+                      <div className="flex items-center gap-3">
+                        <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full border-2 border-primary/20" />
+                        <div>
+                          <p className="font-bold text-lg">{child.name}</p>
+                          <p className="text-xs text-muted-foreground">Age {child.age} • Explorer</p>
+                        </div>
+                      </div>
+                      <Link href="/parent/settings">
+                        <Button variant="ghost" size="sm">Configure</Button>
+                      </Link>
                     </div>
-                    <div>
-                      <p className="font-bold text-sm">{app.name}</p>
-                      <p className="text-xs text-muted-foreground">{app.category}</p>
-                    </div>
-                  </div>
-                  <p className="font-bold text-sm">{app.time}</p>
+                  ))}
                 </div>
-              ))}
-            </div>
-            <Button variant="ghost" className="w-full mt-6 text-primary font-bold">View All Apps</Button>
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        <Card className="rounded-3xl border-none shadow-sm bg-white">
-          <CardHeader>
-            <CardTitle>Proactive Suggestions</CardTitle>
-            <CardDescription>AI-driven observations for wellness</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 flex gap-4">
-               <TrendingUp className="h-6 w-6 text-primary shrink-0" />
-               <p className="text-sm">Alex shows <strong>20% better focus</strong> after taking an eye health break. Consider scheduling automated breaks every 45 mins.</p>
-            </div>
-            <div className="p-4 rounded-2xl bg-accent/10 border border-accent/20 flex gap-4">
-               <AlertCircle className="h-6 w-6 text-accent-foreground shrink-0" />
-               <p className="text-sm">Late-night usage increased by 15% this week. We suggest activating <strong>Wind-Down Mode</strong> at 7:30 PM.</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            <Card className="rounded-3xl border-none shadow-sm bg-white">
+              <CardHeader>
+                <CardTitle>Smart Suggestions</CardTitle>
+                <CardDescription>AI-driven observations for wellness</CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 flex gap-4">
+                   <TrendingUp className="h-6 w-6 text-primary shrink-0" />
+                   <p className="text-sm">Explorers show <strong>20% better focus</strong> after taking an eye health break. Consider scheduling automated breaks every 45 mins.</p>
+                </div>
+                <div className="p-4 rounded-2xl bg-accent/10 border border-accent/20 flex gap-4">
+                   <AlertCircle className="h-6 w-6 text-accent-foreground shrink-0" />
+                   <p className="text-sm">Late-night usage detected. We suggest activating <strong>Wind-Down Mode</strong> at 7:30 PM in settings.</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   );
 }
+
+import Link from "next/navigation";

@@ -8,10 +8,23 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock, Mail } from "lucide-react";
+import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
+import { doc } from "firebase/firestore";
+import { updateDocumentNonBlocking, setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 
 export default function ParentSettings() {
+  const { user } = useUser();
+  const db = useFirestore();
+
+  const parentRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, "parentProfiles", user.uid);
+  }, [db, user]);
+
+  const { data: parentProfile, isLoading } = useDoc(parentRef);
+
   const [settings, setSettings] = useState({
     dailyLimit: 120,
     enableBugDeterrent: false,
@@ -22,25 +35,52 @@ export default function ParentSettings() {
   });
 
   useEffect(() => {
+    if (parentProfile) {
+      setSettings((prev) => ({
+        ...prev,
+        receiveWeeklyReportEmail: parentProfile.receiveWeeklyReportEmail || false,
+        weeklyReportDayOfWeek: parentProfile.weeklyReportDayOfWeek || "Monday",
+      }));
+    }
+    // Also check local storage for non-profile device settings
     const saved = localStorage.getItem('parent-settings');
     if (saved) {
-      setSettings(JSON.parse(saved));
+      const parsed = JSON.parse(saved);
+      setSettings(prev => ({ ...prev, ...parsed }));
     }
-  }, []);
+  }, [parentProfile]);
 
   const handleSave = () => {
+    if (!parentRef) return;
+
+    // Save profile settings to Firestore
+    updateDocumentNonBlocking(parentRef, {
+      receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
+      weeklyReportDayOfWeek: settings.weeklyReportDayOfWeek,
+    });
+
+    // Save device-specific settings to localStorage
     localStorage.setItem('parent-settings', JSON.stringify(settings));
+
     toast({
-      title: "Settings Saved!",
-      description: "Child device policies and email alert preferences have been updated.",
+      title: "Device Policy Saved!",
+      description: "Settings have been updated in the cloud and on this device.",
     });
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       <div>
         <h2 className="text-3xl font-extrabold tracking-tight">Control Center</h2>
-        <p className="text-muted-foreground">Configure boundaries and healthy habits for Alex</p>
+        <p className="text-muted-foreground">Configure boundaries and healthy habits for your family</p>
       </div>
 
       <div className="grid gap-6">
@@ -151,17 +191,6 @@ export default function ParentSettings() {
               min={10}
               step={5} 
             />
-            
-            <div className="flex items-center justify-between pt-4 border-t">
-              <div className="flex items-center gap-2">
-                <Bell className="h-4 w-4" />
-                <Label>Parent Notifications</Label>
-              </div>
-              <Switch 
-                checked={settings.notificationsEnabled} 
-                onCheckedChange={(val) => setSettings({...settings, notificationsEnabled: val})} 
-              />
-            </div>
           </CardContent>
         </Card>
 

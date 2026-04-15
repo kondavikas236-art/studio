@@ -1,4 +1,3 @@
-
 {
   "entities": {
     "ParentProfile": {
@@ -30,7 +29,7 @@
         },
         "subscriptionTier": {
           "type": "string",
-          "enum": ["free", "family_pro", "yearly_pro"],
+          "enum": ["free", "family_pro"],
           "description": "The current subscription tier."
         },
         "receiveWeeklyReportEmail": {

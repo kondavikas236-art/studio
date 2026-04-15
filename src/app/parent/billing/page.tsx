@@ -1,9 +1,8 @@
-
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ShieldCheck, Zap, Star, Sparkles, Globe } from "lucide-react";
+import { Check, ShieldCheck, Star, Globe } from "lucide-react";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
@@ -23,22 +22,12 @@ const PLANS = [
   {
     id: "family_pro",
     name: "Family Pro",
-    price: "$9.99",
+    price: "$1",
     period: "/mo",
     description: "Advanced protection for the whole family.",
     features: ["Custom Cockroach Density", "AI Diary Buddy (Unlimited)", "Detailed PDF Reports", "Up to 5 Child Profiles", "Priority AI Generation"],
     cta: "Upgrade to Pro",
     highlight: true,
-  },
-  {
-    id: "yearly_pro",
-    name: "Yearly Saver",
-    price: "$79.99",
-    period: "/yr",
-    description: "The best value for mindful families.",
-    features: ["Everything in Family Pro", "2 Months Free", "Early Access to New Missions", "Family Wellness Consultation"],
-    cta: "Go Yearly",
-    highlight: false,
   }
 ];
 
@@ -70,20 +59,20 @@ export default function BillingPage() {
   const currentTier = parentProfile?.subscriptionTier || "free";
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto pb-12">
+    <div className="space-y-8 max-w-4xl mx-auto pb-12">
       <div className="text-center space-y-4">
         <h1 className="text-4xl font-black text-foreground">Choose Your Plan</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto">
-          Unlock the full power of AI-driven wellness and give your kids the best digital protection.
+          Unlock the full power of AI-driven wellness for just $1/month.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
         {PLANS.map((plan) => (
           <Card key={plan.id} className={`rounded-[2.5rem] border-2 transition-all flex flex-col ${plan.highlight ? 'border-primary shadow-2xl scale-105 bg-white relative z-10' : 'border-border bg-white/50'}`}>
             {plan.highlight && (
               <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                <Badge className="bg-primary text-white font-black px-4 py-1 rounded-full">MOST POPULAR</Badge>
+                <Badge className="bg-primary text-white font-black px-4 py-1 rounded-full">RECOMMENDED</Badge>
               </div>
             )}
             <CardHeader className="text-center pt-8">

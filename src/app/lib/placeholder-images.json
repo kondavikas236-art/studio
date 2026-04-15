@@ -1,0 +1,23 @@
+
+{
+  "placeholderImages": [
+    {
+      "id": "hero-kid",
+      "description": "Happy child playing outdoors",
+      "imageUrl": "https://picsum.photos/seed/mindful-kid/1200/800",
+      "imageHint": "happy child"
+    },
+    {
+      "id": "avatar-buddy",
+      "description": "Cute friendly monster avatar",
+      "imageUrl": "https://picsum.photos/seed/avatar-1/200/200",
+      "imageHint": "cute monster"
+    },
+    {
+      "id": "eye-health-bg",
+      "description": "Calming nature scene for eye rest",
+      "imageUrl": "https://picsum.photos/seed/nature/800/600",
+      "imageHint": "calm nature"
+    }
+  ]
+}

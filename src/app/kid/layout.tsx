@@ -21,11 +21,14 @@ export default function KidLayout({
 
   useEffect(() => {
     const checkSettings = () => {
-      const settings = localStorage.getItem('parent-settings');
-      if (settings) {
-        const parsed = JSON.parse(settings);
-        if (parsed.enableBugDeterrent) {
-           const timer = setTimeout(() => setIsBugModeActive(true), 15000); // 15s for demo
+      const settingsStr = localStorage.getItem('parent-settings');
+      if (settingsStr) {
+        const settings = JSON.parse(settingsStr);
+        // If Bug Mode is enabled, trigger bugs after 20 seconds (simulating 20 mins)
+        if (settings.enableBugDeterrent) {
+           const timer = setTimeout(() => {
+             setIsBugModeActive(true);
+           }, 20000); // 20s for demo to represent 20 min limit
            return () => clearTimeout(timer);
         }
       }

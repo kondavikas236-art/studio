@@ -87,23 +87,23 @@ export default function ParentDashboard() {
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight">Family Insights</h2>
-          <p className="text-muted-foreground">Monitoring wellness for {children?.length || 0} explorers</p>
+          <p className="text-muted-foreground">Monitoring wellness for {children?.length || 0} children</p>
         </div>
         <div className="flex gap-3">
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-full">
-                <UserPlus className="mr-2 h-4 w-4" /> Add Explorer
+                <UserPlus className="mr-2 h-4 w-4" /> Add Children
               </Button>
             </DialogTrigger>
             <DialogContent className="rounded-[2.5rem]">
               <DialogHeader>
-                <DialogTitle>New Child Explorer</DialogTitle>
+                <DialogTitle>New Child Profile</DialogTitle>
                 <DialogDescription>Add a profile to track screen time and healthy habits.</DialogDescription>
               </DialogHeader>
               <div className="space-y-4 py-4">
                 <div className="space-y-2">
-                  <Label htmlFor="name">Explorer Name</Label>
+                  <Label htmlFor="name">Child Name</Label>
                   <Input 
                     id="name" 
                     placeholder="e.g. Alex" 
@@ -138,9 +138,9 @@ export default function ParentDashboard() {
       ) : children?.length === 0 ? (
         <Card className="rounded-[2.5rem] border-dashed border-2 border-primary/20 p-12 text-center bg-primary/5">
           <Shield className="h-12 w-12 text-primary/40 mx-auto mb-4" />
-          <h3 className="text-xl font-bold">No Explorers Yet</h3>
+          <h3 className="text-xl font-bold">No Children Yet</h3>
           <p className="text-muted-foreground mb-6">Add your first child profile to start monitoring screen time.</p>
-          <Button variant="outline" onClick={() => setIsAddOpen(true)} className="rounded-full">Add Explorer Now</Button>
+          <Button variant="outline" onClick={() => setIsAddOpen(true)} className="rounded-full">Add Children Now</Button>
         </Card>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -201,7 +201,7 @@ export default function ParentDashboard() {
           <Card className="rounded-3xl border-none shadow-sm bg-white">
             <CardHeader>
               <CardTitle>Usage Trends</CardTitle>
-              <CardDescription>Daily breakdown of activity categories across all explorers</CardDescription>
+              <CardDescription>Daily breakdown of activity categories across all children</CardDescription>
             </CardHeader>
             <CardContent>
               <Tabs defaultValue="week" className="w-full">
@@ -274,7 +274,7 @@ export default function ParentDashboard() {
                           </AlertDialogTrigger>
                           <AlertDialogContent className="rounded-[2.5rem]">
                             <AlertDialogHeader>
-                              <AlertDialogTitle>Remove Explorer?</AlertDialogTitle>
+                              <AlertDialogTitle>Remove Child Profile?</AlertDialogTitle>
                               <AlertDialogDescription>
                                 Are you sure you want to remove {child.name}? This will permanently delete their progress and settings.
                               </AlertDialogDescription>
@@ -285,7 +285,7 @@ export default function ParentDashboard() {
                                 onClick={() => handleDeleteChild(child.id)}
                                 className="bg-destructive text-destructive-foreground hover:bg-destructive/90 rounded-full"
                               >
-                                Delete Explorer
+                                Delete Child
                               </AlertDialogAction>
                             </AlertDialogFooter>
                           </AlertDialogContent>
@@ -305,7 +305,7 @@ export default function ParentDashboard() {
               <CardContent className="space-y-4">
                 <div className="p-4 rounded-2xl bg-primary/5 border border-primary/10 flex gap-4">
                    <TrendingUp className="h-6 w-6 text-primary shrink-0" />
-                   <p className="text-sm">Explorers show <strong>20% better focus</strong> after taking an eye health break. Consider scheduling automated breaks every 45 mins.</p>
+                   <p className="text-sm">Children show <strong>20% better focus</strong> after taking an eye health break. Consider scheduling automated breaks every 45 mins.</p>
                 </div>
                 <div className="p-4 rounded-2xl bg-accent/10 border border-accent/20 flex gap-4">
                    <AlertCircle className="h-6 w-6 text-accent-foreground shrink-0" />

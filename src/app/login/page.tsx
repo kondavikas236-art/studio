@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Lock, Mail, UserPlus, LogIn, Loader2, ShieldCheck } from "lucide-react";
-import { useRouter } from "navigation";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function LoginPage() {
@@ -107,5 +107,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-import { useRouter } from "next/navigation";

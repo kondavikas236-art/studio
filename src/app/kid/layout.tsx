@@ -19,37 +19,37 @@ export default function KidLayout({
   const [isBugModeActive, setIsBugModeActive] = useState(false);
   const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  useEffect(() => {
-    const checkSettings = () => {
-      // Clear any existing timer
-      if (bugTimerRef.current) {
-        clearTimeout(bugTimerRef.current);
-        bugTimerRef.current = null;
-      }
+  const checkSettingsAndSetTimer = () => {
+    if (bugTimerRef.current) {
+      clearTimeout(bugTimerRef.current);
+      bugTimerRef.current = null;
+    }
 
-      const settingsStr = localStorage.getItem('parent-settings');
-      if (settingsStr) {
-        try {
-          const settings = JSON.parse(settingsStr);
-          if (settings.enableBugDeterrent) {
-             const triggerDelayMs = (settings.eyeBreakInterval || 20) * 1000;
-             if (!isBugModeActive) {
-               bugTimerRef.current = setTimeout(() => {
-                 setIsBugModeActive(true);
-               }, triggerDelayMs);
-             }
-          }
-        } catch (e) {
-          console.error("Failed to parse settings", e);
+    const settingsStr = localStorage.getItem('parent-settings');
+    if (settingsStr) {
+      try {
+        const settings = JSON.parse(settingsStr);
+        // Cockroach mode only triggers if enabled by parent
+        if (settings.enableBugDeterrent) {
+          // Scale minutes to seconds for prototype testing
+          const intervalSeconds = (settings.eyeBreakInterval || 20);
+          bugTimerRef.current = setTimeout(() => {
+            setIsBugModeActive(true);
+          }, intervalSeconds * 1000);
         }
+      } catch (e) {
+        console.error("Failed to parse settings", e);
       }
-    };
+    }
+  };
 
-    checkSettings();
+  useEffect(() => {
+    checkSettingsAndSetTimer();
 
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
-      checkSettings();
+      // Restart the timer after a successful break
+      checkSettingsAndSetTimer();
     };
 
     window.addEventListener('mindful-play:break-completed', handleBreakCompleted);
@@ -58,10 +58,10 @@ export default function KidLayout({
       if (bugTimerRef.current) clearTimeout(bugTimerRef.current);
       window.removeEventListener('mindful-play:break-completed', handleBreakCompleted);
     };
-  }, [isBugModeActive]);
+  }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative">
+    <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative overflow-hidden">
       <CockroachOverlay active={isBugModeActive} />
       
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">
@@ -75,7 +75,7 @@ export default function KidLayout({
         <Navigation />
       </div>
 
-      <main className="flex-1 flex flex-col">
+      <main className="flex-1 flex flex-col h-screen overflow-auto">
         <header className="flex justify-between items-center p-6 bg-white/50 backdrop-blur-md border-b sticky top-0 z-40">
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12 border-2 border-primary ring-4 ring-primary/5">

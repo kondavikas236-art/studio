@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,28 +28,7 @@
     --chart-3: 197 37% 24%;
     --chart-4: 43 74% 66%;
     --chart-5: 27 87% 67%;
-    --radius: 1rem;
-  }
-  .dark {
-    --background: 210 20% 10%;
-    --foreground: 210 20% 98%;
-    --card: 210 20% 12%;
-    --card-foreground: 210 20% 98%;
-    --popover: 210 20% 12%;
-    --popover-foreground: 210 20% 98%;
-    --primary: 199 60% 55%;
-    --primary-foreground: 210 20% 10%;
-    --secondary: 210 20% 20%;
-    --secondary-foreground: 210 20% 98%;
-    --muted: 210 20% 20%;
-    --muted-foreground: 210 20% 65%;
-    --accent: 70 70% 65%;
-    --accent-foreground: 210 20% 10%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --border: 210 20% 25%;
-    --input: 210 20% 25%;
-    --ring: 199 60% 55%;
+    --radius: 1.25rem;
   }
 }
 
@@ -61,75 +39,37 @@
   body {
     @apply bg-background text-foreground font-body;
   }
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-headline;
-  }
 }
 
-.focus-meter-glow {
-  box-shadow: 0 0 20px rgba(46, 138, 184, 0.3);
-}
-
-.kid-card-hover {
-  @apply transition-transform duration-300 hover:scale-[1.02] hover:shadow-lg;
-}
-
-@keyframes bug-float {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  20% { transform: translate(30vw, -10vh) rotate(45deg); }
-  40% { transform: translate(60vw, 40vh) rotate(180deg); }
-  60% { transform: translate(10vw, 60vh) rotate(270deg); }
-  80% { transform: translate(50vw, 20vh) rotate(90deg); }
-  100% { transform: translate(0, 0) rotate(360deg); }
-}
-
+/* Realistic Cockroach Animations */
 @keyframes bug-skitter {
-  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
-  5% { transform: translate(2px, -3px) rotate(5deg) scale(1.02); }
-  10% { transform: translate(-4px, 2px) rotate(-8deg) scale(0.98); }
-  15% { transform: translate(5px, 4px) rotate(4deg) scale(1); }
-  20% { transform: translate(-6px, -5px) rotate(-12deg) scale(1.04); }
-  25% { transform: translate(7px, 1px) rotate(15deg) scale(0.96); }
-  30% { transform: translate(-3px, 6px) rotate(-6deg) scale(1); }
+  0% { transform: translate(0, 0) rotate(0deg); }
+  10% { transform: translate(5px, -5px) rotate(5deg); }
+  20% { transform: translate(-3px, 8px) rotate(-10deg); }
+  30% { transform: translate(12px, 2px) rotate(15deg); }
+  40% { transform: translate(-8px, -12px) rotate(-20deg); }
+  50% { transform: translate(15px, 15px) rotate(30deg); }
+  60% { transform: translate(-15px, 5px) rotate(-15deg); }
+  70% { transform: translate(8px, -15px) rotate(20deg); }
+  80% { transform: translate(-12px, 10px) rotate(-30deg); }
+  90% { transform: translate(5px, -8px) rotate(10deg); }
+  100% { transform: translate(0, 0) rotate(0deg); }
 }
 
-.animate-bug-float {
-  animation: bug-float 10s infinite linear;
+@keyframes bug-roam {
+  0% { transform: translate(-10vw, -10vh) rotate(45deg); }
+  25% { transform: translate(110vw, 30vh) rotate(135deg); }
+  50% { transform: translate(50vw, 110vh) rotate(225deg); }
+  75% { transform: translate(-10vw, 60vh) rotate(315deg); }
+  100% { transform: translate(-10vw, -10vh) rotate(405deg); }
 }
 
 .animate-bug-skitter {
-  animation: bug-skitter 0.2s infinite ease-in-out;
+  animation: bug-skitter 0.5s infinite linear;
 }
 
-/* Eye Wellness Animations */
-@keyframes eye-jitter {
-  0%, 100% { transform: translate(0, 0); filter: drop-shadow(0 0 8px rgba(239, 68, 68, 0.4)); }
-  25% { transform: translate(2px, -2px); }
-  50% { transform: translate(-2px, 2px); filter: drop-shadow(0 0 15px rgba(239, 68, 68, 0.8)); }
-  75% { transform: translate(2px, 2px); }
-}
-
-@keyframes eye-calm {
-  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 5px rgba(34, 197, 94, 0.3)); }
-  50% { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.7)); }
-}
-
-@keyframes eye-blink {
-  0%, 90%, 100% { transform: scaleY(1); }
-  95% { transform: scaleY(0.1); }
-}
-
-.animate-eye-strained {
-  animation: eye-jitter 0.3s infinite ease-in-out, eye-blink 4s infinite linear;
-}
-
-.animate-eye-healthy {
-  animation: eye-calm 3s infinite ease-in-out, eye-blink 6s infinite linear;
-}
-
-@keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(100%); }
+.animate-bug-roam {
+  animation: bug-roam 15s infinite linear;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

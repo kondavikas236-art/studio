@@ -1,12 +1,11 @@
-
 import type {Metadata, Viewport} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'Kidsyee - Eye & Brain Wellness',
-  description: 'The ultimate screen time guardian for kids. Protect vision, foster focus, and build healthy digital habits with AI-powered breaks.',
+  title: 'Kidsyee - The Smart Screen Time Guardian',
+  description: 'Kidsyee helps children build healthy digital habits. Protect vision with AI-powered breaks, foster reflection with the AI Diary Buddy, and gamify wellness with fun eye-health missions.',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
@@ -18,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: '#1996c5',
+  themeColor: '#2E8AB8',
   width: 'device-width',
   initialScale: 1,
   maximumScale: 1,

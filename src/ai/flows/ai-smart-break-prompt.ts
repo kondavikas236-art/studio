@@ -63,7 +63,17 @@ const smartBreakPromptFlow = ai.defineFlow(
     outputSchema: SmartBreakPromptOutputSchema,
   },
   async (input) => {
-    const { output } = await smartBreakPrompt(input);
-    return output!;
+    try {
+      const { output } = await smartBreakPrompt(input);
+      if (!output) throw new Error('AI output was empty');
+      return output;
+    } catch (error) {
+      console.error('AI Smart Break Prompt failed, providing fallback:', error);
+      // Fallback response for high demand or transient failures
+      return {
+        suggestionType: 'general_break',
+        suggestionText: `Hey ${input.childName || 'Explorer'}, your digital buddy here! You've been doing an amazing job. How about we take a quick 2-minute "Power Pause"? Stand up, reach for the stars, and take three deep breaths. Your brain and eyes will feel supercharged! ✨`
+      };
+    }
   }
 );

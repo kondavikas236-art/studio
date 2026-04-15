@@ -65,10 +65,22 @@ const aiStoryChainCompanionFlow = ai.defineFlow(
     outputSchema: StoryChainCompanionOutputSchema,
   },
   async (input) => {
-    const { output } = await storyChainCompanionPrompt(input);
-    if (!output) {
-      throw new Error('AI did not provide a story continuation.');
+    try {
+      const { output } = await storyChainCompanionPrompt(input);
+      if (!output) throw new Error('AI output was empty');
+      return output;
+    } catch (error) {
+      console.error('AI Story Chain Companion failed, providing fallback:', error);
+      // Fallback response for high demand or transient failures
+      return {
+        nextStorySegment: input.currentStory.length === 0 
+          ? "Once upon a time, in a land where the clouds were made of cotton candy and the rivers flowed with sparkling juice, a small explorer found a mysterious silver key..." 
+          : "And then, as if by magic, a giant friendly dragon swooped down from the sky to help! What do you think happens next? (AI is resting, but you can keep the adventure going!)",
+        isStoryComplete: false,
+        feedback: input.userContribution 
+          ? "I love that idea! You have a wonderful imagination. Keep going!" 
+          : "Ready to start a new adventure? Let's go!"
+      };
     }
-    return output;
   }
 );

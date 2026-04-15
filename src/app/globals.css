@@ -83,24 +83,21 @@
 }
 
 @keyframes bug-skitter {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  10% { transform: translate(4px, -6px) rotate(15deg) scale(1.05); }
-  20% { transform: translate(-8px, 4px) rotate(-20deg) scale(0.95); }
-  30% { transform: translate(10px, 8px) rotate(10deg) scale(1); }
-  40% { transform: translate(-12px, -10px) rotate(-25deg) scale(1.1); }
-  50% { transform: translate(15px, 2px) rotate(30deg) scale(0.9); }
-  60% { transform: translate(-5px, 12px) rotate(-15deg) scale(1); }
-  70% { transform: translate(8px, -8px) rotate(20deg) scale(1.05); }
-  80% { transform: translate(-10px, 5px) rotate(-10deg) scale(0.95); }
-  90% { transform: translate(5px, -3px) rotate(5deg) scale(1); }
+  0%, 100% { transform: translate(0, 0) scale(1) rotate(0deg); }
+  5% { transform: translate(2px, -3px) rotate(5deg) scale(1.02); }
+  10% { transform: translate(-4px, 2px) rotate(-8deg) scale(0.98); }
+  15% { transform: translate(5px, 4px) rotate(4deg) scale(1); }
+  20% { transform: translate(-6px, -5px) rotate(-12deg) scale(1.04); }
+  25% { transform: translate(7px, 1px) rotate(15deg) scale(0.96); }
+  30% { transform: translate(-3px, 6px) rotate(-6deg) scale(1); }
 }
 
 .animate-bug-float {
-  animation: bug-float 12s infinite linear;
+  animation: bug-float 10s infinite linear;
 }
 
 .animate-bug-skitter {
-  animation: bug-skitter 0.35s infinite ease-in-out;
+  animation: bug-skitter 0.2s infinite ease-in-out;
 }
 
 /* Eye Wellness Animations */
@@ -127,4 +124,9 @@
 
 .animate-eye-healthy {
   animation: eye-calm 3s infinite ease-in-out, eye-blink 6s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
 }

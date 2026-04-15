@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -45,7 +44,7 @@ export default function Home() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl mb-24">
           <Link href="/kid/dashboard" className="group">
-            <div className="h-full bg-card border-4 border-primary/20 p-10 rounded-[3rem] kid-card-hover flex flex-col items-center text-center space-y-8 relative overflow-hidden">
+            <div className="h-full bg-card border-4 border-primary/20 p-10 rounded-[3rem] transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center text-center space-y-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                 <Gamepad2 className="h-32 w-32 -mr-12 -mt-12" />
               </div>
@@ -63,7 +62,7 @@ export default function Home() {
           </Link>
 
           <Link href={user ? "/parent/dashboard" : "/login"} className="group">
-            <div className="h-full bg-card border-4 border-accent/20 p-10 rounded-[3rem] kid-card-hover flex flex-col items-center text-center space-y-8 relative overflow-hidden">
+            <div className="h-full bg-card border-4 border-accent/20 p-10 rounded-[3rem] transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center text-center space-y-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                 <ShieldCheck className="h-32 w-32 -mr-12 -mt-12" />
               </div>

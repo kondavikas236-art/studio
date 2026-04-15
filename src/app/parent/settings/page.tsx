@@ -77,7 +77,7 @@ export default function ParentSettings() {
 
     toast({
       title: "Device Policy Saved!",
-      description: "Settings have been updated in the cloud and on this device.",
+      description: "Cockroach mode and Health Breaks updated.",
     });
   };
 
@@ -102,32 +102,51 @@ export default function ParentSettings() {
         <Smartphone className="h-4 w-4" />
         <AlertTitle className="font-bold">Prototyping Note</AlertTitle>
         <AlertDescription className="text-sm">
-          Background monitoring (YouTube, Social Media) is simulated in this prototype. In a production app, this would require a native device installation.
+          Background monitoring and Cockroach mode are simulated in this prototype. Health Breaks are scaled to seconds for testing.
         </AlertDescription>
       </Alert>
 
       <div className="grid gap-6">
         <Card className="rounded-3xl border-none shadow-sm">
           <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Smartphone className="h-5 w-5 text-primary" />
-              <CardTitle>App Enforcement</CardTitle>
+             <div className="flex items-center gap-2 mb-2">
+              <ShieldAlert className="h-5 w-5 text-accent-foreground" />
+              <CardTitle>Health Breaks</CardTitle>
             </div>
-            <CardDescription>Select which app categories to monitor and restrict.</CardDescription>
+            <CardDescription>How often should your child take a break? (Triggers Cockroach mode)</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Label className="font-bold">Health Break Interval</Label>
+              <span className="font-bold text-accent-foreground">{settings.eyeBreakInterval} Minutes</span>
+            </div>
+            <Slider 
+              value={[settings.eyeBreakInterval]} 
+              onValueChange={([val]) => setSettings({...settings, eyeBreakInterval: val})} 
+              max={60} 
+              min={10}
+              step={5} 
+            />
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-destructive overflow-hidden">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <Bug className="h-5 w-5 text-destructive" />
+              <CardTitle>Cockroach mode</CardTitle>
+            </div>
+            <CardDescription>Trigger visual "invasions" when Health Break time is reached.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
-              <Label className="font-bold">Monitor Video Apps (YouTube, Netflix)</Label>
+            <div className="flex items-center justify-between p-4 bg-destructive/5 rounded-2xl border border-destructive/10">
+              <div className="space-y-0.5">
+                <Label className="text-base font-bold">Enable Cockroach Mode</Label>
+                <p className="text-sm text-muted-foreground">Bugs appear on screen at each Health Break interval.</p>
+              </div>
               <Switch 
-                checked={settings.blockVideoApps} 
-                onCheckedChange={(val) => setSettings({...settings, blockVideoApps: val})} 
-              />
-            </div>
-            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
-              <Label className="font-bold">Monitor Social Media (TikTok, Instagram)</Label>
-              <Switch 
-                checked={settings.blockSocialMedia} 
-                onCheckedChange={(val) => setSettings({...settings, blockSocialMedia: val})} 
+                checked={settings.enableBugDeterrent} 
+                onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} 
               />
             </div>
           </CardContent>
@@ -143,7 +162,7 @@ export default function ParentSettings() {
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex justify-between items-center">
-              <Label>Total Screen Time</Label>
+              <Label className="font-bold">Total Screen Time Limit</Label>
               <span className="font-bold text-primary">{Math.floor(settings.dailyLimit / 60)}h {settings.dailyLimit % 60}m</span>
             </div>
             <Slider 
@@ -158,10 +177,36 @@ export default function ParentSettings() {
         <Card className="rounded-3xl border-none shadow-sm">
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
+              <Smartphone className="h-5 w-5 text-primary" />
+              <CardTitle>App Enforcement</CardTitle>
+            </div>
+            <CardDescription>Simulate monitoring and restricting specific categories.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+              <Label className="font-bold">Monitor Video Apps</Label>
+              <Switch 
+                checked={settings.blockVideoApps} 
+                onCheckedChange={(val) => setSettings({...settings, blockVideoApps: val})} 
+              />
+            </div>
+            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
+              <Label className="font-bold">Monitor Social Media</Label>
+              <Switch 
+                checked={settings.blockSocialMedia} 
+                onCheckedChange={(val) => setSettings({...settings, blockSocialMedia: val})} 
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-none shadow-sm">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
               <Mail className="h-5 w-5 text-primary" />
               <CardTitle>Email Reports</CardTitle>
             </div>
-            <CardDescription>Receive a weekly summary of digital wellness and activity.</CardDescription>
+            <CardDescription>Receive weekly digital wellness summaries.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
@@ -206,51 +251,6 @@ export default function ParentSettings() {
                 </div>
               </div>
             )}
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-destructive overflow-hidden">
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Bug className="h-5 w-5 text-destructive" />
-              <CardTitle>Cockroach mode</CardTitle>
-            </div>
-            <CardDescription>Enable visual "invasions" to encourage stopping usage when time is up.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-destructive/5 rounded-2xl border border-destructive/10">
-              <div className="space-y-0.5">
-                <Label className="text-base font-bold">Invasive Cockroach Visuals</Label>
-                <p className="text-sm text-muted-foreground">Cockroaches appear on screen when time limit is exceeded.</p>
-              </div>
-              <Switch 
-                checked={settings.enableBugDeterrent} 
-                onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} 
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none shadow-sm">
-          <CardHeader>
-             <div className="flex items-center gap-2 mb-2">
-              <ShieldAlert className="h-5 w-5 text-accent-foreground" />
-              <CardTitle>Health Breaks</CardTitle>
-            </div>
-            <CardDescription>Configure frequency of eye health prompts.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <Label>Break Frequency (Minutes)</Label>
-              <span className="font-bold text-accent-foreground">{settings.eyeBreakInterval} min</span>
-            </div>
-            <Slider 
-              value={[settings.eyeBreakInterval]} 
-              onValueChange={([val]) => setSettings({...settings, eyeBreakInterval: val})} 
-              max={60} 
-              min={10}
-              step={5} 
-            />
           </CardContent>
         </Card>
 

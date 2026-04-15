@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Trophy, Lock } from "lucide-react";
 import { CockroachOverlay } from "@/components/CockroachOverlay";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -18,22 +18,31 @@ export default function KidLayout({
 }) {
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
   const [isBugModeActive, setIsBugModeActive] = useState(false);
+  const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    let bugTimer: NodeJS.Timeout;
-
     const checkSettings = () => {
+      // Clear any existing timer
+      if (bugTimerRef.current) {
+        clearTimeout(bugTimerRef.current);
+        bugTimerRef.current = null;
+      }
+
       const settingsStr = localStorage.getItem('parent-settings');
       if (settingsStr) {
         try {
           const settings = JSON.parse(settingsStr);
-          // If Cockroach Mode is enabled, trigger bugs based on the break interval
+          // If Cockroach Mode is enabled, trigger bugs exactly at the health break interval
           if (settings.enableBugDeterrent) {
-             // In prototype: minutes are scaled to seconds (e.g. 20m = 20s)
+             // In prototype: minutes are scaled to seconds for testing (e.g. 20m interval = 20s trigger)
              const triggerDelayMs = (settings.eyeBreakInterval || 20) * 1000;
-             bugTimer = setTimeout(() => {
-               setIsBugModeActive(true);
-             }, triggerDelayMs);
+             
+             // Only set timer if bugs aren't already active
+             if (!isBugModeActive) {
+               bugTimerRef.current = setTimeout(() => {
+                 setIsBugModeActive(true);
+               }, triggerDelayMs);
+             }
           }
         } catch (e) {
           console.error("Failed to parse settings", e);
@@ -43,21 +52,20 @@ export default function KidLayout({
 
     checkSettings();
 
-    // Listen for break-completed events to stop the bugs
+    // Listen for break-completed events (from Eye Gym) to stop the bugs
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
-      // Restart the cycle if the user stays on the page
-      if (bugTimer) clearTimeout(bugTimer);
+      // Restart the cycle
       checkSettings();
     };
 
     window.addEventListener('mindful-play:break-completed', handleBreakCompleted);
 
     return () => {
-      if (bugTimer) clearTimeout(bugTimer);
+      if (bugTimerRef.current) clearTimeout(bugTimerRef.current);
       window.removeEventListener('mindful-play:break-completed', handleBreakCompleted);
     };
-  }, []);
+  }, [isBugModeActive]);
 
   return (
     <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative">

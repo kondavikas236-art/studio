@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -69,7 +68,7 @@ export default function ParentDashboard() {
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2">
               <Smartphone className="h-4 w-4 text-blue-500" /> Focus Score
-            </CardTitle>
+            </CardDescription>
             <CardTitle className="text-2xl font-black">Good</CardTitle>
           </CardHeader>
           <CardContent>

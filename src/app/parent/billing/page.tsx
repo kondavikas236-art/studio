@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ShieldCheck, Star, Globe, Clock, Sparkles } from "lucide-react";
+import { Check, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
@@ -62,7 +62,7 @@ export default function BillingPage() {
         <div className="inline-block p-3 rounded-2xl bg-primary/10 mb-2">
           <Sparkles className="h-8 w-8 text-primary" />
         </div>
-        <h1 className="text-4xl font-black text-foreground">One Plan. Total Protection.</h1>
+        <h1 className="text-4xl font-black text-foreground">Family Pro Subscription</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto">
           Start your 7-day free trial today. Protect your family's digital health for just $1/month.
         </p>
@@ -76,7 +76,7 @@ export default function BillingPage() {
           
           <CardHeader className="text-center pt-10">
             <Badge className="w-fit mx-auto bg-primary text-white font-black px-4 py-1 rounded-full shadow-lg mb-4">
-              FAMILY FAVORITE
+              BEST VALUE
             </Badge>
             <CardTitle className="text-3xl font-black">{PLAN.name}</CardTitle>
             <div className="flex flex-col items-center justify-center mt-6">
@@ -116,18 +116,8 @@ export default function BillingPage() {
         </Card>
       </div>
 
-      <div className="bg-white/50 backdrop-blur-md rounded-[2.5rem] p-10 border-2 border-dashed border-primary/20 text-center space-y-6">
-        <div className="flex justify-center gap-6">
-          <ShieldCheck className="h-12 w-12 text-primary opacity-40" />
-          <Globe className="h-12 w-12 text-primary opacity-40" />
-          <Star className="h-12 w-12 text-primary opacity-40" />
-        </div>
-        <div className="space-y-2">
-          <h3 className="text-xl font-bold">Cancel Anytime</h3>
-          <p className="text-sm text-muted-foreground font-medium max-w-md mx-auto">
-            Your 7-day trial is completely risk-free. If Kidsyee isn't the right fit for your family, cancel before the trial ends and you won't be charged.
-          </p>
-        </div>
+      <div className="text-center opacity-60">
+        <p className="text-sm font-medium">Cancel anytime during your 1-week trial to avoid charges.</p>
       </div>
     </div>
   );

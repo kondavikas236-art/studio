@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield } from "lucide-react";
+import { Eye, BookOpen, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
@@ -151,38 +151,69 @@ export default function KidDashboard() {
         </div>
       </section>
 
-      <section className="space-y-4">
-        <h2 className="text-2xl font-bold">Quick Quests</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Link href="/kid/eye-health">
-            <Card className="rounded-3xl border-2 border-transparent hover:border-primary/40 transition-all kid-card-hover cursor-pointer group">
-              <CardHeader className="flex flex-row items-center space-x-4">
-                <div className="p-4 bg-primary/10 rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors">
-                  <ShieldCheck className="h-8 w-8" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl">Eye Gym</CardTitle>
-                  <p className="text-sm text-muted-foreground">Give your eyes a holiday</p>
-                </div>
-              </CardHeader>
-            </Card>
-          </Link>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <section className="space-y-4">
+          <h2 className="text-2xl font-bold">Quick Quests</h2>
+          <div className="grid grid-cols-1 gap-4">
+            <Link href="/kid/eye-health">
+              <Card className="rounded-3xl border-2 border-transparent hover:border-primary/40 transition-all kid-card-hover cursor-pointer group">
+                <CardHeader className="flex flex-row items-center space-x-4">
+                  <div className="p-4 bg-primary/10 rounded-2xl group-hover:bg-primary group-hover:text-white transition-colors">
+                    <ShieldCheck className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Eye Gym</CardTitle>
+                    <p className="text-sm text-muted-foreground">Give your eyes a holiday</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </Link>
 
-          <Link href="/kid/story-chain">
-            <Card className="rounded-3xl border-2 border-transparent hover:border-accent/40 transition-all kid-card-hover cursor-pointer group">
-              <CardHeader className="flex flex-row items-center space-x-4">
-                <div className="p-4 bg-accent/10 rounded-2xl group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
-                  <BookOpen className="h-8 w-8" />
-                </div>
-                <div>
-                  <CardTitle className="text-xl">Story Time</CardTitle>
-                  <p className="text-sm text-muted-foreground">Write a tale with AI Buddy</p>
-                </div>
-              </CardHeader>
-            </Card>
-          </Link>
-        </div>
-      </section>
+            <Link href="/kid/story-chain">
+              <Card className="rounded-3xl border-2 border-transparent hover:border-accent/40 transition-all kid-card-hover cursor-pointer group">
+                <CardHeader className="flex flex-row items-center space-x-4">
+                  <div className="p-4 bg-accent/10 rounded-2xl group-hover:bg-accent group-hover:text-accent-foreground transition-colors">
+                    <BookOpen className="h-8 w-8" />
+                  </div>
+                  <div>
+                    <CardTitle className="text-xl">Story Time</CardTitle>
+                    <p className="text-sm text-muted-foreground">Write a tale with AI Buddy</p>
+                  </div>
+                </CardHeader>
+              </Card>
+            </Link>
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <div className="flex justify-between items-center">
+            <h2 className="text-2xl font-bold">Recent Trophies</h2>
+            <Link href="/kid/achievements" className="text-sm font-bold text-primary hover:underline">View All</Link>
+          </div>
+          <Card className="rounded-3xl border-none shadow-lg bg-white p-6">
+            <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
+              <div className="flex-shrink-0 flex flex-col items-center gap-2">
+                 <div className="p-4 bg-blue-500 rounded-2xl text-white shadow-md">
+                   <Eye className="h-8 w-8" />
+                 </div>
+                 <span className="text-[10px] font-bold text-center">Blink<br/>Master</span>
+              </div>
+              <div className="flex-shrink-0 flex flex-col items-center gap-2">
+                 <div className="p-4 bg-purple-500 rounded-2xl text-white shadow-md">
+                   <BookOpen className="h-8 w-8" />
+                 </div>
+                 <span className="text-[10px] font-bold text-center">Story<br/>Weaver</span>
+              </div>
+              <div className="flex-shrink-0 flex flex-col items-center gap-2 opacity-30">
+                 <div className="p-4 bg-gray-200 rounded-2xl text-gray-500">
+                   <Trophy className="h-8 w-8" />
+                 </div>
+                 <span className="text-[10px] font-bold text-center">Locked</span>
+              </div>
+            </div>
+          </Card>
+        </section>
+      </div>
 
       <section className="space-y-4">
         <h2 className="text-2xl font-bold">Today's Play Mix</h2>

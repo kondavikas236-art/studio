@@ -77,19 +77,6 @@ export default function ParentLayout({
            <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
-                  <Button variant="ghost" size="icon" onClick={handleShare} className="text-muted-foreground hover:text-primary">
-                    <Share2 className="h-5 w-5" />
-                  </Button>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Share Kidsyee</p>
-                </TooltipContent>
-              </Tooltip>
-           </TooltipProvider>
-
-           <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger asChild>
                   <Link href="/kid/dashboard">
                     <Button variant="outline" size="sm" className="hidden sm:flex rounded-full border-primary/20 hover:bg-primary/5 text-primary font-bold">
                       <Gamepad2 className="mr-2 h-4 w-4" /> Kid Zone
@@ -118,17 +105,39 @@ export default function ParentLayout({
         </div>
       </header>
 
-      <div className="flex-1 flex flex-col md:flex-row">
-        <aside className="hidden md:block w-64 border-r bg-white p-6">
-          <div className="mb-8 px-4 py-2">
-            <h2 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Operations</h2>
+      <div className="flex-1 flex flex-col md:flex-row relative">
+        <aside className="hidden md:flex w-64 border-r bg-white p-6 flex-col sticky top-20 h-[calc(100vh-5rem)]">
+          <div className="flex-1">
+            <div className="mb-8 px-4 py-2">
+              <h2 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Operations</h2>
+            </div>
+            <Navigation />
           </div>
-          <Navigation />
+          <div className="mt-auto pt-6 border-t">
+            <Button 
+              onClick={handleShare} 
+              variant="outline" 
+              className="w-full rounded-2xl h-12 font-bold flex items-center justify-center gap-2 border-primary/20 hover:bg-primary/5 text-primary shadow-sm"
+            >
+              <Share2 className="h-5 w-5" /> Share Kidsyee
+            </Button>
+          </div>
         </aside>
 
-        <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full overflow-auto">
+        <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full overflow-auto pb-32 md:pb-10">
           {children}
         </main>
+
+        {/* Floating Share Button for Mobile (Bottom Left) */}
+        <div className="md:hidden fixed bottom-24 left-6 z-[60]">
+           <Button 
+            onClick={handleShare} 
+            size="icon" 
+            className="h-14 w-14 rounded-full shadow-2xl bg-primary text-white hover:scale-110 active:scale-95 transition-all"
+          >
+              <Share2 className="h-6 w-6" />
+           </Button>
+        </div>
       </div>
       
       <div className="md:hidden">

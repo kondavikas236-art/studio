@@ -68,7 +68,7 @@ export default function KidLayout({
         <div className="p-8">
            <Link href="/">
              <h1 className="text-2xl font-black text-primary italic hover:scale-105 transition-transform cursor-pointer flex items-center gap-2">
-               <ShieldCheck className="h-6 w-6" /> ScreenGuard
+               <ShieldCheck className="h-6 w-6" /> Kidsyee
              </h1>
            </Link>
         </div>
@@ -80,7 +80,7 @@ export default function KidLayout({
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12 border-2 border-primary ring-4 ring-primary/5">
               <AvatarImage src={avatar?.imageUrl} alt="Avatar" />
-              <AvatarFallback>SG</AvatarFallback>
+              <AvatarFallback>KY</AvatarFallback>
             </Avatar>
             <div>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Explorer</p>

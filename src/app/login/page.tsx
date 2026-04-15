@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Lock, Mail, UserPlus, LogIn, Loader2, ShieldCheck } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useRouter } from "navigation";
 import { useEffect } from "react";
 
 export default function LoginPage() {
@@ -51,7 +51,7 @@ export default function LoginPage() {
             <ShieldCheck className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-3xl font-black italic">
-            {isSignUp ? "Join ScreenGuard" : "Parent Portal"}
+            {isSignUp ? "Join Kidsyee" : "Parent Portal"}
           </CardTitle>
           <CardDescription className="text-muted-foreground font-semibold">
             {isSignUp ? "Create an account to protect your kids" : "Secure access to your family dashboard"}
@@ -107,3 +107,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+import { useRouter } from "next/navigation";

@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { FirebaseClientProvider } from '@/firebase';
 
 export const metadata: Metadata = {
-  title: 'ScreenGuard - Eye & Brain Wellness for Kids',
+  title: 'Kidsyee - Eye & Brain Wellness for Kids',
   description: 'The ultimate screen time guardian for kids. Protect vision, foster focus, and build healthy digital habits with AI-powered breaks.',
 };
 

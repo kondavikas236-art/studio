@@ -15,7 +15,7 @@ export default function Home() {
           <ShieldCheck className="h-14 w-14 text-primary" />
         </div>
         <h1 className="text-6xl font-black tracking-tighter text-foreground md:text-8xl italic leading-none">
-          Screen<span className="text-primary">Guard</span>
+          Kids<span className="text-primary">yee</span>
         </h1>
         <p className="text-xl text-muted-foreground font-semibold max-w-lg mx-auto leading-relaxed">
           The pediatric digital bridge between screen time and wellness. Protect eyes, boost brains, and build lasting habits.
@@ -61,7 +61,7 @@ export default function Home() {
       </div>
 
       <div className="mt-16 text-center space-y-2 opacity-60">
-        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">ScreenGuard Pro v1.0</p>
+        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Kidsyee Pro v1.0</p>
         <p className="text-xs">Trusted by thousands of mindful families worldwide.</p>
       </div>
     </div>

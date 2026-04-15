@@ -44,7 +44,7 @@ export default function ParentLayout({
                 <ShieldCheck className="h-5 w-5" />
              </div>
              <h1 className="text-xl font-black tracking-tighter text-foreground">
-               Screen<span className="text-primary">Guard</span>
+               Kids<span className="text-primary">yee</span>
              </h1>
            </Link>
         </div>

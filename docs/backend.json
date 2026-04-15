@@ -1,0 +1,435 @@
+{
+  "entities": {
+    "ParentProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ParentProfile",
+      "type": "object",
+      "description": "Represents a parent or guardian who manages one or more child profiles and receives reports and notifications.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ParentProfile entity."
+        },
+        "email": {
+          "type": "string",
+          "description": "The email address of the parent, used for communication and account access.",
+          "format": "email"
+        },
+        "firstName": {
+          "type": "string",
+          "description": "The first name of the parent."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "The last name of the parent."
+        },
+        "receiveWeeklyReportEmail": {
+          "type": "boolean",
+          "description": "A flag indicating whether the parent wishes to receive weekly screen time reports via email."
+        },
+        "weeklyReportDayOfWeek": {
+          "type": "string",
+          "description": "The preferred day of the week (e.g., 'Monday', 'Friday') for receiving the weekly report email."
+        },
+        "weeklyReportSendTime": {
+          "type": "string",
+          "description": "The preferred time of day (e.g., '09:00:00') for sending the weekly report email.",
+          "format": "time"
+        }
+      },
+      "required": [
+        "id",
+        "email",
+        "firstName",
+        "lastName",
+        "receiveWeeklyReportEmail"
+      ]
+    },
+    "ChildProfile": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ChildProfile",
+      "type": "object",
+      "description": "Represents a child user whose screen time and activities are monitored and managed by a parent.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ChildProfile entity."
+        },
+        "parentId": {
+          "type": "string",
+          "description": "Reference to the ParentProfile managing this child. (Relationship: ParentProfile 1:N ChildProfile)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name or nickname of the child."
+        },
+        "age": {
+          "type": "number",
+          "description": "The age of the child."
+        },
+        "avatarUrl": {
+          "type": "string",
+          "description": "URL to the image chosen by the child as their profile avatar.",
+          "format": "uri"
+        },
+        "dailyScreenTimeLimitMinutes": {
+          "type": "number",
+          "description": "The total daily screen time limit in minutes set by the parent for this child."
+        },
+        "gamingTimeLimitMinutes": {
+          "type": "number",
+          "description": "The daily limit for gaming app usage in minutes set by the parent for this child."
+        }
+      },
+      "required": [
+        "id",
+        "parentId",
+        "name",
+        "age"
+      ]
+    },
+    "AppUsageSession": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "AppUsageSession",
+      "type": "object",
+      "description": "Records individual instances of a child using a specific application on their device.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the AppUsageSession entity."
+        },
+        "childId": {
+          "type": "string",
+          "description": "Reference to the ChildProfile who used the app. (Relationship: ChildProfile 1:N AppUsageSession)"
+        },
+        "appIdentifier": {
+          "type": "string",
+          "description": "A unique identifier for the application (e.g., package name for Android, bundle ID for iOS)."
+        },
+        "appName": {
+          "type": "string",
+          "description": "The human-readable name of the application."
+        },
+        "appCategory": {
+          "type": "string",
+          "description": "The categorized type of the application (e.g., 'Gaming', 'Educational', 'Social Media', 'Browser')."
+        },
+        "startTime": {
+          "type": "string",
+          "description": "The date and time when the app usage session began.",
+          "format": "date-time"
+        },
+        "endTime": {
+          "type": "string",
+          "description": "The date and time when the app usage session ended.",
+          "format": "date-time"
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "The total duration of the app usage session in minutes."
+        }
+      },
+      "required": [
+        "id",
+        "childId",
+        "appIdentifier",
+        "appName",
+        "appCategory",
+        "startTime",
+        "endTime",
+        "durationMinutes"
+      ]
+    },
+    "DailyUsageSummary": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DailyUsageSummary",
+      "type": "object",
+      "description": "Aggregates a child's app usage, break data, and activity completions for a specific day.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the DailyUsageSummary entity."
+        },
+        "childId": {
+          "type": "string",
+          "description": "Reference to the ChildProfile for whom this summary applies. (Relationship: ChildProfile 1:N DailyUsageSummary)"
+        },
+        "date": {
+          "type": "string",
+          "description": "The calendar date for which the usage is summarized.",
+          "format": "date"
+        },
+        "totalScreenTimeMinutes": {
+          "type": "number",
+          "description": "The total screen time for the day across all applications, in minutes."
+        },
+        "gamingTimeMinutes": {
+          "type": "number",
+          "description": "The total time spent in gaming applications for the day, in minutes."
+        },
+        "educationalTimeMinutes": {
+          "type": "number",
+          "description": "The total time spent in educational applications for the day, in minutes."
+        },
+        "socialMediaTimeMinutes": {
+          "type": "number",
+          "description": "The total time spent in social media applications for the day, in minutes."
+        },
+        "browserTimeMinutes": {
+          "type": "number",
+          "description": "The total time spent in browser applications for the day, in minutes."
+        },
+        "breaksTakenCount": {
+          "type": "number",
+          "description": "The number of smart break prompts that were successfully completed by the child during the day."
+        },
+        "activitiesCompletedCount": {
+          "type": "number",
+          "description": "The total number of eye health or brain fog buster activities completed by the child during the day."
+        }
+      },
+      "required": [
+        "id",
+        "childId",
+        "date",
+        "totalScreenTimeMinutes",
+        "gamingTimeMinutes",
+        "educationalTimeMinutes",
+        "socialMediaTimeMinutes",
+        "browserTimeMinutes",
+        "breaksTakenCount",
+        "activitiesCompletedCount"
+      ]
+    },
+    "ActivityLog": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "ActivityLog",
+      "type": "object",
+      "description": "Tracks the completion of specific eye health, brain fog buster, or mindful moment activities by a child.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the ActivityLog entry."
+        },
+        "childId": {
+          "type": "string",
+          "description": "Reference to the ChildProfile who completed the activity. (Relationship: ChildProfile 1:N ActivityLog)"
+        },
+        "activityType": {
+          "type": "string",
+          "description": "The general category of the activity (e.g., 'EyeHealthMission', 'BrainFogBuster', 'MindfulMoment')."
+        },
+        "activityName": {
+          "type": "string",
+          "description": "The specific name of the activity completed (e.g., 'Focus Maze', 'Story Chain', 'Deep Breathing')."
+        },
+        "completionTime": {
+          "type": "string",
+          "description": "The date and time when the activity was completed.",
+          "format": "date-time"
+        },
+        "durationMinutes": {
+          "type": "number",
+          "description": "The estimated duration in minutes the child spent engaging with the activity."
+        },
+        "pointsEarned": {
+          "type": "number",
+          "description": "The number of points awarded to the child for completing this activity, contributing to the positive reinforcement system."
+        }
+      },
+      "required": [
+        "id",
+        "childId",
+        "activityType",
+        "activityName",
+        "completionTime",
+        "durationMinutes",
+        "pointsEarned"
+      ]
+    },
+    "Achievement": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Achievement",
+      "type": "object",
+      "description": "Records specific badges, rewards, or milestones earned by a child through positive behavior and activity completion.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Achievement entity."
+        },
+        "childId": {
+          "type": "string",
+          "description": "Reference to the ChildProfile who earned the achievement. (Relationship: ChildProfile 1:N Achievement)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the achievement or badge earned."
+        },
+        "description": {
+          "type": "string",
+          "description": "A detailed description of what the achievement represents."
+        },
+        "earnedDate": {
+          "type": "string",
+          "description": "The date and time when the achievement was earned by the child.",
+          "format": "date-time"
+        },
+        "iconUrl": {
+          "type": "string",
+          "description": "URL to the image or icon representing the achievement.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "childId",
+        "name",
+        "description",
+        "earnedDate"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/parentProfiles/{parentId}",
+        "definition": {
+          "entityName": "parentProfile",
+          "schema": {
+            "$ref": "#/backend/entities/ParentProfile"
+          },
+          "description": "Stores individual parent profiles. The document ID is the parent's `uid`. Includes fields for managing weekly report email alerts. Authorization is based on `request.auth.uid == parentId`.",
+          "params": [
+            {
+              "name": "parentId",
+              "description": "The unique identifier of the parent, corresponding to `request.auth.uid`."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/parentProfiles/{parentId}/childProfiles/{childId}",
+        "definition": {
+          "entityName": "childProfile",
+          "schema": {
+            "$ref": "#/backend/entities/ChildProfile"
+          },
+          "description": "Stores individual child profiles, nested under their managing parent. Includes denormalized 'parentId' for authorization independence, allowing `request.auth.uid == resource.data.parentId` checks.",
+          "params": [
+            {
+              "name": "parentId",
+              "description": "The unique identifier of the managing parent."
+            },
+            {
+              "name": "childId",
+              "description": "The unique identifier of the child profile."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/parentProfiles/{parentId}/childProfiles/{childId}/appUsageSessions/{sessionId}",
+        "definition": {
+          "entityName": "appUsageSession",
+          "schema": {
+            "$ref": "#/backend/entities/AppUsageSession"
+          },
+          "description": "Records individual app usage sessions for a specific child. Includes denormalized 'parentId' for authorization independence, allowing `request.auth.uid == resource.data.parentId` checks. (Recommended: Add 'parentId' field to schema).",
+          "params": [
+            {
+              "name": "parentId",
+              "description": "The unique identifier of the managing parent."
+            },
+            {
+              "name": "childId",
+              "description": "The unique identifier of the child."
+            },
+            {
+              "name": "sessionId",
+              "description": "The unique identifier of the app usage session."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/parentProfiles/{parentId}/childProfiles/{childId}/dailyUsageSummaries/{summaryId}",
+        "definition": {
+          "entityName": "dailyUsageSummary",
+          "schema": {
+            "$ref": "#/backend/entities/DailyUsageSummary"
+          },
+          "description": "Aggregates a child's daily usage data. Includes denormalized 'parentId' for authorization independence, allowing `request.auth.uid == resource.data.parentId` checks. (Recommended: Add 'parentId' field to schema).",
+          "params": [
+            {
+              "name": "parentId",
+              "description": "The unique identifier of the managing parent."
+            },
+            {
+              "name": "childId",
+              "description": "The unique identifier of the child."
+            },
+            {
+              "name": "summaryId",
+              "description": "The unique identifier of the daily usage summary."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/parentProfiles/{parentId}/childProfiles/{childId}/activityLogs/{logId}",
+        "definition": {
+          "entityName": "activityLog",
+          "schema": {
+            "$ref": "#/backend/entities/ActivityLog"
+          },
+          "description": "Tracks completed activities by a child. Includes denormalized 'parentId' for authorization independence, allowing `request.auth.uid == resource.data.parentId` checks. (Recommended: Add 'parentId' field to schema).",
+          "params": [
+            {
+              "name": "parentId",
+              "description": "The unique identifier of the managing parent."
+            },
+            {
+              "name": "childId",
+              "description": "The unique identifier of the child."
+            },
+            {
+              "name": "logId",
+              "description": "The unique identifier of the activity log entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/parentProfiles/{parentId}/childProfiles/{childId}/achievements/{achievementId}",
+        "definition": {
+          "entityName": "achievement",
+          "schema": {
+            "$ref": "#/backend/entities/Achievement"
+          },
+          "description": "Records achievements earned by a child. Includes denormalized 'parentId' for authorization independence, allowing `request.auth.uid == resource.data.parentId` checks. (Recommended: Add 'parentId' field to schema).",
+          "params": [
+            {
+              "name": "parentId",
+              "description": "The unique identifier of the managing parent."
+            },
+            {
+              "name": "childId",
+              "description": "The unique identifier of the child."
+            },
+            {
+              "name": "achievementId",
+              "description": "The unique identifier of the achievement."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The recommended Firestore structure is designed with a strong emphasis on Authorization Independence, enabling robust and easily debuggable security rules. All data is organized hierarchically, rooted in the `parentProfiles` collection, where each document's ID directly corresponds to the authenticated user's `uid`.\n\n1.  **Root Collection (`parentProfiles`):** Stores `ParentProfile` documents, directly mapping to `request.auth.uid`. This allows for simple path-based authorization (`request.auth.uid == parentId`). The fields related to weekly reports (`receiveWeeklyReportEmail`, `weeklyReportDayOfWeek`, `weeklyReportSendTime`) are stored directly within the `ParentProfile` document, making them easily manageable by the parent who owns the document.\n\n2.  **Child-Specific Data Nesting (`childProfiles`, `appUsageSessions`, `dailyUsageSummaries`, `activityLogs`, `achievements`):** All data related to a child, including their profile, app usage, daily summaries, activities, and achievements, is nested under the respective parent's profile: `/parentProfiles/{parentId}/childProfiles/{childId}/...`.\n\n**Authorization Independence (CRITICAL Denormalization):**\n    *   For `ChildProfile` documents, the `parentId` field is explicitly stored and checked against `request.auth.uid`. This allows security rules for `childProfiles/{childId}` to directly verify `request.auth.uid == resource.data.parentId` without needing to perform a `get()` operation on the parent document. This is a form of denormalization as the `parentId` in the document matches the `parentId` in the path.\n    *   **Crucially, for all subcollections under `childProfiles` (i.e., `appUsageSessions`, `dailyUsageSummaries`, `activityLogs`, `achievements`), the `parentId` field MUST also be denormalized into each document.** Although `childId` is present in these schemas, relying solely on `childId` would require a `get()` operation on the `childProfiles` document to determine its `parentId`, violating Authorization Independence. By including `parentId` directly in `AppUsageSession`, `DailyUsageSummary`, `ActivityLog`, and `Achievement` documents (e.g., `resource.data.parentId`), security rules can always evaluate `request.auth.uid == resource.data.parentId` atomically, preventing slow, complex, and error-prone rule evaluations.\n\n**QAPs (Rules are not Filters):**\n    *   **Secure `list` Operations:** The hierarchical structure ensures that `list` operations are inherently secure. A parent can only list documents within their `/parentProfiles/{request.auth.uid}/...` branch. For example, listing all child profiles for an authenticated parent (`/parentProfiles/myUid/childProfiles`) is efficient and secure, as the rules will simply check `request.auth.uid == parentId` from the path. Similarly, for sub-subcollections like `appUsageSessions`, a parent can list all sessions for a specific child (`/parentProfiles/myUid/childProfiles/childId/appUsageSessions`) because `parentId` is denormalized within each session document, allowing for direct authorization checks. This design avoids the need for complex query filters in rules, ensuring that any `list` operation implicitly respects the user's authorization and only returns data they are permitted to see.\n\nThis structure makes security rules concise, performant, and easy to debug, as each document carries its full authorization context, eliminating cross-document `get()` calls in rules."
+  }
+}

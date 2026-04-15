@@ -1,0 +1,142 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * DOCUMENTATION: PARENTAL MONITORING AND REPORTING SYSTEM
+     *
+     * Core Philosophy:
+     * This ruleset enforces a strict "Parent-Ownership" model. Every piece of data—from 
+     * child profiles to usage summaries—is nested under a Parent Profile root document. 
+     * Access is strictly controlled by the parent's authenticated UID.
+     *
+     * Data Structure:
+     * All data follows the hierarchy: /parentProfiles/{parentId}/childProfiles/{childId}/...
+     * The {parentId} in the path must always match the request.auth.uid of the user.
+     *
+     * Key Security Decisions:
+     * 1. Authorization Independence: To ensure rules are performant and avoid costly 
+     *    get() calls, the 'parentId' is denormalized (copied) into every child profile 
+     *    and its subsequent sub-collection documents.
+     * 2. Strict Scoping: Users cannot list other parents' profiles or children. 
+     *    All read/write operations are scoped to the authenticated parent's tree.
+     * 3. Prototyping Mode: Schema validation is limited to relational integrity 
+     *    (e.g., ensuring parentId matches) to allow for rapid UI iteration while 
+     *    maintaining a high security posture for access control.
+     * 4. Denormalization for Authorization: We enforce that the 'parentId' field 
+     *    inside documents matches the parent ID in the URL path, preventing users 
+     *    from "injecting" data into another user's tree.
+     */
+
+    // --- GLOBAL HELPER FUNCTIONS ---
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // Combined ownership and existence check for updates/deletes
+    function isExistingOwner(userId) {
+      return isOwner(userId) && resource != null;
+    }
+
+    // Validates that the data being written has a parentId matching the path
+    function isValidParentRelation(parentId) {
+      return request.resource.data.parentId == parentId;
+    }
+
+    // Ensures the parentId field cannot be changed once the document is created
+    function isParentRelationImmutable() {
+      return request.resource.data.parentId == resource.data.parentId;
+    }
+
+    // --- COLLECTION RULES ---
+
+    /**
+     * @description Rules for Parent Profiles. Allows parents to manage their own settings and email alert preferences.
+     * @path /parentProfiles/{parentId}
+     * @allow Authenticated user where (uid == parentId) (create/get/update)
+     * @deny Any user attempting to read or write to a parentProfile ID that does not match their auth UID.
+     * @principle Ownership-based root access.
+     */
+    match /parentProfiles/{parentId} {
+      allow get, list: if isOwner(parentId);
+      allow create: if isOwner(parentId) && request.resource.data.id == parentId;
+      allow update: if isExistingOwner(parentId) && request.resource.data.id == resource.data.id;
+      allow delete: if isExistingOwner(parentId);
+
+      /**
+       * @description Rules for Child Profiles. Parents manage their children's screen time limits and avatars.
+       * @path /parentProfiles/{parentId}/childProfiles/{childId}
+       * @allow Parent owner (create) with matching parentId field.
+       * @deny Mismatched parentId or unauthorized UID.
+       * @principle Relational integrity through denormalized parentId.
+       */
+      match /childProfiles/{childId} {
+        allow get, list: if isOwner(parentId);
+        allow create: if isOwner(parentId) && isValidParentRelation(parentId);
+        allow update: if isExistingOwner(parentId) && isParentRelationImmutable();
+        allow delete: if isExistingOwner(parentId);
+
+        /**
+         * @description App usage sessions recording child activity.
+         * @path /parentProfiles/{parentId}/childProfiles/{childId}/appUsageSessions/{sessionId}
+         * @allow Parent owner (list) all sessions for their child.
+         * @deny Non-parent users.
+         * @principle Authorization Independence (no get() required).
+         */
+        match /appUsageSessions/{sessionId} {
+          allow get, list: if isOwner(parentId);
+          allow create: if isOwner(parentId) && isValidParentRelation(parentId);
+          allow update: if isExistingOwner(parentId) && isParentRelationImmutable();
+          allow delete: if isExistingOwner(parentId);
+        }
+
+        /**
+         * @description Daily summaries of screen time and activity completion.
+         * @path /parentProfiles/{parentId}/childProfiles/{childId}/dailyUsageSummaries/{summaryId}
+         * @allow Parent owner (get) their child's daily summary.
+         * @deny Requesting summaries from a different parent's tree.
+         * @principle Scoped list operations.
+         */
+        match /dailyUsageSummaries/{summaryId} {
+          allow get, list: if isOwner(parentId);
+          allow create: if isOwner(parentId) && isValidParentRelation(parentId);
+          allow update: if isExistingOwner(parentId) && isParentRelationImmutable();
+          allow delete: if isExistingOwner(parentId);
+        }
+
+        /**
+         * @description Logs of specific activities (eye health, mindfulness) completed by the child.
+         * @path /parentProfiles/{parentId}/childProfiles/{childId}/activityLogs/{logId}
+         * @allow Parent owner (create) a log entry when a child finishes an activity.
+         * @deny Unauthorized writes.
+         * @principle Path-based authorization for nested sub-collections.
+         */
+        match /activityLogs/{logId} {
+          allow get, list: if isOwner(parentId);
+          allow create: if isOwner(parentId) && isValidParentRelation(parentId);
+          allow update: if isExistingOwner(parentId) && isParentRelationImmutable();
+          allow delete: if isExistingOwner(parentId);
+        }
+
+        /**
+         * @description Achievements and badges earned by the child.
+         * @path /parentProfiles/{parentId}/childProfiles/{childId}/achievements/{achievementId}
+         * @allow Parent owner (list) achievements to display in the parent dashboard.
+         * @deny Public listing of child achievements.
+         * @principle Verified Identity as the source of truth (request.auth).
+         */
+        match /achievements/{achievementId} {
+          allow get, list: if isOwner(parentId);
+          allow create: if isOwner(parentId) && isValidParentRelation(parentId);
+          allow update: if isExistingOwner(parentId) && isParentRelationImmutable();
+          allow delete: if isExistingOwner(parentId);
+        }
+      }
+    }
+  }
+}

@@ -75,26 +75,32 @@
 
 @keyframes bug-float {
   0% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(20vw, 30vh) rotate(90deg); }
-  50% { transform: translate(50vw, 10vh) rotate(180deg); }
-  75% { transform: translate(80vw, 40vh) rotate(270deg); }
+  20% { transform: translate(30vw, -10vh) rotate(45deg); }
+  40% { transform: translate(60vw, 40vh) rotate(180deg); }
+  60% { transform: translate(10vw, 60vh) rotate(270deg); }
+  80% { transform: translate(50vw, 20vh) rotate(90deg); }
   100% { transform: translate(0, 0) rotate(360deg); }
 }
 
 @keyframes bug-skitter {
-  0%, 100% { transform: translate(0, 0); }
-  20% { transform: translate(10px, -15px) rotate(10deg); }
-  40% { transform: translate(-20px, 10px) rotate(-15deg); }
-  60% { transform: translate(15px, 20px) rotate(5deg); }
-  80% { transform: translate(-10px, -5px) rotate(-5deg); }
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  10% { transform: translate(4px, -6px) rotate(15deg) scale(1.05); }
+  20% { transform: translate(-8px, 4px) rotate(-20deg) scale(0.95); }
+  30% { transform: translate(10px, 8px) rotate(10deg) scale(1); }
+  40% { transform: translate(-12px, -10px) rotate(-25deg) scale(1.1); }
+  50% { transform: translate(15px, 2px) rotate(30deg) scale(0.9); }
+  60% { transform: translate(-5px, 12px) rotate(-15deg) scale(1); }
+  70% { transform: translate(8px, -8px) rotate(20deg) scale(1.05); }
+  80% { transform: translate(-10px, 5px) rotate(-10deg) scale(0.95); }
+  90% { transform: translate(5px, -3px) rotate(5deg) scale(1); }
 }
 
 .animate-bug-float {
-  animation: bug-float 15s infinite linear;
+  animation: bug-float 12s infinite linear;
 }
 
 .animate-bug-skitter {
-  animation: bug-skitter 0.5s infinite ease-in-out;
+  animation: bug-skitter 0.35s infinite ease-in-out;
 }
 
 /* Eye Wellness Animations */

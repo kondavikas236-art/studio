@@ -12,7 +12,7 @@ import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck }
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
-import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 
@@ -61,13 +61,19 @@ export default function ParentSettings() {
   }, [parentProfile]);
 
   const handleSave = () => {
-    if (!parentRef) return;
+    if (!parentRef || !user) return;
 
-    updateDocumentNonBlocking(parentRef, {
+    // Use setDocumentNonBlocking with merge: true to handle both initial creation and updates.
+    // Ensure the 'id' field is included as it's required by both the entity schema and security rules.
+    setDocumentNonBlocking(parentRef, {
+      id: user.uid,
       receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
       weeklyReportDayOfWeek: settings.weeklyReportDayOfWeek,
       weeklyReportSendTime: settings.weeklyReportSendTime,
-    });
+      firstName: parentProfile?.firstName || user.displayName?.split(' ')[0] || "Parent",
+      lastName: parentProfile?.lastName || user.displayName?.split(' ').slice(1).join(' ') || "",
+      email: user.email || "",
+    }, { merge: true });
 
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 

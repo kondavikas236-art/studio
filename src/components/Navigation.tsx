@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "node_modules/next/link";
+import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { User, ShieldCheck, Gamepad2, Book, BarChart3, Settings, Trophy, Lock, CreditCard } from "lucide-react";
 import { cn } from "@/lib/utils";

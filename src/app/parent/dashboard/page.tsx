@@ -1,22 +1,20 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings, History, Lock, Sparkles, Zap } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Settings, History, Lock, Sparkles, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFirestore, useUser, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
 import { addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 
 const USAGE_DATA = [
   { day: 'Mon', video: 45, education: 120, social: 15 },
@@ -70,7 +68,6 @@ export default function ParentDashboard() {
   const handleAddChild = () => {
     if (!db || !user || !newChildName.trim() || !newChildDob) return;
     
-    // Revenue logic: Limit free users to 1 child
     if (!parentProfile?.isPro && children && children.length >= 1) {
       toast({
         variant: "destructive",
@@ -95,18 +92,12 @@ export default function ParentDashboard() {
     setIsAddOpen(false);
   };
 
-  const handleDeleteChild = (childId: string) => {
-    if (!db || !user) return;
-    const childRef = doc(db, "parentProfiles", user.uid, "childProfiles", childId);
-    deleteDocumentNonBlocking(childRef);
-  };
-
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight">Family Insights</h2>
-          <p className="text-muted-foreground">Monitoring wellness for {children?.length || 0} children</p>
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground">Family Insights</h2>
+          <p className="text-muted-foreground font-medium">Monitoring wellness for {children?.length || 0} children</p>
         </div>
         <div className="flex gap-3">
           {!parentProfile?.isPro && (
@@ -119,7 +110,7 @@ export default function ParentDashboard() {
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-full h-12 px-6 font-bold">
-                <UserPlus className="mr-2 h-5 w-5" /> Add Children
+                <UserPlus className="mr-2 h-5 w-5" /> Add Child
               </Button>
             </DialogTrigger>
             <DialogContent className="rounded-[2.5rem]">
@@ -234,7 +225,7 @@ export default function ParentDashboard() {
               <CardDescription className="flex items-center gap-2">
                 <AlertCircle className="h-4 w-4 text-destructive" /> Active Alerts
               </CardDescription>
-              <CardTitle className="text-2xl font-black">{children?.length > 0 ? "1 Active" : "0"}</CardTitle>
+              <CardTitle className="text-2xl font-black">{children && children.length > 0 ? "1 Active" : "0"}</CardTitle>
             </CardHeader>
             <CardContent>
                <div className="text-xs font-bold text-destructive">Daily limit reached</div>
@@ -306,5 +297,3 @@ export default function ParentDashboard() {
     </div>
   );
 }
-
-import { toast } from "@/hooks/use-toast";

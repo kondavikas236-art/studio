@@ -2,41 +2,30 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ShieldCheck, Star, Globe, Clock } from "lucide-react";
+import { Check, ShieldCheck, Star, Globe, Clock, Sparkles } from "lucide-react";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
 
-const PLANS = [
-  {
-    id: "free",
-    name: "Basic",
-    price: "$0",
-    description: "Essential wellness for 1 child.",
-    features: ["Standard Cockroach Mode", "Blink Buddy Mission", "Daily Summary", "1 Child Profile"],
-    cta: "Current Plan",
-    active: true,
-  },
-  {
-    id: "family_pro",
-    name: "Family Pro",
-    price: "$1",
-    period: "/mo",
-    trialPeriod: "7 Days Free",
-    description: "Advanced protection for the whole family.",
-    features: [
-      "Custom Cockroach Density", 
-      "AI Diary Buddy (Unlimited)", 
-      "Detailed PDF Reports", 
-      "Up to 5 Child Profiles", 
-      "Priority AI Generation"
-    ],
-    cta: "Start Free Trial",
-    highlight: true,
-  }
-];
+const PLAN = {
+  id: "family_pro",
+  name: "Family Pro",
+  price: "$1",
+  period: "/mo",
+  trialPeriod: "7 Days Free",
+  description: "Complete digital protection for your entire family.",
+  features: [
+    "Custom Cockroach Density", 
+    "AI Diary Buddy (Unlimited)", 
+    "Detailed PDF Reports", 
+    "Up to 5 Child Profiles", 
+    "Priority AI Generation",
+    "Ad-Free Experience"
+  ],
+  cta: "Start 7-Day Free Trial",
+};
 
 export default function BillingPage() {
   const { user } = useUser();
@@ -49,14 +38,12 @@ export default function BillingPage() {
 
   const { data: parentProfile } = useDoc(parentRef);
 
-  const handleUpgrade = (planId: string) => {
-    if (!parentRef || planId === "free") return;
+  const handleUpgrade = () => {
+    if (!parentRef) return;
 
-    // In a real app, this would initiate a Stripe Checkout session with a trial period.
-    // For this prototype, we update the profile to 'pro' immediately to show the features.
     updateDocumentNonBlocking(parentRef, {
       isPro: true,
-      subscriptionTier: planId,
+      subscriptionTier: PLAN.id,
       trialStartedAt: new Date().toISOString(),
     });
 
@@ -66,62 +53,66 @@ export default function BillingPage() {
     });
   };
 
-  const currentTier = parentProfile?.subscriptionTier || "free";
+  const isPro = parentProfile?.isPro || false;
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       <div className="text-center space-y-4">
-        <h1 className="text-4xl font-black text-foreground">Family Wellness Plans</h1>
+        <div className="inline-block p-3 rounded-2xl bg-primary/10 mb-2">
+          <Sparkles className="h-8 w-8 text-primary" />
+        </div>
+        <h1 className="text-4xl font-black text-foreground">One Plan. Total Protection.</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto">
           Start your 7-day free trial today. Protect your family's digital health for just $1/month.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto pt-4">
-        {PLANS.map((plan) => (
-          <Card key={plan.id} className={`rounded-[2.5rem] border-2 transition-all flex flex-col ${plan.highlight ? 'border-primary shadow-2xl scale-105 bg-white relative z-10' : 'border-border bg-white/50'}`}>
-            {plan.highlight && (
-              <div className="absolute -top-4 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1">
-                <Badge className="bg-primary text-white font-black px-4 py-1 rounded-full shadow-lg">MOST POPULAR</Badge>
+      <div className="max-w-md mx-auto pt-4">
+        <Card className="rounded-[2.5rem] border-4 border-primary shadow-2xl bg-white relative overflow-hidden">
+          <div className="absolute top-0 right-0 p-6 opacity-5">
+            <ShieldCheck className="h-32 w-32" />
+          </div>
+          
+          <CardHeader className="text-center pt-10">
+            <Badge className="w-fit mx-auto bg-primary text-white font-black px-4 py-1 rounded-full shadow-lg mb-4">
+              FAMILY FAVORITE
+            </Badge>
+            <CardTitle className="text-3xl font-black">{PLAN.name}</CardTitle>
+            <div className="flex flex-col items-center justify-center mt-6">
+              <div className="flex items-center gap-1">
+                <span className="text-5xl font-black">{PLAN.price}</span>
+                <span className="text-muted-foreground font-bold text-xl">{PLAN.period}</span>
               </div>
-            )}
-            <CardHeader className="text-center pt-8">
-              <CardTitle className="text-2xl font-black">{plan.name}</CardTitle>
-              <div className="flex flex-col items-center justify-center mt-4">
-                <div className="flex items-center gap-1">
-                  <span className="text-4xl font-black">{plan.price}</span>
-                  {plan.period && <span className="text-muted-foreground font-bold">{plan.period}</span>}
+              <Badge variant="secondary" className="mt-4 bg-accent/20 text-accent-foreground border-accent/30 font-bold px-4 py-1">
+                <Clock className="h-4 w-4 mr-2" /> {PLAN.trialPeriod} Trial
+              </Badge>
+            </div>
+            <CardDescription className="font-medium mt-6 px-4">
+              {PLAN.description}
+            </CardDescription>
+          </CardHeader>
+
+          <CardContent className="space-y-4 pt-8 px-10">
+            {PLAN.features.map((feature, i) => (
+              <div key={i} className="flex items-start gap-4">
+                <div className="mt-1 bg-green-100 p-1 rounded-full">
+                  <Check className="h-4 w-4 text-green-600" />
                 </div>
-                {plan.trialPeriod && (
-                  <Badge variant="secondary" className="mt-2 bg-accent/20 text-accent-foreground border-accent/30 font-bold">
-                    <Clock className="h-3 w-3 mr-1" /> {plan.trialPeriod} Trial
-                  </Badge>
-                )}
+                <span className="text-base font-semibold text-foreground/80">{feature}</span>
               </div>
-              <CardDescription className="font-medium mt-4">{plan.description}</CardDescription>
-            </CardHeader>
-            <CardContent className="flex-1 space-y-4 pt-6">
-              {plan.features.map((feature, i) => (
-                <div key={i} className="flex items-start gap-3">
-                  <div className="mt-1 bg-green-100 p-0.5 rounded-full">
-                    <Check className="h-4 w-4 text-green-600" />
-                  </div>
-                  <span className="text-sm font-semibold text-foreground/80">{feature}</span>
-                </div>
-              ))}
-            </CardContent>
-            <CardFooter className="pb-8 px-8">
-              <Button 
-                onClick={() => handleUpgrade(plan.id)}
-                disabled={currentTier === plan.id}
-                variant={plan.highlight ? "default" : "outline"} 
-                className="w-full rounded-full h-12 font-black text-lg shadow-md hover:scale-105 transition-transform"
-              >
-                {currentTier === plan.id ? "Current Plan" : plan.cta}
-              </Button>
-            </CardFooter>
-          </Card>
-        ))}
+            ))}
+          </CardContent>
+
+          <CardFooter className="pb-10 px-10 pt-8">
+            <Button 
+              onClick={handleUpgrade}
+              disabled={isPro}
+              className="w-full rounded-full h-16 font-black text-xl shadow-xl hover:scale-105 transition-transform"
+            >
+              {isPro ? "Plan Active" : PLAN.cta}
+            </Button>
+          </CardFooter>
+        </Card>
       </div>
 
       <div className="bg-white/50 backdrop-blur-md rounded-[2.5rem] p-10 border-2 border-dashed border-primary/20 text-center space-y-6">
@@ -131,9 +122,9 @@ export default function BillingPage() {
           <Star className="h-12 w-12 text-primary opacity-40" />
         </div>
         <div className="space-y-2">
-          <h3 className="text-xl font-bold">Risk-Free Trial</h3>
+          <h3 className="text-xl font-bold">Cancel Anytime</h3>
           <p className="text-sm text-muted-foreground font-medium max-w-md mx-auto">
-            Try Family Pro for 7 days. If you don't love it, cancel anytime before the trial ends and you won't be charged a cent.
+            Your 7-day trial is completely risk-free. If Kidsyee isn't the right fit for your family, cancel before the trial ends and you won't be charged.
           </p>
         </div>
       </div>

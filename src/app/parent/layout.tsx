@@ -1,7 +1,8 @@
+
 "use client";
 
 import { Navigation } from "@/components/Navigation";
-import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2 } from "lucide-react";
+import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -9,6 +10,7 @@ import { useUser, useAuth } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signOut } from "firebase/auth";
+import { toast } from "@/hooks/use-toast";
 
 export default function ParentLayout({
   children,
@@ -24,6 +26,28 @@ export default function ParentLayout({
       router.push("/login");
     }
   }, [user, isUserLoading, router]);
+
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Kidsyee - Eye & Brain Wellness',
+      text: 'Check out Kidsyee, the ultimate screen time guardian for kids!',
+      url: window.location.origin,
+    };
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      await navigator.clipboard.writeText(window.location.origin);
+      toast({
+        title: "Link Copied!",
+        description: "App link has been copied to your clipboard. Send it to your friend!",
+      });
+    }
+  };
 
   if (isUserLoading) {
     return (
@@ -50,6 +74,19 @@ export default function ParentLayout({
         </div>
         
         <div className="flex items-center space-x-4">
+           <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Button variant="ghost" size="icon" onClick={handleShare} className="text-muted-foreground hover:text-primary">
+                    <Share2 className="h-5 w-5" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Share Kidsyee</p>
+                </TooltipContent>
+              </Tooltip>
+           </TooltipProvider>
+
            <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>

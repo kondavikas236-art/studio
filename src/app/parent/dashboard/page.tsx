@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings, History, Lock } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Trash2, Settings, History, Lock, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useFirestore, useUser, useCollection, useMemoFirebase } from "@/firebase";
@@ -17,6 +17,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
+import { toast } from "@/hooks/use-toast";
 
 const USAGE_DATA = [
   { day: 'Mon', video: 45, education: 120, social: 15 },
@@ -84,6 +85,28 @@ export default function ParentDashboard() {
     deleteDocumentNonBlocking(childRef);
   };
 
+  const handleShare = async () => {
+    const shareData = {
+      title: 'Kidsyee - Eye & Brain Wellness',
+      text: 'Check out Kidsyee, the ultimate screen time guardian for kids!',
+      url: window.location.origin,
+    };
+
+    if (navigator.share && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      await navigator.clipboard.writeText(window.location.origin);
+      toast({
+        title: "Link Copied!",
+        description: "App link copied! You can now paste and send it to your friend.",
+      });
+    }
+  };
+
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -92,6 +115,9 @@ export default function ParentDashboard() {
           <p className="text-muted-foreground">Monitoring wellness for {children?.length || 0} children</p>
         </div>
         <div className="flex gap-3">
+          <Button variant="outline" onClick={handleShare} className="rounded-full h-12 px-6 font-bold border-primary/20 hover:bg-primary/5 text-primary">
+            <Share2 className="mr-2 h-5 w-5" /> Share App
+          </Button>
           <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
             <DialogTrigger asChild>
               <Button className="rounded-full h-12 px-6 font-bold">

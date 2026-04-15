@@ -1,10 +1,9 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Trophy, Lock } from "lucide-react";
+import { Trophy, Lock, ShieldCheck } from "lucide-react";
 import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
@@ -32,12 +31,8 @@ export default function KidLayout({
       if (settingsStr) {
         try {
           const settings = JSON.parse(settingsStr);
-          // If Cockroach Mode is enabled, trigger bugs exactly at the health break interval
           if (settings.enableBugDeterrent) {
-             // In prototype: minutes are scaled to seconds for testing (e.g. 20m interval = 20s trigger)
              const triggerDelayMs = (settings.eyeBreakInterval || 20) * 1000;
-             
-             // Only set timer if bugs aren't already active
              if (!isBugModeActive) {
                bugTimerRef.current = setTimeout(() => {
                  setIsBugModeActive(true);
@@ -52,10 +47,8 @@ export default function KidLayout({
 
     checkSettings();
 
-    // Listen for break-completed events (from Eye Gym) to stop the bugs
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
-      // Restart the cycle
       checkSettings();
     };
 
@@ -74,7 +67,9 @@ export default function KidLayout({
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">
         <div className="p-8">
            <Link href="/">
-             <h1 className="text-2xl font-black text-primary italic hover:scale-105 transition-transform cursor-pointer">MindfulPlay</h1>
+             <h1 className="text-2xl font-black text-primary italic hover:scale-105 transition-transform cursor-pointer flex items-center gap-2">
+               <ShieldCheck className="h-6 w-6" /> ScreenGuard
+             </h1>
            </Link>
         </div>
         <Navigation />
@@ -85,7 +80,7 @@ export default function KidLayout({
           <div className="flex items-center space-x-3">
             <Avatar className="h-12 w-12 border-2 border-primary ring-4 ring-primary/5">
               <AvatarImage src={avatar?.imageUrl} alt="Avatar" />
-              <AvatarFallback>MP</AvatarFallback>
+              <AvatarFallback>SG</AvatarFallback>
             </Avatar>
             <div>
               <p className="text-xs font-bold text-muted-foreground uppercase tracking-wider">Explorer</p>

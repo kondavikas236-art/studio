@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from "next/link";
@@ -13,13 +12,13 @@ export default function Home() {
     <div className="flex-1 flex flex-col items-center justify-center p-6 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background overflow-hidden min-h-screen">
       <div className="text-center space-y-4 max-w-2xl mb-12 animate-in fade-in zoom-in duration-700">
         <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm">
-          <HeartPulse className="h-14 w-14 text-primary" />
+          <ShieldCheck className="h-14 w-14 text-primary" />
         </div>
         <h1 className="text-6xl font-black tracking-tighter text-foreground md:text-8xl italic leading-none">
-          Mindful <span className="text-primary">Play</span>
+          Screen<span className="text-primary">Guard</span>
         </h1>
         <p className="text-xl text-muted-foreground font-semibold max-w-lg mx-auto leading-relaxed">
-          The digital bridge between screen time and the real world. Healthy habits for a brighter future.
+          The pediatric digital bridge between screen time and wellness. Protect eyes, boost brains, and build lasting habits.
         </p>
       </div>
 
@@ -62,8 +61,8 @@ export default function Home() {
       </div>
 
       <div className="mt-16 text-center space-y-2 opacity-60">
-        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Mindful Play Protocol v1.0</p>
-        <p className="text-xs">Trusted by 10,000+ mindful families worldwide.</p>
+        <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">ScreenGuard Pro v1.0</p>
+        <p className="text-xs">Trusted by thousands of mindful families worldwide.</p>
       </div>
     </div>
   );

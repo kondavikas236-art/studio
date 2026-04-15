@@ -1,8 +1,7 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
-import { Lock, Bell, Gamepad2, LogOut, Loader2 } from "lucide-react";
+import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -42,10 +41,10 @@ export default function ParentLayout({
         <div className="flex items-center space-x-3">
            <Link href="/" className="flex items-center space-x-2 group">
              <div className="bg-primary p-2 rounded-xl text-white group-hover:rotate-12 transition-transform shadow-md">
-                <Lock className="h-5 w-5" />
+                <ShieldCheck className="h-5 w-5" />
              </div>
              <h1 className="text-xl font-black tracking-tighter text-foreground">
-               Parent <span className="text-primary">Portal</span>
+               Screen<span className="text-primary">Guard</span>
              </h1>
            </Link>
         </div>

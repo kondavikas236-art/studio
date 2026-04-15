@@ -1,14 +1,13 @@
-
 "use client";
 
 import { useState } from "react";
-import { useAuth, useUser } from "@/firebase";
+import { useFirebase } from "@/firebase";
 import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import { Lock, Mail, UserPlus, LogIn, Loader2 } from "lucide-react";
+import { Lock, Mail, UserPlus, LogIn, Loader2, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
@@ -49,10 +48,10 @@ export default function LoginPage() {
       <Card className="w-full max-w-md rounded-[2.5rem] border-none shadow-2xl overflow-hidden bg-white">
         <CardHeader className="space-y-1 text-center bg-primary/5 p-8">
           <div className="bg-white p-4 rounded-3xl inline-block shadow-sm mb-2">
-            <Lock className="h-8 w-8 text-primary" />
+            <ShieldCheck className="h-8 w-8 text-primary" />
           </div>
           <CardTitle className="text-3xl font-black italic">
-            {isSignUp ? "Join Mindful Play" : "Parent Portal"}
+            {isSignUp ? "Join ScreenGuard" : "Parent Portal"}
           </CardTitle>
           <CardDescription className="text-muted-foreground font-semibold">
             {isSignUp ? "Create an account to protect your kids" : "Secure access to your family dashboard"}
@@ -108,6 +107,3 @@ export default function LoginPage() {
     </div>
   );
 }
-
-// Fixed import for useFirebase in login page
-import { useFirebase } from "@/firebase";

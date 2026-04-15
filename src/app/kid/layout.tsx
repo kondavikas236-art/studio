@@ -23,13 +23,19 @@ export default function KidLayout({
     const checkSettings = () => {
       const settingsStr = localStorage.getItem('parent-settings');
       if (settingsStr) {
-        const settings = JSON.parse(settingsStr);
-        // If Bug Mode is enabled, trigger bugs after 20 seconds (simulating 20 mins)
-        if (settings.enableBugDeterrent) {
-           const timer = setTimeout(() => {
-             setIsBugModeActive(true);
-           }, 20000); // 20s for demo to represent 20 min limit
-           return () => clearTimeout(timer);
+        try {
+          const settings = JSON.parse(settingsStr);
+          // If Cockroach Mode is enabled, trigger bugs based on the break interval
+          if (settings.enableBugDeterrent) {
+             // In prototype: minutes are scaled to seconds (e.g. 20m = 20s)
+             const triggerDelayMs = (settings.eyeBreakInterval || 20) * 1000;
+             const timer = setTimeout(() => {
+               setIsBugModeActive(true);
+             }, triggerDelayMs);
+             return () => clearTimeout(timer);
+          }
+        } catch (e) {
+          console.error("Failed to parse settings", e);
         }
       }
     };
@@ -37,7 +43,7 @@ export default function KidLayout({
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row">
+    <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative">
       <CockroachOverlay active={isBugModeActive} />
       
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">

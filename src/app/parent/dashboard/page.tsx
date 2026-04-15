@@ -14,6 +14,7 @@ import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const USAGE_DATA = [
   { day: 'Mon', games: 45, education: 120, other: 15 },
@@ -259,5 +260,3 @@ export default function ParentDashboard() {
     </div>
   );
 }
-
-import Link from "next/navigation";

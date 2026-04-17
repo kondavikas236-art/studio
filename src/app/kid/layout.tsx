@@ -63,7 +63,6 @@ export default function KidLayout({
         console.error("Failed to parse settings", e);
       }
     } else {
-      // Initialize default settings for testing if none exist
       localStorage.setItem('parent-settings', JSON.stringify(settings));
     }
 
@@ -110,12 +109,12 @@ export default function KidLayout({
         <header className="flex justify-between items-center p-5 bg-white/80 backdrop-blur-md border-b sticky top-0 z-40">
           <div className="flex items-center space-x-3">
             <Avatar className="h-10 w-10 border-2 border-primary ring-2 ring-primary/5">
-              <AvatarImage src={avatar?.imageUrl} alt="Avatar" />
-              <AvatarFallback>KY</AvatarFallback>
+              <AvatarImage src={avatar?.imageUrl} alt="Explorer Avatar" />
+              <AvatarFallback>EX</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Explorer</p>
-              <p className="text-base font-black tracking-tight leading-none">Alex Buddy</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Kid Mode</p>
+              <p className="text-base font-black tracking-tight leading-none">Alex (Explorer)</p>
             </div>
           </div>
           
@@ -137,7 +136,6 @@ export default function KidLayout({
           {children}
         </div>
 
-        {/* Floating Share FAB - Lower Left */}
         <div className="fixed bottom-24 left-6 z-[60] md:bottom-6 md:left-72">
           <Button 
             onClick={handleShare} 

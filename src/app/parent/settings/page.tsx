@@ -332,6 +332,7 @@ export default function ParentSettings() {
         </Card>
       </div>
 
+      {/* PDF-Style Report Preview Dialog */}
       <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
         <DialogContent className="rounded-[3rem] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
           <DialogHeader className="p-8 pb-4 bg-primary text-white print:hidden">
@@ -351,6 +352,7 @@ export default function ParentSettings() {
           
           <ScrollArea className="flex-1 p-8 bg-[#F8FAFC]">
             <div id="pdf-report" className="bg-white p-12 rounded-[2.5rem] border shadow-sm space-y-10 text-foreground max-w-3xl mx-auto">
+              {/* Header Branding */}
               <div className="flex justify-between items-center border-b pb-8">
                 <div>
                   <h1 className="text-4xl font-black tracking-tighter text-primary italic">Kids<span className="text-foreground/80">yee</span></h1>
@@ -362,6 +364,7 @@ export default function ParentSettings() {
                 </div>
               </div>
 
+              {/* AI Summary Section */}
               <div className="space-y-4">
                 <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
                   <h2 className="text-xl font-black text-primary mb-2">Parental Summary</h2>
@@ -371,6 +374,7 @@ export default function ParentSettings() {
                 </div>
               </div>
 
+              {/* Family Distribution Pie Chart */}
               {testReport?.chartData && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-black flex items-center gap-2">
@@ -402,6 +406,7 @@ export default function ParentSettings() {
                 </div>
               )}
 
+              {/* Individual Breakdown */}
               <div className="space-y-6">
                 <h2 className="text-xl font-black flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-primary" /> Individual Metrics
@@ -411,6 +416,7 @@ export default function ParentSettings() {
                 </div>
               </div>
 
+              {/* Footer */}
               <div className="pt-10 border-t flex flex-col items-center gap-4 text-center">
                 <div className="bg-accent/10 p-3 rounded-2xl text-accent-foreground font-black text-xs uppercase tracking-widest">
                   Powered by Kidsyee Digital Wellness AI

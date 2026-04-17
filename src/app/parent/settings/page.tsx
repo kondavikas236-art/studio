@@ -379,7 +379,7 @@ export default function ParentSettings() {
                     <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
                   </h2>
                   <div className="h-[350px] w-full bg-muted/5 rounded-3xl p-6 border-2 border-dashed flex flex-col items-center justify-center">
-                    <div className="h-[280px] w-full" style={{ minHeight: '280px' }}>
+                    <div className="h-[280px] w-full" style={{ minHeight: '280px', width: '100%' }}>
                       <ResponsiveContainer width="100%" height={280}>
                         <PieChart>
                           <Pie
@@ -392,7 +392,7 @@ export default function ParentSettings() {
                             fill="#8884d8"
                             dataKey="value"
                             nameKey="name"
-                            isAnimationActive={false}
+                            isAnimationActive={false} // Crucial for immediate rendering in print/preview
                           >
                             {testReport.chartData.map((entry, index) => (
                               <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />

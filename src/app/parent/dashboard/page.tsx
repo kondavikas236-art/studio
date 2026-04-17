@@ -4,11 +4,11 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ChartContainer, ChartTooltip, ChartTooltipContent, ChartConfig } from "@/components/ui/chart";
 import { BarChart, Bar, ResponsiveContainer, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
-import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, Settings, History, Lock, Sparkles, Zap } from "lucide-react";
+import { Clock, Smartphone, AlertCircle, TrendingUp, CheckCircle2, UserPlus, Shield, Loader2, ChevronRight, Zap, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFirestore, useUser, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
-import { addDocumentNonBlocking, deleteDocumentNonBlocking } from "@/firebase/non-blocking-updates";
+import { addDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -272,31 +272,28 @@ export default function ParentDashboard() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-none shadow-sm bg-white">
-            <CardHeader>
-              <CardTitle>Child Profiles</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {children.map((child) => (
-                  <div key={child.id} className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
-                    <div className="flex items-center gap-3">
-                      <img src={child.avatarUrl} alt={child.name} className="h-12 w-12 rounded-full object-cover" />
-                      <div>
-                        <p className="font-bold">{child.name}</p>
-                        <p className="text-xs text-muted-foreground font-semibold">Age {calculateAge(child.dateOfBirth)}</p>
-                      </div>
+          <section className="space-y-4">
+            <h3 className="text-2xl font-black text-foreground">Family Profiles</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {children.map((child) => (
+                <Link key={child.id} href={`/parent/child/${child.id}`}>
+                  <Card className="rounded-[2.5rem] border-none shadow-sm bg-white hover:shadow-xl transition-all cursor-pointer group relative overflow-hidden">
+                    <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <ChevronRight className="h-6 w-6 text-primary" />
                     </div>
-                    <Link href="/parent/settings">
-                      <Button variant="ghost" size="icon" className="rounded-full">
-                        <Settings className="h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
+                    <CardContent className="p-6 flex items-center gap-4">
+                      <img src={child.avatarUrl} alt={child.name} className="h-16 w-16 rounded-3xl object-cover shadow-md" />
+                      <div>
+                        <p className="text-lg font-black">{child.name}</p>
+                        <p className="text-xs text-muted-foreground font-semibold uppercase tracking-widest">Age {calculateAge(child.dateOfBirth)}</p>
+                        <Badge variant="secondary" className="mt-2 bg-primary/5 text-primary text-[10px] font-bold">View Report</Badge>
+                      </div>
+                    </CardContent>
+                  </Card>
+                </Link>
+              ))}
+            </div>
+          </section>
         </>
       )}
     </div>

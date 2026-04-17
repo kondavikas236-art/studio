@@ -26,8 +26,8 @@ export type WeeklyReportInput = z.infer<typeof WeeklyReportInputSchema>;
 
 const WeeklyReportOutputSchema = z.object({
   emailSubject: z.string().describe('A catchy, warm subject line for the email.'),
-  emailBody: z.string().describe('The full HTML or text content of the report email, formatted with headers and bullet points.'),
-  formalReportContent: z.string().describe('A formal, structured version of the report suitable for a PDF export.'),
+  emailBody: z.string().describe('A warm, professional summary for the parent.'),
+  formalReportContent: z.string().describe('A structured, easy-to-read report suitable for a PDF export.'),
 });
 export type WeeklyReportOutput = z.infer<typeof WeeklyReportOutputSchema>;
 
@@ -39,22 +39,23 @@ const weeklyReportPrompt = ai.definePrompt({
   name: 'weeklyReportPrompt',
   input: { schema: WeeklyReportInputSchema },
   output: { schema: WeeklyReportOutputSchema },
-  prompt: `You are the Kidsyee Digital Wellness Assistant. Your job is to write a weekly "Family Wellness Summary" and a formal "Digital Health PDF Report" for a parent named {{{parentName}}}.
+  prompt: `You are the Kidsyee Digital Wellness Assistant. Your job is to write a weekly "Family Wellness Summary" for a parent named {{{parentName}}}.
 
-You will be provided with a list of children and their stats for the week.
+For the 'emailBody', write a warm and encouraging summary of the family's progress this week. Address the parent directly and highlight the overall health of the digital environment.
 
-For each child, provide in the emailBody:
-1. A warm summary of their digital activity.
-2. A "Win of the Week" (e.g., great eye health missions, consistent diary use).
-3. A gentle suggestion if their usage is high or missions are low.
+For the 'formalReportContent', generate a structured breakdown for each child. Use clear labels and avoid complex markdown tables. Instead, use bulleted lists and headers.
 
-For the formalReportContent (PDF Style):
-- Header with "KIDSYEE WEEKLY WELLNESS REPORT"
-- Date Range: Current Week
-- Detailed sections for each child with their metrics.
-- A "Parental Guidance" section with actionable advice based on the data.
+Structure the 'formalReportContent' like this for each child:
 
-Keep the tone encouraging, professional, and supportive. Use Markdown-style formatting.
+- Child: [Name]
+- Screen Time: [Minutes] (Add a short note if this is healthy or needs care)
+- Wellness Missions: [Count] Completed
+- Diary Engagement: [Count] Entries
+- Status: [Status]
+
+Then, add a "Pro Tip" section at the end for the family.
+
+Keep the tone encouraging, professional, and supportive.
 
 Children Data:
 {{#each children}}
@@ -64,8 +65,6 @@ Children Data:
 - Diary Entries: {{diaryEntries}}
 - Overall Status: {{healthStatus}}
 {{/each}}
-
-Generate the email subject, the warm body, and the formal report content.
 `,
 });
 

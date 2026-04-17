@@ -7,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck, User, Send, Sparkles, FileText, Printer } from "lucide-react";
+import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck, User, Send, Sparkles, FileText, Printer, BarChart3, PieChart as PieChartIcon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { generateWeeklyReport } from "@/ai/flows/ai-weekly-report-flow";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
+
+const CHART_COLORS = ['#1996C5', '#CFE467', '#4FB0C6', '#A855F7', '#F97316'];
 
 export default function ParentSettings() {
   const { user } = useUser();
@@ -52,7 +55,12 @@ export default function ParentSettings() {
   });
 
   const [isReportLoading, setIsReportLoading] = useState(false);
-  const [testReport, setTestReport] = useState<{ subject: string, body: string, formal: string } | null>(null);
+  const [testReport, setTestReport] = useState<{ 
+    subject: string, 
+    body: string, 
+    formal: string,
+    chartData: { name: string, value: number }[] 
+  } | null>(null);
 
   useEffect(() => {
     if (parentProfile) {
@@ -110,22 +118,26 @@ export default function ParentSettings() {
 
     setIsReportLoading(true);
     try {
+      const simulatedChildren = children.map(c => ({
+        name: c.name,
+        usageMinutes: Math.floor(Math.random() * 500) + 200,
+        missionsCompleted: Math.floor(Math.random() * 10) + 2,
+        diaryEntries: Math.floor(Math.random() * 7),
+        healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
+      }));
+
       const reportData = {
         parentName: settings.firstName || "Parent",
-        children: children.map(c => ({
-          name: c.name,
-          usageMinutes: Math.floor(Math.random() * 500) + 200,
-          missionsCompleted: Math.floor(Math.random() * 10) + 2,
-          diaryEntries: Math.floor(Math.random() * 7),
-          healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
-        })),
+        children: simulatedChildren,
       };
 
       const result = await generateWeeklyReport(reportData);
+      
       setTestReport({ 
         subject: result.emailSubject, 
         body: result.emailBody,
-        formal: result.formalReportContent
+        formal: result.formalReportContent,
+        chartData: simulatedChildren.map(c => ({ name: c.name, value: c.usageMinutes }))
       });
     } catch (error) {
       console.error(error);
@@ -339,7 +351,6 @@ export default function ParentSettings() {
           
           <ScrollArea className="flex-1 p-8 bg-[#F8FAFC]">
             <div id="pdf-report" className="bg-white p-12 rounded-[2.5rem] border shadow-sm space-y-10 text-foreground max-w-3xl mx-auto">
-              {/* Header */}
               <div className="flex justify-between items-center border-b pb-8">
                 <div>
                   <h1 className="text-4xl font-black tracking-tighter text-primary italic">Kids<span className="text-foreground/80">yee</span></h1>
@@ -351,7 +362,6 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              {/* Summary Section */}
               <div className="space-y-4">
                 <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
                   <h2 className="text-xl font-black text-primary mb-2">Parental Summary</h2>
@@ -361,7 +371,37 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              {/* Detailed Metrics */}
+              {testReport?.chartData && (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-black flex items-center gap-2">
+                    <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
+                  </h2>
+                  <div className="h-[300px] w-full bg-muted/10 rounded-3xl p-6 border-2 border-dashed flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={testReport.chartData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {testReport.chartData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <RechartsTooltip />
+                        <Legend verticalAlign="bottom" height={36}/>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                  <p className="text-xs text-center text-muted-foreground font-medium italic">Breakdown of total screen minutes per child this week</p>
+                </div>
+              )}
+
               <div className="space-y-6">
                 <h2 className="text-xl font-black flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-primary" /> Individual Metrics
@@ -371,7 +411,6 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              {/* Footer */}
               <div className="pt-10 border-t flex flex-col items-center gap-4 text-center">
                 <div className="bg-accent/10 p-3 rounded-2xl text-accent-foreground font-black text-xs uppercase tracking-widest">
                   Powered by Kidsyee Digital Wellness AI
@@ -391,5 +430,3 @@ export default function ParentSettings() {
     </div>
   );
 }
-
-import { BarChart3 } from "lucide-react";

@@ -1,13 +1,22 @@
+
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
-import { Gamepad2, ShieldCheck, HeartPulse, ChevronRight, LogIn, Smartphone, Eye, Trophy, Sparkles } from "lucide-react";
+import { Gamepad2, ShieldCheck, ChevronRight, LogIn, Smartphone, Eye, Trophy, Sparkles, Mail, Lock, UserPlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useUser } from "@/firebase";
-import { Card, CardContent } from "@/components/ui/card";
+import { useUser, useAuth } from "@/firebase";
+import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Home() {
-  const { user } = useUser();
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [isSignUp, setIsSignUp] = useState(false);
 
   const steps = [
     {
@@ -27,6 +36,104 @@ export default function Home() {
     }
   ];
 
+  const handleAuthSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!auth) return;
+    if (isSignUp) {
+      initiateEmailSignUp(auth, email, password);
+    } else {
+      initiateEmailSignIn(auth, email, password);
+    }
+  };
+
+  if (isUserLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  // If NOT logged in, show the Login/Signup Screen
+  if (!user) {
+    return (
+      <div className="flex-1 flex flex-col items-center bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background min-h-screen p-6">
+        <div className="w-full max-w-md mt-12 mb-12 text-center space-y-4">
+          <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20">
+            <ShieldCheck className="h-12 w-12 text-primary" />
+          </div>
+          <h1 className="text-5xl font-black tracking-tighter text-foreground italic">
+            Kids<span className="text-primary">yee</span>
+          </h1>
+          <p className="text-muted-foreground font-semibold">The Smart Screen Time Guardian</p>
+        </div>
+
+        <Card className="w-full max-w-md rounded-[2.5rem] border-none shadow-2xl overflow-hidden bg-white">
+          <CardHeader className="space-y-1 text-center bg-primary/5 p-8">
+            <CardTitle className="text-2xl font-black">
+              {isSignUp ? "Create Account" : "Parent Login"}
+            </CardTitle>
+            <CardDescription className="text-sm font-medium">
+              {isSignUp ? "Start protecting your family today" : "Access your secure family dashboard"}
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleAuthSubmit}>
+            <CardContent className="space-y-4 p-8">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
+                <div className="relative">
+                  <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="parent@example.com"
+                    className="pl-10 rounded-xl"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="••••••••"
+                    className="pl-10 rounded-xl"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4 p-8 pt-0">
+              <Button type="submit" className="w-full rounded-full h-12 font-bold text-lg shadow-lg">
+                {isSignUp ? <><UserPlus className="mr-2 h-5 w-5" /> Sign Up</> : <><LogIn className="mr-2 h-5 w-5" /> Sign In</>}
+              </Button>
+              <Button
+                variant="ghost"
+                type="button"
+                className="text-sm font-semibold text-primary"
+                onClick={() => setIsSignUp(!isSignUp)}
+              >
+                {isSignUp ? "Already have an account? Sign In" : "New to Kidsyee? Create Account"}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+
+        <div className="mt-12 text-center opacity-40 max-w-xs">
+          <p className="text-xs font-bold uppercase tracking-widest">Wellness simplified for modern families.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If LOGGED IN, show the Main Portal Selection
   return (
     <div className="flex-1 flex flex-col items-center bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background min-h-screen">
       <div className="w-full max-w-6xl px-6 py-20 flex flex-col items-center">
@@ -38,7 +145,7 @@ export default function Home() {
             Kids<span className="text-primary">yee</span>
           </h1>
           <p className="text-xl text-muted-foreground font-semibold max-w-xl mx-auto leading-relaxed">
-            The pediatric digital bridge between screen time and wellness. Protect eyes, boost brains, and build lasting habits with a fun twist.
+            Welcome back! Choose your destination to start your mindful digital journey.
           </p>
         </div>
 
@@ -61,7 +168,7 @@ export default function Home() {
             </div>
           </Link>
 
-          <Link href={user ? "/parent/dashboard" : "/login"} className="group">
+          <Link href="/parent/dashboard" className="group">
             <div className="h-full bg-card border-4 border-accent/20 p-10 rounded-[3rem] transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center text-center space-y-8 relative overflow-hidden">
               <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
                 <ShieldCheck className="h-32 w-32 -mr-12 -mt-12" />
@@ -74,7 +181,7 @@ export default function Home() {
                 <p className="text-muted-foreground font-medium text-lg">Manage limits, view insights, and keep them safe.</p>
               </div>
               <Button variant="secondary" size="lg" className="w-full rounded-full text-xl h-16 font-black shadow-xl group-hover:scale-105 transition-transform border-2 border-accent/20">
-                {user ? "Go to Dashboard" : "Secure Access"} <ShieldCheck className="ml-2 h-6 w-6" />
+                Manage Family <ShieldCheck className="ml-2 h-6 w-6" />
               </Button>
             </div>
           </Link>
@@ -83,9 +190,8 @@ export default function Home() {
         <section className="w-full max-w-4xl space-y-12">
           <div className="text-center">
             <h2 className="text-3xl font-black text-foreground flex items-center justify-center gap-2">
-              How it Works <Sparkles className="h-6 w-6 text-accent-foreground" />
+              The Kidsyee Cycle <Sparkles className="h-6 w-6 text-accent-foreground" />
             </h2>
-            <p className="text-muted-foreground font-bold">The Kidsyee Protection Cycle</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -111,7 +217,6 @@ export default function Home() {
 
         <div className="mt-24 text-center space-y-2 opacity-60">
           <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest">Kidsyee Wellness v1.0</p>
-          <p className="text-xs font-medium">Trusted by thousands of mindful families worldwide.</p>
         </div>
       </div>
     </div>

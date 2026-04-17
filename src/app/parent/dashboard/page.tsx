@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -92,11 +93,15 @@ export default function ParentDashboard() {
     setIsAddOpen(false);
   };
 
+  const displayName = parentProfile?.firstName || "Guardian";
+
   return (
     <div className="space-y-8 pb-12">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground">Family Insights</h2>
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground">
+            Welcome back, {displayName}!
+          </h2>
           <p className="text-muted-foreground font-medium">Monitoring wellness for {children?.length || 0} children</p>
         </div>
         <div className="flex gap-3">

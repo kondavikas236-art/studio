@@ -3,24 +3,28 @@ import type { MetadataRoute } from 'next'
  
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'Kidsyee',
+    name: 'Kidsyee - Smart Screen Guardian',
     short_name: 'Kidsyee',
-    description: 'The Smart Screen Time Guardian',
+    description: 'Protect your child\'s vision and digital wellness with AI-powered habits.',
     start_url: '/',
     display: 'standalone',
-    background_color: '#F0F3F5',
-    theme_color: '#2E8AB8',
+    background_color: '#F8FAFC',
+    theme_color: '#1996C5',
     icons: [
       {
         src: 'https://picsum.photos/seed/kidsyee-icon-1/192/192',
         sizes: '192x192',
         type: 'image/png',
+        purpose: 'maskable'
       },
       {
         src: 'https://picsum.photos/seed/kidsyee-icon-1/512/512',
         sizes: '512x512',
         type: 'image/png',
+        purpose: 'any'
       },
     ],
+    orientation: 'portrait',
+    scope: '/',
   }
 }

@@ -25,7 +25,7 @@ export default function KidDashboard() {
   const [focusValue, setFocusValue] = useState(85);
   const [breakSuggestion, setBreakSuggestion] = useState<SmartBreakPromptOutput | null>(null);
 
-  // Fetch children to get the "Explorer" name dynamically
+  // Fetch children to get the child's name dynamically
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return collection(db, "parentProfiles", user.uid, "childProfiles");
@@ -47,7 +47,7 @@ export default function KidDashboard() {
       setBreakSuggestion(output);
       
       toast({
-        title: "Buddy Check-in! ✨",
+        title: `Buddy Check-in for ${explorerName}! ✨`,
         description: output.suggestionText,
         duration: 10000,
       });
@@ -74,12 +74,12 @@ export default function KidDashboard() {
             <Shield className="h-6 w-6 text-primary" />
           </div>
           <div>
-            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Protection</p>
-            <p className="text-sm font-bold text-foreground">Background Active</p>
+            <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">Active Protection</p>
+            <p className="text-sm font-bold text-foreground">Safe Zone Active</p>
           </div>
         </div>
         <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100 rounded-full border-green-200">
-          Enforced
+          Monitoring {explorerName}
         </Badge>
       </div>
 
@@ -107,7 +107,7 @@ export default function KidDashboard() {
               "text-3xl font-black italic tracking-tight transition-colors duration-700",
               isLowFocus ? "text-destructive" : "text-primary"
             )}>
-              {isLowFocus ? "Eyes need a break!" : "Your eyes are feeling great!"}
+              {isLowFocus ? `${explorerName}, eyes need a break!` : `${explorerName}'s eyes are feeling great!`}
             </h2>
             <p className="text-muted-foreground font-semibold">
               {isLowFocus 
@@ -121,7 +121,7 @@ export default function KidDashboard() {
       <section className="space-y-4">
         <div className="flex justify-between items-end">
           <h2 className="text-2xl font-black text-foreground flex items-center gap-2">
-            My Focus Meter <Sparkles className="text-accent-foreground h-6 w-6" />
+            {explorerName}'s Focus Meter <Sparkles className="text-accent-foreground h-6 w-6" />
           </h2>
         </div>
 
@@ -129,7 +129,7 @@ export default function KidDashboard() {
           <Card className="rounded-[2.5rem] border-primary/20 overflow-hidden shadow-xl bg-white/80 backdrop-blur-sm">
             <CardContent className="p-8 space-y-8">
               <div className="max-w-3xl mx-auto">
-                <FocusMeter value={focusValue} label="Current Energy" />
+                <FocusMeter value={focusValue} label="Energy Level" />
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 text-center max-w-4xl mx-auto">
@@ -162,7 +162,7 @@ export default function KidDashboard() {
                     <AlertCircle className="h-6 w-6" />
                   </div>
                   <div>
-                    <h3 className="font-black text-destructive text-lg">Recharge Needed!</h3>
+                    <h3 className="font-black text-destructive text-lg">Recharge Needed, {explorerName}!</h3>
                     <p className="text-destructive/80 font-bold">Try the 'Eye Gym' or look at the horizon for 20 seconds.</p>
                   </div>
                 </div>
@@ -237,7 +237,7 @@ export default function KidDashboard() {
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold">Today's Play Mix</h2>
+        <h2 className="text-2xl font-bold">{explorerName}'s Play Mix</h2>
         <Card className="rounded-3xl border-none shadow-lg bg-white/50">
           <CardContent className="p-6">
             <div className="h-[200px] w-full">

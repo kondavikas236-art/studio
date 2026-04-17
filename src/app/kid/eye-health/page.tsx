@@ -1,19 +1,32 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Eye, Shield, Timer, Award, Compass, ChevronRight, CheckCircle2 } from "lucide-react";
+import { Eye, Shield, Timer, Award, Compass, ChevronRight, CheckCircle2, Loader2 } from "lucide-react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { cn } from "@/lib/utils";
+import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 export default function EyeHealthPage() {
+  const { user } = useUser();
+  const { firestore: db } = useFirebase();
   const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
   const [currentStep, setCurrentStep] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isDone, setIsDone] = useState(false);
+
+  // Fetch children to get the child's name dynamically
+  const childrenQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return collection(db, "parentProfiles", user.uid, "childProfiles");
+  }, [db, user]);
+
+  const { data: childrenData, isLoading: isChildrenLoading } = useCollection(childrenQuery);
+
+  const explorerName = childrenData?.[0]?.name || "Explorer";
   
   const missions = [
     { 
@@ -77,11 +90,19 @@ export default function EyeHealthPage() {
 
   const bgImage = PlaceHolderImages.find(img => img.id === 'eye-health-bg');
 
+  if (isChildrenLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-8 max-w-3xl mx-auto pb-12">
       <div className="text-center space-y-3">
-        <h1 className="text-4xl font-black text-foreground italic underline decoration-primary decoration-4">Eye Gym</h1>
-        <p className="text-muted-foreground font-semibold">Give your eyes a super-powered workout!</p>
+        <h1 className="text-4xl font-black text-foreground italic underline decoration-primary decoration-4">{explorerName}'s Eye Gym</h1>
+        <p className="text-muted-foreground font-semibold">Give your eyes a super-powered workout, {explorerName}!</p>
       </div>
 
       {activeMissionId && activeMission ? (
@@ -136,7 +157,7 @@ export default function EyeHealthPage() {
              </div>
           </div>
           <div className="space-y-2">
-            <h2 className="text-4xl font-black">Mission Complete!</h2>
+            <h2 className="text-4xl font-black">Mission Complete, {explorerName}!</h2>
             <p className="text-xl font-bold text-accent-foreground">Your eyes feel supercharged! +50 Points earned.</p>
           </div>
           <Button onClick={() => setIsDone(false)} size="lg" className="rounded-full h-16 px-12 text-2xl font-black bg-primary hover:bg-primary/90 shadow-lg hover:scale-105 transition-transform">
@@ -180,7 +201,7 @@ export default function EyeHealthPage() {
         </div>
         <div>
           <h4 className="text-xl font-black text-primary italic">Pro Eye Secret</h4>
-          <p className="text-muted-foreground font-medium">The 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds. This is how top Explorers protect their vision!</p>
+          <p className="text-muted-foreground font-medium">The 20-20-20 rule: Every 20 minutes, look at something 20 feet away for 20 seconds. This is how top Explorers like {explorerName} protect their vision!</p>
         </div>
       </div>
     </div>

@@ -44,11 +44,9 @@
 }
 
 @media print {
-  /* Hide everything by default */
   body * {
     visibility: hidden !important;
   }
-  /* Show only the report and its children */
   #pdf-report, #pdf-report * {
     visibility: visible !important;
   }
@@ -59,16 +57,16 @@
     width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    padding: 2rem !important;
+    padding: 1.5rem !important;
     border: none !important;
     box-shadow: none !important;
     background: white !important;
     display: block !important;
   }
-  /* Force charts to be visible */
+  /* Fix chart rendering in PDF */
   .recharts-responsive-container {
     width: 100% !important;
-    height: 350px !important;
+    height: 300px !important;
     display: block !important;
     visibility: visible !important;
   }
@@ -78,7 +76,7 @@
   }
 }
 
-/* Realistic Cockroach Animations */
+/* realistic animations for cockroach mode */
 @keyframes bug-skitter {
   0% { transform: translate(0, 0) rotate(0deg); }
   10% { transform: translate(8px, -8px) rotate(8deg); }

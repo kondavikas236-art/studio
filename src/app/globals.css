@@ -48,7 +48,7 @@
     visibility: hidden;
   }
   #pdf-report, #pdf-report * {
-    visibility: visible;
+    visibility: visible !important;
   }
   #pdf-report {
     position: absolute;
@@ -60,9 +60,18 @@
     border: none !important;
     box-shadow: none !important;
     background: white !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 300px !important;
   }
   .print\:hidden {
     display: none !important;
+  }
+  svg {
+    display: block !important;
   }
 }
 

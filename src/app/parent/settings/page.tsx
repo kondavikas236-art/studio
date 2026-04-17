@@ -334,7 +334,6 @@ export default function ParentSettings() {
         </Card>
       </div>
 
-      {/* PDF-Style Report Preview Dialog */}
       <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
         <DialogContent className="rounded-[3rem] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
           <DialogHeader className="p-8 pb-4 bg-primary text-white print:hidden">
@@ -354,7 +353,6 @@ export default function ParentSettings() {
           
           <ScrollArea className="flex-1 p-8 bg-[#F8FAFC]">
             <div id="pdf-report" className="bg-white p-12 rounded-[2.5rem] border shadow-sm space-y-10 text-foreground max-w-3xl mx-auto">
-              {/* Header Branding */}
               <div className="flex justify-between items-center border-b pb-8">
                 <div>
                   <h1 className="text-4xl font-black tracking-tighter text-primary italic">Kids<span className="text-foreground/80">yee</span></h1>
@@ -366,7 +364,6 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              {/* AI Summary Section */}
               <div className="space-y-4">
                 <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
                   <h2 className="text-xl font-black text-primary mb-2">Parental Summary</h2>
@@ -376,39 +373,40 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              {/* Family Distribution Pie Chart */}
-              {testReport?.chartData && (
+              {testReport?.chartData && testReport.chartData.length > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-black flex items-center gap-2">
                     <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
                   </h2>
-                  <div className="h-[300px] w-full bg-muted/10 rounded-3xl p-6 border-2 border-dashed flex items-center justify-center">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={testReport.chartData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name} (${(percent * 100).toFixed(0)}%)`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {testReport.chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <RechartsTooltip />
-                        <Legend verticalAlign="bottom" height={36}/>
-                      </PieChart>
-                    </ResponsiveContainer>
+                  <div className="h-[350px] w-full bg-muted/10 rounded-3xl p-6 border-2 border-dashed flex flex-col items-center justify-center">
+                    <div className="h-[280px] w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={testReport.chartData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={true}
+                            label={({ name, value }) => `${name}: ${value}m`}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                            nameKey="name"
+                          >
+                            {testReport.chartData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
+                            ))}
+                          </Pie>
+                          <RechartsTooltip />
+                          <Legend verticalAlign="bottom" height={36} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                    <p className="text-xs text-center text-muted-foreground font-medium italic mt-4">Breakdown of total screen minutes per child this week</p>
                   </div>
-                  <p className="text-xs text-center text-muted-foreground font-medium italic">Breakdown of total screen minutes per child this week</p>
                 </div>
               )}
 
-              {/* Individual Breakdown */}
               <div className="space-y-6">
                 <h2 className="text-xl font-black flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-primary" /> Individual Metrics
@@ -418,7 +416,6 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              {/* Footer */}
               <div className="pt-10 border-t flex flex-col items-center gap-4 text-center">
                 <div className="bg-accent/10 p-3 rounded-2xl text-accent-foreground font-black text-xs uppercase tracking-widest">
                   Powered by Kidsyee Digital Wellness AI

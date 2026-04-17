@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,13 +7,16 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck, User } from "lucide-react";
+import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck, User, Send, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
-import { doc } from "firebase/firestore";
+import { useFirestore, useUser, useDoc, useMemoFirebase, useCollection } from "@/firebase";
+import { doc, collection } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
+import { generateWeeklyReport } from "@/ai/flows/ai-weekly-report-flow";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 export default function ParentSettings() {
   const { user } = useUser();
@@ -26,6 +28,13 @@ export default function ParentSettings() {
   }, [db, user]);
 
   const { data: parentProfile, isLoading } = useDoc(parentRef);
+
+  const childrenQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return collection(db, "parentProfiles", user.uid, "childProfiles");
+  }, [db, user]);
+
+  const { data: children } = useCollection(childrenQuery);
 
   const [settings, setSettings] = useState({
     firstName: "",
@@ -41,6 +50,9 @@ export default function ParentSettings() {
     blockSocialMedia: true,
     blockVideoApps: true,
   });
+
+  const [isReportLoading, setIsReportLoading] = useState(false);
+  const [testReport, setTestReport] = useState<{ subject: string, body: string } | null>(null);
 
   useEffect(() => {
     if (parentProfile) {
@@ -67,7 +79,6 @@ export default function ParentSettings() {
   const handleSave = () => {
     if (!parentRef || !user) return;
 
-    // Save profile data to Firestore
     setDocumentNonBlocking(parentRef, {
       id: user.uid,
       firstName: settings.firstName,
@@ -79,13 +90,49 @@ export default function ParentSettings() {
       isPro: parentProfile?.isPro || false,
     }, { merge: true });
 
-    // Save device-specific policies to local storage
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 
     toast({
       title: "Profile Updated!",
       description: "Your parent profile and device policies have been saved.",
     });
+  };
+
+  const handleTriggerTestReport = async () => {
+    if (!children || children.length === 0) {
+      toast({
+        variant: "destructive",
+        title: "No Profiles Found",
+        description: "Please add a child profile before testing reports.",
+      });
+      return;
+    }
+
+    setIsReportLoading(true);
+    try {
+      const reportData = {
+        parentName: settings.firstName || "Parent",
+        children: children.map(c => ({
+          name: c.name,
+          usageMinutes: Math.floor(Math.random() * 500) + 200, // Simulated weekly data
+          missionsCompleted: Math.floor(Math.random() * 10) + 2,
+          diaryEntries: Math.floor(Math.random() * 7),
+          healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
+        })),
+      };
+
+      const result = await generateWeeklyReport(reportData);
+      setTestReport({ subject: result.emailSubject, body: result.emailBody });
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Report Failed",
+        description: "Could not generate test report. Please try again.",
+      });
+    } finally {
+      setIsReportLoading(false);
+    }
   };
 
   if (isLoading) {
@@ -98,18 +145,21 @@ export default function ParentSettings() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
-      <div>
-        <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
-          Control Center <ShieldCheck className="text-primary h-8 w-8" />
-        </h2>
-        <p className="text-muted-foreground">Configure boundaries and healthy habits for your family</p>
+      <div className="flex justify-between items-end">
+        <div>
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
+            Control Center <ShieldCheck className="text-primary h-8 w-8" />
+          </h2>
+          <p className="text-muted-foreground">Configure boundaries and healthy habits for your family</p>
+        </div>
+        <Button onClick={handleSave} className="rounded-full px-8 font-bold">Save All Changes</Button>
       </div>
 
       <Alert className="bg-primary/5 border-primary/20 rounded-2xl">
         <Smartphone className="h-4 w-4" />
         <AlertTitle className="font-bold">Prototyping Note</AlertTitle>
         <AlertDescription className="text-sm">
-          Background monitoring and Cockroach mode are simulated in this prototype. Health Breaks are scaled to seconds for testing.
+          Background monitoring and Cockroach mode are simulated. Reports generated are powered by Gemini AI.
         </AlertDescription>
       </Alert>
 
@@ -145,119 +195,34 @@ export default function ParentSettings() {
                 />
               </div>
             </div>
-            <div className="space-y-2 opacity-60">
-              <Label>Account Email</Label>
-              <Input value={user?.email || ""} disabled className="rounded-xl bg-muted/50 cursor-not-allowed" />
-            </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-none shadow-sm">
-          <CardHeader>
-             <div className="flex items-center gap-2 mb-2">
-              <ShieldAlert className="h-5 w-5 text-accent-foreground" />
-              <CardTitle>Health Breaks</CardTitle>
-            </div>
-            <CardDescription>How often should your child take a break? (Triggers Cockroach mode)</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-              <Label className="font-bold">Health Break Interval</Label>
-              <span className="font-bold text-accent-foreground">{settings.eyeBreakInterval} Minutes</span>
-            </div>
-            <Slider 
-              value={[settings.eyeBreakInterval]} 
-              onValueChange={([val]) => setSettings({...settings, eyeBreakInterval: val})} 
-              max={60} 
-              min={10}
-              step={5} 
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-destructive overflow-hidden">
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Bug className="h-5 w-5 text-destructive" />
-              <CardTitle>Cockroach mode</CardTitle>
-            </div>
-            <CardDescription>Trigger visual "invasions" when Health Break time is reached.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-destructive/5 rounded-2xl border border-destructive/10">
-              <div className="space-y-0.5">
-                <Label className="text-base font-bold">Enable Cockroach Mode</Label>
-                <p className="text-sm text-muted-foreground">Bugs appear on screen at each Health Break interval.</p>
+        <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-primary overflow-hidden">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+              <div className="flex items-center gap-2 mb-2">
+                <Mail className="h-5 w-5 text-primary" />
+                <CardTitle>AI Weekly Reports</CardTitle>
               </div>
-              <Switch 
-                checked={settings.enableBugDeterrent} 
-                onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} 
-              />
+              <CardDescription>Consolidated digital wellness summaries for all children.</CardDescription>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Clock className="h-5 w-5 text-primary" />
-              <CardTitle>Daily Time Limits</CardTitle>
-            </div>
-            <CardDescription>Set the maximum allowed screen time per day.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="flex justify-between items-center">
-              <Label className="font-bold">Total Screen Time Limit</Label>
-              <span className="font-bold text-primary">{Math.floor(settings.dailyLimit / 60)}h {settings.dailyLimit % 60}m</span>
-            </div>
-            <Slider 
-              value={[settings.dailyLimit]} 
-              onValueChange={([val]) => setSettings({...settings, dailyLimit: val})} 
-              max={360} 
-              step={15} 
-            />
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Smartphone className="h-5 w-5 text-primary" />
-              <CardTitle>App Enforcement</CardTitle>
-            </div>
-            <CardDescription>Simulate monitoring and restricting specific categories.</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
-              <Label className="font-bold">Monitor Video Apps</Label>
-              <Switch 
-                checked={settings.blockVideoApps} 
-                onCheckedChange={(val) => setSettings({...settings, blockVideoApps: val})} 
-              />
-            </div>
-            <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl">
-              <Label className="font-bold">Monitor Social Media</Label>
-              <Switch 
-                checked={settings.blockSocialMedia} 
-                onCheckedChange={(val) => setSettings({...settings, blockSocialMedia: val})} 
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="rounded-3xl border-none shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-2 mb-2">
-              <Mail className="h-5 w-5 text-primary" />
-              <CardTitle>Email Reports</CardTitle>
-            </div>
-            <CardDescription>Receive weekly digital wellness summaries.</CardDescription>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="rounded-full" 
+              onClick={handleTriggerTestReport}
+              disabled={isReportLoading}
+            >
+              {isReportLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Send className="h-4 w-4 mr-2" />}
+              Test Email Now
+            </Button>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base font-bold">Weekly Report Email</Label>
-                <p className="text-sm text-muted-foreground">Get a detailed PDF report every week.</p>
+                <Label className="text-base font-bold">Auto-Email Reports</Label>
+                <p className="text-sm text-muted-foreground">Automatically send a summary of all children every week.</p>
               </div>
               <Switch 
                 checked={settings.receiveWeeklyReportEmail} 
@@ -299,11 +264,80 @@ export default function ParentSettings() {
           </CardContent>
         </Card>
 
-        <div className="flex justify-end gap-4">
-          <Button variant="ghost" onClick={() => window.location.reload()} className="rounded-full">Discard Changes</Button>
-          <Button size="lg" className="rounded-full px-8 font-bold" onClick={handleSave}>Save Device Policy</Button>
-        </div>
+        <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-destructive overflow-hidden">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <Bug className="h-5 w-5 text-destructive" />
+              <CardTitle>Cockroach Mode</CardTitle>
+            </div>
+            <CardDescription>Trigger visual "invasions" when Health Break time is reached.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-destructive/5 rounded-2xl border border-destructive/10">
+              <div className="space-y-0.5">
+                <Label className="text-base font-bold">Enable Cockroach Mode</Label>
+                <p className="text-sm text-muted-foreground">Bugs appear on screen at each Health Break interval.</p>
+              </div>
+              <Switch 
+                checked={settings.enableBugDeterrent} 
+                onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} 
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-3xl border-none shadow-sm">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <ShieldAlert className="h-5 w-5 text-accent-foreground" />
+              <CardTitle>Health Break Timer</CardTitle>
+            </div>
+            <CardDescription>How often should your child take a mandatory eye rest?</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <Label className="font-bold">Interval (Minutes)</Label>
+              <span className="font-bold text-accent-foreground">{settings.eyeBreakInterval}m</span>
+            </div>
+            <Slider 
+              value={[settings.eyeBreakInterval]} 
+              onValueChange={([val]) => setSettings({...settings, eyeBreakInterval: val})} 
+              max={60} 
+              min={10}
+              step={5} 
+            />
+          </CardContent>
+        </Card>
       </div>
+
+      <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
+        <DialogContent className="rounded-[2.5rem] max-w-2xl">
+          <DialogHeader>
+            <div className="flex items-center gap-2 text-primary">
+              <Sparkles className="h-6 w-6" />
+              <DialogTitle>Consolidated Family Report Preview</DialogTitle>
+            </div>
+            <DialogDescription>This is what your AI-generated weekly email looks like.</DialogDescription>
+          </DialogHeader>
+          <div className="bg-muted/30 p-4 rounded-2xl border space-y-4">
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase text-muted-foreground">Subject</p>
+              <p className="font-bold text-foreground">{testReport?.subject}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase text-muted-foreground">Report Content</p>
+              <ScrollArea className="h-[300px] w-full pr-4">
+                <div className="text-sm leading-relaxed whitespace-pre-wrap font-medium text-foreground/80">
+                  {testReport?.body}
+                </div>
+              </ScrollArea>
+            </div>
+          </div>
+          <div className="flex justify-center pt-4">
+             <Button onClick={() => setTestReport(null)} className="rounded-full px-8">Got it!</Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -5,15 +5,29 @@ import { aiDiaryBuddy, type DiaryBuddyOutput } from "@/ai/flows/ai-diary-buddy";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Sparkles, Send, Book, Heart, Star, Moon } from "lucide-react";
+import { Sparkles, Send, Book, Heart, Star, Moon, Loader2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { cn } from "@/lib/utils";
+import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 export default function DiaryPage() {
+  const { user } = useUser();
+  const { firestore: db } = useFirebase();
   const [messages, setMessages] = useState<{ role: 'user' | 'buddy', text: string, emoji?: string }[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Fetch children to get the "Explorer" name dynamically
+  const childrenQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return collection(db, "parentProfiles", user.uid, "childProfiles");
+  }, [db, user]);
+
+  const { data: childrenData, isLoading: isChildrenLoading } = useCollection(childrenQuery);
+
+  const explorerName = childrenData?.[0]?.name || "Explorer";
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -33,7 +47,7 @@ export default function DiaryPage() {
       const result = await aiDiaryBuddy({
         diaryEntry: messages.map(m => m.text).join("\n"),
         userMessage: userText,
-        childName: "Alex"
+        childName: explorerName
       });
 
       setMessages(prev => [...prev, { 
@@ -48,6 +62,14 @@ export default function DiaryPage() {
     }
   };
 
+  if (isChildrenLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 max-w-2xl mx-auto pb-12">
       <div className="text-center space-y-2">
@@ -55,7 +77,7 @@ export default function DiaryPage() {
           <Book className="h-10 w-10 text-purple-600" />
         </div>
         <h1 className="text-4xl font-black text-primary">My Diary Buddy</h1>
-        <p className="text-muted-foreground font-medium">Tell me about your day! I'm all ears. 👂</p>
+        <p className="text-muted-foreground font-medium">Tell me about your day, {explorerName}! I'm all ears. 👂</p>
       </div>
 
       <Card className="rounded-[2.5rem] border-2 border-primary/20 shadow-xl overflow-hidden bg-white/80 backdrop-blur-sm">

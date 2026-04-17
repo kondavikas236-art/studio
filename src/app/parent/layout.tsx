@@ -2,7 +2,7 @@
 "use client";
 
 import { Navigation } from "@/components/Navigation";
-import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2, Share2, User } from "lucide-react";
+import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -32,7 +32,7 @@ export default function ParentLayout({
 
   useEffect(() => {
     if (!isUserLoading && !user) {
-      router.push("/login");
+      router.push("/");
     }
   }, [user, isUserLoading, router]);
 
@@ -53,7 +53,7 @@ export default function ParentLayout({
       await navigator.clipboard.writeText(window.location.origin);
       toast({
         title: "Link Copied!",
-        description: "App link has been copied to your clipboard. Send it to your friend!",
+        description: "App link copied to clipboard.",
       });
     }
   };
@@ -100,11 +100,6 @@ export default function ParentLayout({
               </Tooltip>
            </TooltipProvider>
 
-           <Button variant="ghost" size="icon" className="relative text-muted-foreground hover:text-primary">
-              <Bell className="h-5 w-5" />
-              <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white" />
-           </Button>
-           
            <div className="flex items-center gap-3 bg-muted/20 px-3 py-1.5 rounded-full border border-border/50">
              <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs shadow-sm">
                {parentDisplayName.substring(0, 1).toUpperCase()}
@@ -120,18 +115,11 @@ export default function ParentLayout({
       <div className="flex-1 flex flex-col md:flex-row relative">
         <aside className="hidden md:flex w-64 border-r bg-white p-6 flex-col sticky top-20 h-[calc(100vh-5rem)]">
           <div className="flex-1">
-            <div className="mb-8 px-4 py-2">
-              <h2 className="text-[10px] font-black text-muted-foreground uppercase tracking-[0.2em]">Operations</h2>
-            </div>
             <Navigation />
           </div>
           <div className="mt-auto pt-6 border-t">
-            <Button 
-              onClick={handleShare} 
-              variant="outline" 
-              className="w-full rounded-2xl h-12 font-bold flex items-center justify-center gap-2 border-primary/20 hover:bg-primary/5 text-primary shadow-sm"
-            >
-              <Share2 className="h-5 w-5" /> Share Kidsyee
+            <Button onClick={handleShare} variant="outline" className="w-full rounded-2xl h-12 font-bold flex items-center justify-center gap-2 border-primary/20 hover:bg-primary/5 text-primary shadow-sm">
+              <Share2 className="h-5 w-5" /> Share App
             </Button>
           </div>
         </aside>
@@ -139,16 +127,6 @@ export default function ParentLayout({
         <main className="flex-1 p-6 md:p-10 max-w-7xl mx-auto w-full overflow-auto pb-32 md:pb-10">
           {children}
         </main>
-
-        <div className="md:hidden fixed bottom-24 left-6 z-[60]">
-           <Button 
-            onClick={handleShare} 
-            size="icon" 
-            className="h-14 w-14 rounded-full shadow-2xl bg-primary text-white hover:scale-110 active:scale-95 transition-all"
-          >
-              <Share2 className="h-6 w-6" />
-           </Button>
-        </div>
       </div>
       
       <div className="md:hidden">

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navigation } from "@/components/Navigation";
@@ -25,7 +26,6 @@ export default function KidLayout({
   const [isBugModeActive, setIsBugModeActive] = useState(false);
   const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch children to get the "Explorer" name dynamically
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return collection(db, "parentProfiles", user.uid, "childProfiles");
@@ -35,29 +35,20 @@ export default function KidLayout({
 
   const explorerName = childrenData?.[0]?.name || "Explorer";
 
-  // Cockroach mode is suppressed while in the Diary Buddy "Safe Zone"
   const isSafeZone = pathname === "/kid/diary";
   const shouldDisplayBugs = isBugModeActive && !isSafeZone;
 
   const handleShare = async () => {
     const shareData = {
       title: 'Kidsyee - Eye & Brain Wellness',
-      text: 'Check out Kidsyee, the ultimate screen time guardian for kids!',
+      text: 'Check out Kidsyee!',
       url: window.location.origin,
     };
-
-    if (navigator.share && navigator.canShare(shareData)) {
-      try {
-        await navigator.share(shareData);
-      } catch (err) {
-        console.error("Error sharing:", err);
-      }
+    if (navigator.share) {
+      await navigator.share(shareData);
     } else {
       await navigator.clipboard.writeText(window.location.origin);
-      toast({
-        title: "Link Copied!",
-        description: "App link has been copied to your clipboard.",
-      });
+      toast({ title: "Link Copied!" });
     }
   };
 
@@ -66,38 +57,24 @@ export default function KidLayout({
       clearTimeout(bugTimerRef.current);
       bugTimerRef.current = null;
     }
-
     const savedSettings = localStorage.getItem('parent-settings');
-    let settings = { enableBugDeterrent: true, eyeBreakInterval: 20 }; // Default for testing
-    
+    let settings = { enableBugDeterrent: true, eyeBreakInterval: 20 };
     if (savedSettings) {
-      try {
-        settings = JSON.parse(savedSettings);
-      } catch (e) {
-        console.error("Failed to parse settings", e);
-      }
-    } else {
-      localStorage.setItem('parent-settings', JSON.stringify(settings));
+      try { settings = JSON.parse(savedSettings); } catch (e) {}
     }
-
     if (settings.enableBugDeterrent) {
       const intervalSeconds = settings.eyeBreakInterval || 20;
-      bugTimerRef.current = setTimeout(() => {
-        setIsBugModeActive(true);
-      }, intervalSeconds * 1000);
+      bugTimerRef.current = setTimeout(() => setIsBugModeActive(true), intervalSeconds * 1000);
     }
   };
 
   useEffect(() => {
     checkSettingsAndSetTimer();
-
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
       checkSettingsAndSetTimer();
     };
-
     window.addEventListener('mindful-play:break-completed', handleBreakCompleted);
-
     return () => {
       if (bugTimerRef.current) clearTimeout(bugTimerRef.current);
       window.removeEventListener('mindful-play:break-completed', handleBreakCompleted);
@@ -136,16 +113,11 @@ export default function KidLayout({
             </Avatar>
             <div>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Kid Mode</p>
-              <p className="text-base font-black tracking-tight leading-none">{explorerName} (Explorer)</p>
+              <p className="text-base font-black tracking-tight leading-none">{explorerName}</p>
             </div>
           </div>
           
           <div className="flex items-center gap-2">
-            <div className="hidden xs:flex bg-accent/20 px-3 py-1.5 rounded-full items-center space-x-2 border border-accent/30 shadow-sm">
-              <Trophy className="h-4 w-4 text-accent-foreground" />
-              <span className="font-black text-xs text-accent-foreground">1.2k</span>
-            </div>
-            
             <Link href="/parent/dashboard">
               <Button variant="ghost" size="icon" className="rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary">
                 <Lock className="h-5 w-5" />
@@ -156,16 +128,6 @@ export default function KidLayout({
         
         <div className="p-4 sm:p-6 max-w-5xl mx-auto w-full">
           {children}
-        </div>
-
-        <div className="fixed bottom-24 left-6 z-[60] md:bottom-6 md:left-72">
-          <Button 
-            onClick={handleShare} 
-            size="icon" 
-            className="h-14 w-14 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] bg-primary text-white hover:scale-110 active:scale-90 transition-all flex items-center justify-center border-2 border-white/20"
-          >
-            <Share2 className="h-6 w-6" />
-          </Button>
         </div>
       </main>
 

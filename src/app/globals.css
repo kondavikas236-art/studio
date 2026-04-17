@@ -43,6 +43,29 @@
   }
 }
 
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #pdf-report, #pdf-report * {
+    visibility: visible;
+  }
+  #pdf-report {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0 !important;
+    padding: 2rem !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: white !important;
+  }
+  .print\:hidden {
+    display: none !important;
+  }
+}
+
 /* Realistic Cockroach Animations */
 @keyframes bug-skitter {
   0% { transform: translate(0, 0) rotate(0deg); }

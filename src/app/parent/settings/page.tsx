@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -153,7 +152,9 @@ export default function ParentSettings() {
   };
 
   const handlePrintReport = () => {
-    window.print();
+    if (typeof window !== "undefined") {
+      window.print();
+    }
   };
 
   if (isLoading) {
@@ -173,7 +174,7 @@ export default function ParentSettings() {
           </h2>
           <p className="text-muted-foreground">Configure boundaries and healthy habits for your family</p>
         </div>
-        <Button onClick={handleSave} className="rounded-full px-8 font-bold">Save All Changes</Button>
+        <Button onClick={handleSave} className="rounded-full px-8 font-bold print:hidden">Save All Changes</Button>
       </div>
 
       <Alert className="bg-primary/5 border-primary/20 rounded-2xl print:hidden">

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -8,7 +7,7 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck } from "lucide-react";
+import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck, User } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
@@ -28,6 +27,8 @@ export default function ParentSettings() {
   const { data: parentProfile, isLoading } = useDoc(parentRef);
 
   const [settings, setSettings] = useState({
+    firstName: "",
+    lastName: "",
     dailyLimit: 120,
     enableBugDeterrent: false,
     eyeBreakInterval: 20,
@@ -44,6 +45,8 @@ export default function ParentSettings() {
     if (parentProfile) {
       setSettings((prev) => ({
         ...prev,
+        firstName: parentProfile.firstName || "",
+        lastName: parentProfile.lastName || "",
         receiveWeeklyReportEmail: parentProfile.receiveWeeklyReportEmail || false,
         weeklyReportDayOfWeek: parentProfile.weeklyReportDayOfWeek || "Monday",
         weeklyReportSendTime: parentProfile.weeklyReportSendTime || "09:00",
@@ -65,19 +68,20 @@ export default function ParentSettings() {
 
     setDocumentNonBlocking(parentRef, {
       id: user.uid,
+      firstName: settings.firstName,
+      lastName: settings.lastName,
       receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
       weeklyReportDayOfWeek: settings.weeklyReportDayOfWeek,
       weeklyReportSendTime: settings.weeklyReportSendTime,
-      firstName: parentProfile?.firstName || user.displayName?.split(' ')[0] || "Parent",
-      lastName: parentProfile?.lastName || user.displayName?.split(' ').slice(1).join(' ') || "",
       email: user.email || "",
+      isPro: parentProfile?.isPro || false,
     }, { merge: true });
 
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 
     toast({
-      title: "Device Policy Saved!",
-      description: "Cockroach mode and Health Breaks updated.",
+      title: "Profile Updated!",
+      description: "Your parent profile and device policies have been saved.",
     });
   };
 
@@ -107,6 +111,44 @@ export default function ParentSettings() {
       </Alert>
 
       <div className="grid gap-6">
+        <Card className="rounded-3xl border-none shadow-sm">
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <User className="h-5 w-5 text-primary" />
+              <CardTitle>Parent Profile</CardTitle>
+            </div>
+            <CardDescription>Update your personal information used throughout the portal.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="firstName">First Name</Label>
+                <Input 
+                  id="firstName" 
+                  placeholder="e.g. Sarah" 
+                  value={settings.firstName}
+                  onChange={(e) => setSettings({...settings, firstName: e.target.value})}
+                  className="rounded-xl"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="lastName">Last Name</Label>
+                <Input 
+                  id="lastName" 
+                  placeholder="e.g. Johnson" 
+                  value={settings.lastName}
+                  onChange={(e) => setSettings({...settings, lastName: e.target.value})}
+                  className="rounded-xl"
+                />
+              </div>
+            </div>
+            <div className="space-y-2 opacity-60">
+              <Label>Account Email</Label>
+              <Input value={user?.email || ""} disabled className="rounded-xl bg-muted/50 cursor-not-allowed" />
+            </div>
+          </CardContent>
+        </Card>
+
         <Card className="rounded-3xl border-none shadow-sm">
           <CardHeader>
              <div className="flex items-center gap-2 mb-2">

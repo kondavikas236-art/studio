@@ -1,15 +1,16 @@
 "use client";
 
 import { Navigation } from "@/components/Navigation";
-import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2, Share2 } from "lucide-react";
+import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2, Share2, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useUser, useAuth } from "@/firebase";
+import { useUser, useAuth, useDoc, useMemoFirebase, useFirestore } from "@/firebase";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { toast } from "@/hooks/use-toast";
+import { doc } from "firebase/firestore";
 
 export default function ParentLayout({
   children,
@@ -18,7 +19,15 @@ export default function ParentLayout({
 }) {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const db = useFirestore();
   const router = useRouter();
+
+  const parentRef = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return doc(db, "parentProfiles", user.uid);
+  }, [db, user]);
+
+  const { data: parentProfile } = useDoc(parentRef);
 
   useEffect(() => {
     if (!isUserLoading && !user) {
@@ -58,6 +67,8 @@ export default function ParentLayout({
 
   if (!user) return null;
 
+  const parentDisplayName = parentProfile?.firstName || user.email?.split('@')[0] || "Parent";
+
   return (
     <div className="flex flex-col min-h-screen bg-[#F8FAFC]">
       <header className="h-20 border-b bg-white flex items-center justify-between px-8 sticky top-0 z-50">
@@ -93,12 +104,13 @@ export default function ParentLayout({
               <span className="absolute top-2 right-2 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white" />
            </Button>
            
-           <div className="flex items-center gap-2">
-             <div className="h-10 w-10 rounded-full bg-primary/5 border-2 border-primary/10 flex items-center justify-center font-black text-primary text-sm shadow-sm">
-               {user.email?.substring(0, 2).toUpperCase() || "JD"}
+           <div className="flex items-center gap-3 bg-muted/20 px-3 py-1.5 rounded-full border border-border/50">
+             <div className="h-8 w-8 rounded-full bg-primary text-white flex items-center justify-center font-black text-xs shadow-sm">
+               {parentDisplayName.substring(0, 1).toUpperCase()}
              </div>
-             <Button variant="ghost" size="icon" onClick={() => signOut(auth)} className="text-muted-foreground hover:text-destructive">
-               <LogOut className="h-5 w-5" />
+             <span className="hidden sm:inline text-sm font-bold text-foreground pr-1">{parentDisplayName}</span>
+             <Button variant="ghost" size="icon" onClick={() => signOut(auth)} className="h-8 w-8 text-muted-foreground hover:text-destructive rounded-full">
+               <LogOut className="h-4 w-4" />
              </Button>
            </div>
         </div>
@@ -127,7 +139,6 @@ export default function ParentLayout({
           {children}
         </main>
 
-        {/* Floating Share Button for Mobile (Bottom Left) */}
         <div className="md:hidden fixed bottom-24 left-6 z-[60]">
            <Button 
             onClick={handleShare} 

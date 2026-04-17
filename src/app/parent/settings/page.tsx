@@ -66,6 +66,7 @@ export default function ParentSettings() {
   const handleSave = () => {
     if (!parentRef || !user) return;
 
+    // Save profile data to Firestore
     setDocumentNonBlocking(parentRef, {
       id: user.uid,
       firstName: settings.firstName,
@@ -77,6 +78,7 @@ export default function ParentSettings() {
       isPro: parentProfile?.isPro || false,
     }, { merge: true });
 
+    // Save device-specific policies to local storage
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 
     toast({

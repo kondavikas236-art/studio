@@ -3,13 +3,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, Book, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy } from "lucide-react";
+import { Eye, Book, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
 import { toast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
+import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 const DATA = [
   { name: 'Video', mins: 45, color: '#FF0000' },
@@ -18,14 +20,26 @@ const DATA = [
 ];
 
 export default function KidDashboard() {
+  const { user } = useUser();
+  const { firestore: db } = useFirebase();
   const [focusValue, setFocusValue] = useState(85);
   const [breakSuggestion, setBreakSuggestion] = useState<SmartBreakPromptOutput | null>(null);
+
+  // Fetch children to get the "Explorer" name dynamically
+  const childrenQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return collection(db, "parentProfiles", user.uid, "childProfiles");
+  }, [db, user]);
+
+  const { data: childrenData, isLoading: isChildrenLoading } = useCollection(childrenQuery);
+
+  const explorerName = childrenData?.[0]?.name || "Explorer";
 
   useEffect(() => {
     const timer = setTimeout(async () => {
       setFocusValue(25);
       const output = await generateSmartBreakPrompt({
-        childName: "Alex",
+        childName: explorerName,
         screenTimeMinutes: 195,
         lastActivityCategory: "Educational",
         isEyeRestNeeded: true
@@ -40,9 +54,17 @@ export default function KidDashboard() {
     }, 8000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [explorerName]);
 
   const isLowFocus = focusValue < 30;
+
+  if (isChildrenLoading) {
+    return (
+      <div className="flex h-64 items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8 pb-12">
@@ -90,7 +112,7 @@ export default function KidDashboard() {
             <p className="text-muted-foreground font-semibold">
               {isLowFocus 
                 ? "They've been looking at the screen for a long time. Let's rest them!" 
-                : "Looking good, Explorer! Remember to blink often and look far away."}
+                : `Looking good, ${explorerName}! Remember to blink often and look far away.`}
             </p>
           </div>
         </div>

@@ -3,13 +3,15 @@
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Trophy, Lock, ShieldCheck, Share2 } from "lucide-react";
+import { Trophy, Lock, ShieldCheck, Share2, Loader2 } from "lucide-react";
 import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { toast } from "@/hooks/use-toast";
+import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
+import { collection } from "firebase/firestore";
 
 export default function KidLayout({
   children,
@@ -17,9 +19,21 @@ export default function KidLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  const { user, isUserLoading: isAuthLoading } = useUser();
+  const { firestore: db } = useFirebase();
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
   const [isBugModeActive, setIsBugModeActive] = useState(false);
   const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch children to get the "Explorer" name dynamically
+  const childrenQuery = useMemoFirebase(() => {
+    if (!db || !user) return null;
+    return collection(db, "parentProfiles", user.uid, "childProfiles");
+  }, [db, user]);
+
+  const { data: childrenData, isLoading: isChildrenLoading } = useCollection(childrenQuery);
+
+  const explorerName = childrenData?.[0]?.name || "Explorer";
 
   // Cockroach mode is suppressed while in the Diary Buddy "Safe Zone"
   const isSafeZone = pathname === "/kid/diary";
@@ -90,6 +104,14 @@ export default function KidLayout({
     };
   }, []);
 
+  if (isAuthLoading || isChildrenLoading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative overflow-x-hidden">
       <CockroachOverlay active={shouldDisplayBugs} />
@@ -114,7 +136,7 @@ export default function KidLayout({
             </Avatar>
             <div>
               <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Kid Mode</p>
-              <p className="text-base font-black tracking-tight leading-none">Alex (Explorer)</p>
+              <p className="text-base font-black tracking-tight leading-none">{explorerName} (Explorer)</p>
             </div>
           </div>
           

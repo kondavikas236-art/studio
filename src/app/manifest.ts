@@ -26,5 +26,14 @@ export default function manifest(): MetadataRoute.Manifest {
     ],
     orientation: 'portrait',
     scope: '/',
+    categories: ['education', 'parenting', 'health'],
+    screenshots: [
+      {
+        src: 'https://picsum.photos/seed/kidsyee-ss1/1080/1920',
+        sizes: '1080x1920',
+        type: 'image/png',
+        label: 'Kidsyee Dashboard'
+      }
+    ]
   }
 }

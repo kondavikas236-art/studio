@@ -167,14 +167,14 @@ export default function ParentSettings() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
-      <div className="flex justify-between items-end">
+      <div className="flex justify-between items-end print:hidden">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
             Control Center <ShieldCheck className="text-primary h-8 w-8" />
           </h2>
           <p className="text-muted-foreground">Configure boundaries and healthy habits for your family</p>
         </div>
-        <Button onClick={handleSave} className="rounded-full px-8 font-bold print:hidden">Save All Changes</Button>
+        <Button onClick={handleSave} className="rounded-full px-8 font-bold">Save All Changes</Button>
       </div>
 
       <Alert className="bg-primary/5 border-primary/20 rounded-2xl print:hidden">
@@ -336,7 +336,7 @@ export default function ParentSettings() {
 
       <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
         <DialogContent className="rounded-[3rem] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
-          <DialogHeader className="p-8 pb-4 bg-primary text-white print:hidden">
+          <DialogHeader className="p-8 pb-4 bg-primary text-white print-hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 p-2 rounded-2xl">
@@ -378,7 +378,7 @@ export default function ParentSettings() {
                   <h2 className="text-xl font-black flex items-center gap-2">
                     <PieChartIcon className="h-5 w-5 text-primary" /> Screen Time Distribution
                   </h2>
-                  <div className="h-[300px] w-full bg-muted/5 rounded-3xl p-4 border-2 border-dashed flex items-center justify-center">
+                  <div className="h-[350px] w-full bg-muted/5 rounded-3xl p-4 border-2 border-dashed flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie
@@ -387,7 +387,7 @@ export default function ParentSettings() {
                           cy="50%"
                           labelLine={true}
                           label={({ name, value }) => `${name}: ${value}m`}
-                          outerRadius={80}
+                          outerRadius={100}
                           fill="#8884d8"
                           dataKey="value"
                           nameKey="name"

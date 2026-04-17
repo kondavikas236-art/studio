@@ -57,16 +57,16 @@
     width: 100% !important;
     height: auto !important;
     margin: 0 !important;
-    padding: 1.5rem !important;
+    padding: 2rem !important;
     border: none !important;
     box-shadow: none !important;
     background: white !important;
     display: block !important;
   }
-  /* Fix chart rendering in PDF */
+  /* Ensure the pie chart renders in print */
   .recharts-responsive-container {
     width: 100% !important;
-    height: 300px !important;
+    height: 350px !important;
     display: block !important;
     visibility: visible !important;
   }
@@ -74,6 +74,18 @@
     display: block !important;
     visibility: visible !important;
   }
+  .print-hidden {
+    display: none !important;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
 }
 
 /* realistic animations for cockroach mode */

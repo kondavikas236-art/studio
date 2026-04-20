@@ -7,4 +7,4 @@ runConfig:
   cpu: 1
   memoryMiB: 512
   maxInstances: 1
-# Metadata update to trigger build cycle v2
+# Metadata update to trigger build cycle v3 - Final Release Candidate

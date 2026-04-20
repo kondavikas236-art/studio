@@ -44,12 +44,15 @@
 }
 
 @media print {
+  /* Hide everything except the report container */
   body * {
     visibility: hidden !important;
   }
+  
   #pdf-report, #pdf-report * {
     visibility: visible !important;
   }
+
   #pdf-report {
     position: absolute !important;
     left: 0 !important;
@@ -63,17 +66,21 @@
     background: white !important;
     display: block !important;
   }
-  /* Ensure the pie chart renders in print */
+
+  /* Force Pie Chart Visibility in PDF */
   .recharts-responsive-container {
-    width: 100% !important;
+    width: 600px !important;
     height: 350px !important;
     display: block !important;
     visibility: visible !important;
+    overflow: visible !important;
   }
+
   svg {
     display: block !important;
     visibility: visible !important;
   }
+
   .print-hidden {
     display: none !important;
   }

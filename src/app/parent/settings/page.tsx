@@ -376,7 +376,7 @@ export default function ParentSettings() {
               {testReport?.chartData && testReport.chartData.length > 0 && (
                 <div className="space-y-4">
                   <h2 className="text-xl font-black flex items-center gap-2">
-                    <PieChartIcon className="h-5 w-5 text-primary" /> Screen Time Distribution
+                    <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
                   </h2>
                   <div className="h-[350px] w-full bg-muted/5 rounded-3xl p-4 border-2 border-dashed flex items-center justify-center">
                     <ResponsiveContainer width="100%" height="100%">

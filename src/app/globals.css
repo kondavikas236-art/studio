@@ -44,7 +44,7 @@
 }
 
 @media print {
-  /* Hide everything except the report container */
+  /* Hide everything on the page except the report */
   body * {
     visibility: hidden !important;
   }
@@ -67,13 +67,12 @@
     display: block !important;
   }
 
-  /* Force Pie Chart Visibility in PDF */
+  /* Ensure charts have fixed dimensions for the print engine */
   .recharts-responsive-container {
-    width: 600px !important;
+    width: 650px !important;
     height: 350px !important;
     display: block !important;
     visibility: visible !important;
-    overflow: visible !important;
   }
 
   svg {
@@ -93,37 +92,6 @@
 
 .animate-float {
   animation: float 3s ease-in-out infinite;
-}
-
-/* realistic animations for cockroach mode */
-@keyframes bug-skitter {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  10% { transform: translate(8px, -8px) rotate(8deg); }
-  20% { transform: translate(-5px, 12px) rotate(-15deg); }
-  30% { transform: translate(18px, 4px) rotate(20deg); }
-  40% { transform: translate(-12px, -18px) rotate(-25deg); }
-  50% { transform: translate(22px, 22px) rotate(40deg); }
-  60% { transform: translate(-22px, 8px) rotate(-20deg); }
-  70% { transform: translate(12px, -22px) rotate(25deg); }
-  80% { transform: translate(-18px, 15px) rotate(-40deg); }
-  90% { transform: translate(8px, -12px) rotate(15deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-
-@keyframes bug-roam {
-  0% { transform: translate(-20vw, -20vh) rotate(45deg); }
-  25% { transform: translate(120vw, 40vh) rotate(135deg); }
-  50% { transform: translate(60vw, 120vh) rotate(225deg); }
-  75% { transform: translate(-20vw, 70vh) rotate(315deg); }
-  100% { transform: translate(-20vw, -20vh) rotate(405deg); }
-}
-
-.animate-bug-skitter {
-  animation: bug-skitter 0.3s infinite linear;
-}
-
-.animate-bug-roam {
-  animation: bug-roam 10s infinite linear;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

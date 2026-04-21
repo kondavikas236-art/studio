@@ -1,4 +1,3 @@
-
 import type { MetadataRoute } from 'next'
  
 export default function manifest(): MetadataRoute.Manifest {
@@ -32,7 +31,8 @@ export default function manifest(): MetadataRoute.Manifest {
         src: 'https://picsum.photos/seed/kidsyee-ss1/1080/1920',
         sizes: '1080x1920',
         type: 'image/png',
-        label: 'Kidsyee Dashboard'
+        label: 'Kidsyee Dashboard',
+        form_factor: 'narrow'
       }
     ]
   }

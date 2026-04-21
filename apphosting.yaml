@@ -1,10 +1,6 @@
 # Settings to manage and configure a Firebase App Hosting backend.
-# https://firebase.google.com/docs/app-hosting/configure
-
-# Trigger fresh deployment with finalized wellness report and PWA metadata
 runConfig:
-  # Standard configuration for the prototyping environment
   cpu: 1
   memoryMiB: 512
   maxInstances: 1
-# Metadata update to trigger build cycle v3 - Final Release Candidate
+# Metadata update to trigger build cycle v5 - Final Release Candidate for PDF & Play Store

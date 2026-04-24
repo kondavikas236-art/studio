@@ -44,46 +44,41 @@
 }
 
 @media print {
-  /* 1. Hide everything on the screen by default */
+  /* 1. Hide the entire UI of the app during print */
   body * {
     visibility: hidden;
-    margin: 0;
-    padding: 0;
   }
 
-  /* 2. Show only the report and its necessary parent containers */
+  /* 2. Isolate the report container and make it visible */
   #pdf-report, #pdf-report * {
     visibility: visible;
   }
 
-  /* 3. Position the report at the very top of the printed page */
+  /* 3. Position the report for printing */
   #pdf-report {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    display: block !important;
+    margin: 0;
+    padding: 1cm;
     background: white !important;
-    padding: 2cm !important;
+    display: block !important;
+    z-index: 9999;
   }
 
-  /* 4. Ensure colors and backgrounds are printed accurately */
+  /* 4. Ensure colors and charts are printed */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
   }
 
-  /* 5. Chart Specific Styling for Print */
+  /* 5. Force specific elements to show up well */
   .report-chart-container {
     display: block !important;
+    height: 350px !important;
     width: 100% !important;
-    height: 400px !important;
-    margin: 30px 0 !important;
-  }
-
-  svg {
-    display: block !important;
-    width: 100% !important;
+    margin-bottom: 2rem !important;
   }
 
   /* Hide print buttons while printing */

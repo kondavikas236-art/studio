@@ -44,33 +44,51 @@
 }
 
 @media print {
-  /* Hide everything on the page except the report */
-  body * {
-    visibility: hidden !important;
-  }
-  
-  #pdf-report, #pdf-report * {
-    visibility: visible !important;
+  body {
+    background: white !important;
+    color: black !important;
   }
 
+  /* Hide everything except the report container */
+  body > *:not(.radix-portal) {
+    display: none !important;
+  }
+
+  /* Within the portal (Dialog), hide UI elements like the close button and headers */
+  .radix-portal [role="dialog"] > *:not(div:has(#pdf-report)),
+  .radix-portal .print-hidden {
+    display: none !important;
+  }
+
+  /* Ensure the report container itself is positioned correctly */
   #pdf-report {
     position: absolute !important;
     left: 0 !important;
     top: 0 !important;
     width: 100% !important;
-    height: auto !important;
+    max-width: none !important;
     margin: 0 !important;
-    padding: 2rem !important;
+    padding: 30px !important;
     border: none !important;
     box-shadow: none !important;
     background: white !important;
     display: block !important;
+    visibility: visible !important;
   }
 
-  /* Ensure charts have fixed dimensions for the print engine */
+  /* Darken colors for print visibility */
+  #pdf-report h1, #pdf-report h2, #pdf-report h3 {
+    color: #1996C5 !important;
+  }
+  
+  #pdf-report p, #pdf-report div {
+    color: #111 !important;
+  }
+
+  /* Fix chart visibility */
   .recharts-responsive-container {
-    width: 650px !important;
-    height: 350px !important;
+    width: 100% !important;
+    height: 400px !important;
     display: block !important;
     visibility: visible !important;
   }
@@ -78,10 +96,6 @@
   svg {
     display: block !important;
     visibility: visible !important;
-  }
-
-  .print-hidden {
-    display: none !important;
   }
 }
 

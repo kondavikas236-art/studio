@@ -1,14 +1,16 @@
 
 "use client";
 
+import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ShieldCheck, Clock, Sparkles } from "lucide-react";
+import { Check, ShieldCheck, Clock, Sparkles, Loader2, CreditCard } from "lucide-react";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { toast } from "@/hooks/use-toast";
 import { Badge } from "@/components/ui/badge";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 
 const PLAN = {
   id: "family_pro",
@@ -31,6 +33,8 @@ const PLAN = {
 export default function BillingPage() {
   const { user } = useUser();
   const db = useFirestore();
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   const parentRef = useMemoFirebase(() => {
     if (!db || !user) return null;
@@ -39,19 +43,26 @@ export default function BillingPage() {
 
   const { data: parentProfile } = useDoc(parentRef);
 
-  const handleUpgrade = () => {
+  const handleConfirmPurchase = () => {
     if (!parentRef) return;
+    setIsProcessing(true);
 
-    updateDocumentNonBlocking(parentRef, {
-      isPro: true,
-      subscriptionTier: PLAN.id,
-      trialStartedAt: new Date().toISOString(),
-    });
+    // Simulate payment gateway delay
+    setTimeout(() => {
+      updateDocumentNonBlocking(parentRef, {
+        isPro: true,
+        subscriptionTier: PLAN.id,
+        trialStartedAt: new Date().toISOString(),
+      });
 
-    toast({
-      title: "Trial Started! 🚀",
-      description: "Your 7-day free trial of Family Pro has begun. Enjoy all premium features!",
-    });
+      setIsProcessing(false);
+      setShowCheckout(false);
+
+      toast({
+        title: "Subscription Active! 🚀",
+        description: "Welcome to Family Pro. All premium features are now unlocked.",
+      });
+    }, 2000);
   };
 
   const isPro = parentProfile?.isPro || false;
@@ -64,7 +75,7 @@ export default function BillingPage() {
         </div>
         <h1 className="text-4xl font-black text-foreground">Family Pro Subscription</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto">
-          Start your 7-day free trial today. Protect your family's digital health for just $1/month.
+          Protect your family's digital health. Start your 7-day trial for just $1/month.
         </p>
       </div>
 
@@ -106,7 +117,7 @@ export default function BillingPage() {
 
           <CardFooter className="pb-10 px-10 pt-8">
             <Button 
-              onClick={handleUpgrade}
+              onClick={() => setShowCheckout(true)}
               disabled={isPro}
               className="w-full rounded-full h-16 font-black text-xl shadow-xl hover:scale-105 transition-transform"
             >
@@ -115,6 +126,38 @@ export default function BillingPage() {
           </CardFooter>
         </Card>
       </div>
+
+      <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
+        <DialogContent className="rounded-[2rem]">
+          <DialogHeader>
+            <DialogTitle>Complete Subscription</DialogTitle>
+            <DialogDescription>
+              Confirm your upgrade to Family Pro. You won't be charged until after your 7-day trial.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-6 space-y-4">
+            <div className="bg-muted/30 p-4 rounded-2xl flex items-center justify-between border">
+              <div className="flex items-center gap-3">
+                <CreditCard className="h-5 w-5 text-primary" />
+                <span className="font-bold">Family Pro Trial</span>
+              </div>
+              <span className="font-black">$0.00 today</span>
+            </div>
+            <p className="text-xs text-muted-foreground text-center">
+              Prototype Note: This is a simulated checkout. Clicking "Confirm" will update your account status in Firestore directly.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button 
+              onClick={handleConfirmPurchase} 
+              disabled={isProcessing}
+              className="w-full rounded-full h-12 font-bold"
+            >
+              {isProcessing ? <Loader2 className="h-5 w-5 animate-spin" /> : "Confirm & Start Trial"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       <div className="text-center opacity-60">
         <p className="text-sm font-medium">Cancel anytime during your 1-week trial to avoid charges.</p>

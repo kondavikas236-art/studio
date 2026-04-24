@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -44,107 +45,56 @@
 }
 
 @media print {
-  /* 1. Reset everything to be invisible and un-positioned */
-  html, body {
-    background: white !important;
-    height: auto !important;
-    overflow: visible !important;
-    margin: 0 !important;
-    padding: 0 !important;
+  /* 1. Hide everything by default */
+  body * {
+    visibility: hidden !important;
   }
 
-  /* Hide the entire app UI */
-  body > *:not([data-radix-portal]) {
-    display: none !important;
+  /* 2. Target the report and make it and all its children visible */
+  #pdf-report,
+  #pdf-report * {
+    visibility: visible !important;
+    color: black !important;
   }
 
-  /* 2. Target the Radix Portal containing the Modal */
-  [data-radix-portal] {
+  /* 3. Position the report at the very top of the print page */
+  #pdf-report {
     position: absolute !important;
-    top: 0 !important;
     left: 0 !important;
-    width: 100% !important;
-    display: block !important;
-  }
-
-  /* Hide the Modal Backdrop/Overlay */
-  [data-radix-portal] [data-state="open"] {
-    background: transparent !important;
-    animation: none !important;
-    box-shadow: none !important;
-  }
-
-  /* 3. Force Dialog Content to be a normal block element */
-  [data-radix-portal] [role="dialog"] {
-    position: relative !important;
     top: 0 !important;
-    left: 0 !important;
-    transform: none !important;
     width: 100% !important;
-    max-width: none !important;
-    height: auto !important;
-    max-height: none !important;
     margin: 0 !important;
     padding: 0 !important;
+    display: block !important;
+    visibility: visible !important;
+    background: white !important;
     border: none !important;
     box-shadow: none !important;
-    background: white !important;
-    display: block !important;
-    overflow: visible !important;
   }
 
-  /* Hide header and close button in print */
-  .report-modal-header,
-  [role="dialog"] button[aria-label="Close"],
-  .print-hidden {
-    display: none !important;
-  }
-
-  /* 4. Reset ScrollArea containers to allow natural content flow */
+  /* 4. Disable all scroll areas and force them to flow naturally */
   [data-radix-scroll-area-viewport] {
     height: auto !important;
     overflow: visible !important;
     display: block !important;
   }
 
-  /* 5. The Actual Report Content Styling */
-  #pdf-report {
-    display: block !important;
-    width: 100% !important;
-    margin: 0 !important;
-    padding: 1cm !important; /* Proper margin for A4 */
-    background: white !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-
-  /* Force charts to render with size */
+  /* 5. Force specific elements like charts to render properly */
   .report-chart-container {
-    display: block !important;
-    width: 100% !important;
     height: 400px !important;
-    page-break-inside: avoid !important;
-    margin-bottom: 2rem !important;
-  }
-
-  .recharts-responsive-container {
     width: 100% !important;
-    height: 100% !important;
     display: block !important;
-  }
-
-  /* Typography for print */
-  h1, h2, h3, h4, p, span, li {
-    color: #000 !important;
-    text-shadow: none !important;
-  }
-
-  .report-section {
     page-break-inside: avoid !important;
-    margin-bottom: 1.5rem !important;
   }
 
-  /* Ensure background colors are preserved if possible (modern browsers) */
+  /* Hide the UI elements like buttons and headers that aren't part of the report text */
+  .print-hidden,
+  button,
+  [role="dialog"] > button {
+    display: none !important;
+  }
+
+  /* Prevent background colors from disappearing */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;

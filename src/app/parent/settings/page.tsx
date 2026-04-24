@@ -109,6 +109,7 @@ export default function ParentSettings() {
         name: c.name,
         usageMinutes: Math.floor(Math.random() * 500) + 200,
         missionsCompleted: Math.floor(Math.random() * 10) + 2,
+        description: "",
         diaryEntries: Math.floor(Math.random() * 7),
         healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
       }));
@@ -148,7 +149,7 @@ export default function ParentSettings() {
 
   return (
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
-      <div className="flex justify-between items-end print:hidden">
+      <div className="flex justify-between items-end">
         <div>
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
             Control Center <ShieldCheck className="text-primary h-8 w-8" />
@@ -164,7 +165,7 @@ export default function ParentSettings() {
         </div>
       </div>
 
-      <div className="grid gap-6 print:hidden">
+      <div className="grid gap-6">
         <Card className="rounded-[2rem] border-none shadow-sm bg-white">
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
@@ -226,7 +227,7 @@ export default function ParentSettings() {
 
       <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
         <DialogContent className="rounded-[3rem] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
-          <DialogHeader className="p-8 pb-4 bg-primary text-white print:hidden">
+          <DialogHeader className="p-8 pb-4 bg-primary text-white report-modal-header">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-8 w-8" />
@@ -243,7 +244,7 @@ export default function ParentSettings() {
           
           <ScrollArea className="flex-1 p-8 bg-[#F8FAFC]">
             <div id="pdf-report" className="bg-white p-10 rounded-[2.5rem] border shadow-sm space-y-8 text-foreground max-w-3xl mx-auto">
-              <div className="flex justify-between items-center border-b pb-6">
+              <div className="flex justify-between items-center border-b pb-6 report-section">
                 <div>
                   <h1 className="text-4xl font-black tracking-tighter text-primary italic">Kids<span className="text-foreground/80">yee</span></h1>
                   <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mt-1">Smart Screen Time Guardian</p>
@@ -254,7 +255,7 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
+              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 report-section">
                 <h2 className="text-xl font-black text-primary mb-3">Health Assistant Note</h2>
                 <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-sm font-medium">
                   {testReport?.body}
@@ -262,7 +263,7 @@ export default function ParentSettings() {
               </div>
 
               {testReport?.chartData && testReport.chartData.length > 0 && (
-                <div className="space-y-4">
+                <div className="space-y-4 report-section">
                   <h2 className="text-xl font-black flex items-center gap-2">
                     <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
                   </h2>
@@ -292,7 +293,7 @@ export default function ParentSettings() {
                 </div>
               )}
 
-              <div className="space-y-4">
+              <div className="space-y-4 report-section">
                 <h2 className="text-xl font-black flex items-center gap-2">
                   <BarChart3 className="h-5 w-5 text-primary" /> Individual Breakdown
                 </h2>
@@ -301,7 +302,7 @@ export default function ParentSettings() {
                 </div>
               </div>
 
-              <div className="pt-8 border-t flex flex-col items-center gap-2 text-center">
+              <div className="pt-8 border-t flex flex-col items-center gap-2 text-center report-section">
                 <div className="bg-accent/10 text-accent-foreground font-black text-[10px] px-3 py-1 rounded-full">
                   PROTECTED BY KIDSYEE AI
                 </div>

@@ -44,46 +44,97 @@
 }
 
 @media print {
-  /* 1. Hide the entire UI of the app during print */
-  body * {
-    visibility: hidden;
-  }
-
-  /* 2. Isolate the report container and make it visible */
-  #pdf-report, #pdf-report * {
-    visibility: visible;
-  }
-
-  /* 3. Position the report for printing */
-  #pdf-report {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 1cm;
+  /* 1. Reset base elements */
+  html, body {
+    height: auto !important;
+    overflow: visible !important;
     background: white !important;
-    display: block !important;
-    z-index: 9999;
+    margin: 0 !important;
+    padding: 0 !important;
   }
 
-  /* 4. Ensure colors and charts are printed */
-  * {
-    -webkit-print-color-adjust: exact !important;
-    print-color-adjust: exact !important;
+  /* 2. Hide EVERYTHING in the main app layout */
+  body > *:not([data-radix-portal]) {
+    display: none !important;
   }
 
-  /* 5. Force specific elements to show up well */
-  .report-chart-container {
-    display: block !important;
-    height: 350px !important;
+  /* 3. Target the Radix Portal containing the Dialog */
+  [data-radix-portal] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     width: 100% !important;
-    margin-bottom: 2rem !important;
+    display: block !important;
   }
 
-  /* Hide print buttons while printing */
+  /* 4. Reset Dialog Overlay (hide it) */
+  [data-radix-portal] [data-state="open"] {
+    background: transparent !important;
+    animation: none !important;
+  }
+
+  /* 5. Force Dialog Content to fill the page and remove scrolling */
+  [data-radix-portal] [role="dialog"] {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: none !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    display: block !important;
+    background: white !important;
+  }
+
+  /* 6. Hide the Modal Header and Close Button */
+  .report-modal-header, 
+  button[aria-label="Close"],
   .print-hidden {
     display: none !important;
+  }
+
+  /* 7. Force ScrollArea to be visible and unclipped */
+  [data-radix-scroll-area-viewport] {
+    height: auto !important;
+    overflow: visible !important;
+    display: block !important;
+  }
+
+  /* 8. Style the actual report content */
+  #pdf-report {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 1.5cm !important;
+    background: white !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* 9. Ensure charts are visible and sized correctly */
+  .report-chart-container {
+    display: block !important;
+    height: 400px !important;
+    width: 100% !important;
+    page-break-inside: avoid;
+  }
+
+  .recharts-responsive-container {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  /* 10. Better text rendering for print */
+  h1, h2, h3, p, span {
+    color: black !important;
+  }
+
+  /* Prevent page breaks inside key sections */
+  .report-section {
+    page-break-inside: avoid;
   }
 }
 

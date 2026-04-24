@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { ShieldCheck, Mail, Loader2, User, Sparkles, Printer, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
+import { ShieldCheck, Mail, Loader2, User, Sparkles, Printer, PieChart as PieChartIcon, BarChart3, Download } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
@@ -236,7 +236,7 @@ export default function ParentSettings() {
                 </div>
               </div>
               <Button onClick={handlePrintReport} className="rounded-full bg-white text-primary hover:bg-white/90 font-bold">
-                <Printer className="h-4 w-4 mr-2" /> Save PDF
+                <Download className="h-4 w-4 mr-2" /> Save PDF
               </Button>
             </div>
           </DialogHeader>
@@ -266,7 +266,7 @@ export default function ParentSettings() {
                   <h2 className="text-xl font-black flex items-center gap-2">
                     <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
                   </h2>
-                  <div className="report-chart-container h-[350px] w-full bg-white rounded-3xl border-2 border-dashed flex items-center justify-center p-4">
+                  <div className="report-chart-container h-[400px] w-full bg-white rounded-3xl border flex items-center justify-center p-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie

@@ -44,21 +44,21 @@
 }
 
 @media print {
-  /* 1. Reset base elements */
+  /* 1. Reset everything to be invisible and un-positioned */
   html, body {
+    background: white !important;
     height: auto !important;
     overflow: visible !important;
-    background: white !important;
     margin: 0 !important;
     padding: 0 !important;
   }
 
-  /* 2. Hide EVERYTHING in the main app layout */
+  /* Hide the entire app UI */
   body > *:not([data-radix-portal]) {
     display: none !important;
   }
 
-  /* 3. Target the Radix Portal containing the Dialog */
+  /* 2. Target the Radix Portal containing the Modal */
   [data-radix-portal] {
     position: absolute !important;
     top: 0 !important;
@@ -67,15 +67,18 @@
     display: block !important;
   }
 
-  /* 4. Reset Dialog Overlay (hide it) */
+  /* Hide the Modal Backdrop/Overlay */
   [data-radix-portal] [data-state="open"] {
     background: transparent !important;
     animation: none !important;
+    box-shadow: none !important;
   }
 
-  /* 5. Force Dialog Content to fill the page and remove scrolling */
+  /* 3. Force Dialog Content to be a normal block element */
   [data-radix-portal] [role="dialog"] {
-    position: static !important;
+    position: relative !important;
+    top: 0 !important;
+    left: 0 !important;
     transform: none !important;
     width: 100% !important;
     max-width: none !important;
@@ -85,56 +88,66 @@
     padding: 0 !important;
     border: none !important;
     box-shadow: none !important;
-    display: block !important;
     background: white !important;
+    display: block !important;
+    overflow: visible !important;
   }
 
-  /* 6. Hide the Modal Header and Close Button */
-  .report-modal-header, 
-  button[aria-label="Close"],
+  /* Hide header and close button in print */
+  .report-modal-header,
+  [role="dialog"] button[aria-label="Close"],
   .print-hidden {
     display: none !important;
   }
 
-  /* 7. Force ScrollArea to be visible and unclipped */
+  /* 4. Reset ScrollArea containers to allow natural content flow */
   [data-radix-scroll-area-viewport] {
     height: auto !important;
     overflow: visible !important;
     display: block !important;
   }
 
-  /* 8. Style the actual report content */
+  /* 5. The Actual Report Content Styling */
   #pdf-report {
     display: block !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 1.5cm !important;
+    padding: 1cm !important; /* Proper margin for A4 */
     background: white !important;
     border: none !important;
     box-shadow: none !important;
   }
 
-  /* 9. Ensure charts are visible and sized correctly */
+  /* Force charts to render with size */
   .report-chart-container {
     display: block !important;
-    height: 400px !important;
     width: 100% !important;
-    page-break-inside: avoid;
+    height: 400px !important;
+    page-break-inside: avoid !important;
+    margin-bottom: 2rem !important;
   }
 
   .recharts-responsive-container {
     width: 100% !important;
     height: 100% !important;
+    display: block !important;
   }
 
-  /* 10. Better text rendering for print */
-  h1, h2, h3, p, span {
-    color: black !important;
+  /* Typography for print */
+  h1, h2, h3, h4, p, span, li {
+    color: #000 !important;
+    text-shadow: none !important;
   }
 
-  /* Prevent page breaks inside key sections */
   .report-section {
-    page-break-inside: avoid;
+    page-break-inside: avoid !important;
+    margin-bottom: 1.5rem !important;
+  }
+
+  /* Ensure background colors are preserved if possible (modern browsers) */
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
   }
 }
 

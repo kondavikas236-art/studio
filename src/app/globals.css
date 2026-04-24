@@ -44,58 +44,66 @@
 }
 
 @media print {
-  body {
+  /* Hide UI elements that aren't the report */
+  body > * {
+    display: none !important;
+  }
+
+  /* Force the portal (where the dialog lives) to be visible */
+  body > .radix-portal, 
+  body > [data-radix-portal-pointer-events] {
+    display: block !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Reset dialog styles for printing */
+  [role="dialog"] {
+    position: static !important;
+    transform: none !important;
+    width: 100% !important;
+    max-width: none !important;
     background: white !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+  }
+
+  /* The actual report content */
+  #pdf-report {
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 1.5cm !important; /* Clean PDF margins */
     color: black !important;
   }
 
-  /* Hide everything except the report container */
-  body > *:not(.radix-portal) {
+  .print-hidden {
     display: none !important;
   }
 
-  /* Within the portal (Dialog), hide UI elements like the close button and headers */
-  .radix-portal [role="dialog"] > *:not(div:has(#pdf-report)),
-  .radix-portal .print-hidden {
-    display: none !important;
-  }
-
-  /* Ensure the report container itself is positioned correctly */
-  #pdf-report {
-    position: absolute !important;
-    left: 0 !important;
-    top: 0 !important;
-    width: 100% !important;
-    max-width: none !important;
-    margin: 0 !important;
-    padding: 30px !important;
-    border: none !important;
-    box-shadow: none !important;
-    background: white !important;
-    display: block !important;
-    visibility: visible !important;
-  }
-
-  /* Darken colors for print visibility */
+  /* Darken headings for PDF clarity */
   #pdf-report h1, #pdf-report h2, #pdf-report h3 {
     color: #1996C5 !important;
   }
-  
+
   #pdf-report p, #pdf-report div {
     color: #111 !important;
   }
 
-  /* Fix chart visibility */
+  /* Ensure Pie Chart is visible */
   .recharts-responsive-container {
     width: 100% !important;
-    height: 400px !important;
+    height: 350px !important;
     display: block !important;
     visibility: visible !important;
   }
 
   svg {
     display: block !important;
-    visibility: visible !important;
   }
 }
 

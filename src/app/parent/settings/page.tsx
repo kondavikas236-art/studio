@@ -175,7 +175,13 @@ export default function ParentSettings() {
           </h2>
           <p className="text-muted-foreground">Configure boundaries and healthy habits.</p>
         </div>
-        <Button onClick={handleSave} className="rounded-full px-8 font-bold">Save Changes</Button>
+        <div className="flex gap-2">
+           <Button variant="outline" onClick={handleTriggerTestReport} disabled={isReportLoading} className="rounded-full font-bold">
+             {isReportLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
+             Preview Report
+           </Button>
+           <Button onClick={handleSave} className="rounded-full px-8 font-bold">Save Changes</Button>
+        </div>
       </div>
 
       <div className="grid gap-6 print:hidden">
@@ -214,26 +220,12 @@ export default function ParentSettings() {
         </Card>
 
         <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-primary overflow-hidden">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Mail className="h-5 w-5 text-primary" />
-                <CardTitle>AI Family Reports</CardTitle>
-              </div>
-              <CardDescription>Consolidated wellness summaries.</CardDescription>
+          <CardHeader>
+            <div className="flex items-center gap-2 mb-2">
+              <Mail className="h-5 w-5 text-primary" />
+              <CardTitle>AI Family Reports</CardTitle>
             </div>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="rounded-full" 
-                onClick={handleTriggerTestReport}
-                disabled={isReportLoading}
-              >
-                {isReportLoading ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
-                Generate PDF Preview
-              </Button>
-            </div>
+            <CardDescription>Consolidated wellness summaries delivered to your inbox.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
@@ -252,7 +244,7 @@ export default function ParentSettings() {
 
       <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
         <DialogContent className="rounded-[3rem] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
-          <DialogHeader className="p-8 pb-4 bg-primary text-white print-hidden">
+          <DialogHeader className="p-8 pb-4 bg-primary text-white print:hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="bg-white/20 p-2 rounded-2xl">

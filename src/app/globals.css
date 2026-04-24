@@ -44,12 +44,12 @@
 }
 
 @media print {
-  /* Hide the entire app UI */
+  /* Hide the entire app UI including scrollbars and overlays */
   body > *:not([data-radix-portal-pointer-events]) {
     display: none !important;
   }
 
-  /* Target the portal containing the dialog */
+  /* Target the portal containing the dialog specifically */
   body > [data-radix-portal-pointer-events] {
     display: block !important;
     position: absolute !important;
@@ -74,32 +74,41 @@
     margin: 0 !important;
   }
 
-  /* Hide dialog buttons, header, and scrolls during print */
+  /* Hide navigation, buttons, and headers during print */
   button, 
   header, 
+  nav,
   .print-hidden,
   [data-radix-scroll-area-viewport] > div > div:first-child {
     display: none !important;
   }
 
-  /* The actual report content container - Force visibility and structure */
+  /* The actual report content container */
   #pdf-report {
     display: block !important;
     visibility: visible !important;
     width: 100% !important;
-    max-width: 21cm !important; /* A4 Width approx */
+    max-width: 21cm !important;
     margin: 0 auto !important;
-    padding: 2cm !important;
+    padding: 1.5cm !important;
     background: white !important;
     color: black !important;
     border: none !important;
     box-shadow: none !important;
   }
 
-  /* Force Pie Chart to be visible and fixed size */
+  /* Force the Chart to render with a fixed size during print */
+  .report-chart-container {
+    display: block !important;
+    width: 600px !important;
+    height: 350px !important;
+    margin: 20px auto !important;
+    border: none !important;
+  }
+
   .recharts-responsive-container {
     width: 100% !important;
-    height: 400px !important;
+    height: 100% !important;
     display: block !important;
     visibility: visible !important;
     page-break-inside: avoid;
@@ -110,7 +119,7 @@
     max-width: 100% !important;
   }
 
-  /* Ensure text colors are dark enough for printing */
+  /* Color adjustments for print quality */
   h1, h2, h3, h4 { 
     color: #1996C5 !important; 
     -webkit-print-color-adjust: exact;
@@ -121,15 +130,9 @@
     -webkit-print-color-adjust: exact;
   }
 
-  /* Force background colors of specific utility blocks */
   .bg-primary\/5 {
-    background-color: rgba(25, 150, 197, 0.05) !important;
+    background-color: #f0f7fa !important;
     -webkit-print-color-adjust: exact;
-  }
-
-  /* Hide the dialog close button */
-  [role="dialog"] button {
-    display: none !important;
   }
 }
 

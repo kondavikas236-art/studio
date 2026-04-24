@@ -15,6 +15,7 @@ import { generateWeeklyReport } from "@/ai/flows/ai-weekly-report-flow";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
+import { cn } from "@/lib/utils";
 
 const CHART_COLORS = ['#1996C5', '#CFE467', '#4FB0C6', '#A855F7', '#F97316'];
 
@@ -265,7 +266,7 @@ export default function ParentSettings() {
                   <h2 className="text-xl font-black flex items-center gap-2">
                     <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
                   </h2>
-                  <div className="h-[350px] w-full bg-white rounded-3xl border-2 border-dashed flex items-center justify-center p-4">
+                  <div className="report-chart-container h-[350px] w-full bg-white rounded-3xl border-2 border-dashed flex items-center justify-center p-4">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie

@@ -3,22 +3,18 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
-import { ShieldAlert, Bug, Bell, Clock, Mail, Loader2, Smartphone, ShieldCheck, User, Send, Sparkles, FileText, Printer, BarChart3, PieChart as PieChartIcon } from "lucide-react";
+import { ShieldCheck, Mail, Loader2, User, Sparkles, Printer, PieChart as PieChartIcon, BarChart3 } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { generateWeeklyReport } from "@/ai/flows/ai-weekly-report-flow";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
-import { cn } from "@/lib/utils";
 
 const CHART_COLORS = ['#1996C5', '#CFE467', '#4FB0C6', '#A855F7', '#F97316'];
 
@@ -43,16 +39,11 @@ export default function ParentSettings() {
   const [settings, setSettings] = useState({
     firstName: "",
     lastName: "",
-    dailyLimit: 120,
-    enableBugDeterrent: false,
+    enableBugDeterrent: true,
     eyeBreakInterval: 20,
-    notificationsEnabled: true,
     receiveWeeklyReportEmail: false,
     weeklyReportDayOfWeek: "Monday",
     weeklyReportSendTime: "09:00",
-    backgroundMonitoring: true,
-    blockSocialMedia: true,
-    blockVideoApps: true,
   });
 
   const [isReportLoading, setIsReportLoading] = useState(false);
@@ -70,8 +61,6 @@ export default function ParentSettings() {
         firstName: parentProfile.firstName || "",
         lastName: parentProfile.lastName || "",
         receiveWeeklyReportEmail: parentProfile.receiveWeeklyReportEmail || false,
-        weeklyReportDayOfWeek: parentProfile.weeklyReportDayOfWeek || "Monday",
-        weeklyReportSendTime: parentProfile.weeklyReportSendTime || "09:00",
       }));
     }
     const saved = localStorage.getItem('parent-settings');
@@ -79,9 +68,7 @@ export default function ParentSettings() {
       try {
         const parsed = JSON.parse(saved);
         setSettings(prev => ({ ...prev, ...parsed }));
-      } catch (e) {
-        console.error("Failed to parse settings", e);
-      }
+      } catch (e) {}
     }
   }, [parentProfile]);
 
@@ -93,8 +80,6 @@ export default function ParentSettings() {
       firstName: settings.firstName,
       lastName: settings.lastName,
       receiveWeeklyReportEmail: settings.receiveWeeklyReportEmail,
-      weeklyReportDayOfWeek: settings.weeklyReportDayOfWeek,
-      weeklyReportSendTime: settings.weeklyReportSendTime,
       email: user.email || "",
       isPro: parentProfile?.isPro || false,
     }, { merge: true });
@@ -102,8 +87,8 @@ export default function ParentSettings() {
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 
     toast({
-      title: "Profile Updated!",
-      description: "Your parent profile and policies have been saved.",
+      title: "Settings Saved! 🛡️",
+      description: "Cockroach deterrents and wellness policies updated.",
     });
   };
 
@@ -127,12 +112,10 @@ export default function ParentSettings() {
         healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
       }));
 
-      const reportData = {
+      const result = await generateWeeklyReport({
         parentName: settings.firstName || "Parent",
         children: simulatedChildren,
-      };
-
-      const result = await generateWeeklyReport(reportData);
+      });
       
       setTestReport({ 
         subject: result.emailSubject, 
@@ -142,11 +125,7 @@ export default function ParentSettings() {
       });
     } catch (error) {
       console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Report Failed",
-        description: "Could not generate report. Please try again.",
-      });
+      toast({ variant: "destructive", title: "Report Generation Failed" });
     } finally {
       setIsReportLoading(false);
     }
@@ -173,70 +152,72 @@ export default function ParentSettings() {
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
             Control Center <ShieldCheck className="text-primary h-8 w-8" />
           </h2>
-          <p className="text-muted-foreground">Configure boundaries and healthy habits.</p>
+          <p className="text-muted-foreground">Configure boundaries and digital wellness habits.</p>
         </div>
         <div className="flex gap-2">
            <Button variant="outline" onClick={handleTriggerTestReport} disabled={isReportLoading} className="rounded-full font-bold">
              {isReportLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
              Preview Report
            </Button>
-           <Button onClick={handleSave} className="rounded-full px-8 font-bold">Save Changes</Button>
+           <Button onClick={handleSave} className="rounded-full px-8 font-bold shadow-lg">Save Changes</Button>
         </div>
       </div>
 
       <div className="grid gap-6 print:hidden">
-        <Card className="rounded-3xl border-none shadow-sm">
+        <Card className="rounded-[2rem] border-none shadow-sm bg-white">
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
               <User className="h-5 w-5 text-primary" />
               <CardTitle>Parent Profile</CardTitle>
             </div>
-            <CardDescription>Update your personal info.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="firstName">First Name</Label>
-                <Input 
-                  id="firstName" 
-                  placeholder="e.g. Sarah" 
-                  value={settings.firstName}
-                  onChange={(e) => setSettings({...settings, firstName: e.target.value})}
-                  className="rounded-xl"
-                />
+                <Input id="firstName" value={settings.firstName} onChange={(e) => setSettings({...settings, firstName: e.target.value})} className="rounded-xl" />
               </div>
               <div className="space-y-2">
                 <Label htmlFor="lastName">Last Name</Label>
-                <Input 
-                  id="lastName" 
-                  placeholder="e.g. Johnson" 
-                  value={settings.lastName}
-                  onChange={(e) => setSettings({...settings, lastName: e.target.value})}
-                  className="rounded-xl"
-                />
+                <Input id="lastName" value={settings.lastName} onChange={(e) => setSettings({...settings, lastName: e.target.value})} className="rounded-xl" />
               </div>
             </div>
           </CardContent>
         </Card>
 
-        <Card className="rounded-3xl border-none shadow-sm border-l-4 border-l-primary overflow-hidden">
+        <Card className="rounded-[2rem] border-none shadow-sm border-l-4 border-l-primary bg-white">
+          <CardHeader>
+             <div className="flex items-center gap-2 mb-2">
+              <ShieldCheck className="h-5 w-5 text-primary" />
+              <CardTitle>Cockroach Deterrent</CardTitle>
+            </div>
+            <CardDescription>Bugs appear when screen time limits are exceeded or eye breaks are missed.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label className="text-base font-bold">Enable Cockroach Mode</Label>
+                <p className="text-sm text-muted-foreground">Automatic deterrent when healthy limits are hit.</p>
+              </div>
+              <Switch checked={settings.enableBugDeterrent} onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="rounded-[2rem] border-none shadow-sm bg-white">
           <CardHeader>
             <div className="flex items-center gap-2 mb-2">
               <Mail className="h-5 w-5 text-primary" />
               <CardTitle>AI Family Reports</CardTitle>
             </div>
-            <CardDescription>Consolidated wellness summaries delivered to your inbox.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base font-bold">Auto-Email Reports</Label>
-                <p className="text-sm text-muted-foreground">Automatically send a summary of all children.</p>
+                <Label className="text-base font-bold">Weekly Wellness Email</Label>
+                <p className="text-sm text-muted-foreground">Receive a consolidated summary of all children's activity.</p>
               </div>
-              <Switch 
-                checked={settings.receiveWeeklyReportEmail} 
-                onCheckedChange={(val) => setSettings({...settings, receiveWeeklyReportEmail: val})} 
-              />
+              <Switch checked={settings.receiveWeeklyReportEmail} onCheckedChange={(val) => setSettings({...settings, receiveWeeklyReportEmail: val})} />
             </div>
           </CardContent>
         </Card>
@@ -247,12 +228,13 @@ export default function ParentSettings() {
           <DialogHeader className="p-8 pb-4 bg-primary text-white print:hidden">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="bg-white/20 p-2 rounded-2xl">
-                  <ShieldCheck className="h-6 w-6" />
+                <ShieldCheck className="h-8 w-8" />
+                <div className="text-left">
+                  <DialogTitle className="text-2xl font-black">Family Wellness Summary</DialogTitle>
+                  <p className="text-xs font-bold opacity-80 uppercase tracking-widest">AI Generated Preview</p>
                 </div>
-                <DialogTitle className="text-2xl font-black">Family Wellness Report</DialogTitle>
               </div>
-              <Button onClick={handlePrintReport} size="sm" className="rounded-full bg-white text-primary hover:bg-white/90 font-bold border-none">
+              <Button onClick={handlePrintReport} className="rounded-full bg-white text-primary hover:bg-white/90 font-bold">
                 <Printer className="h-4 w-4 mr-2" /> Save PDF
               </Button>
             </div>
@@ -263,16 +245,16 @@ export default function ParentSettings() {
               <div className="flex justify-between items-center border-b pb-6">
                 <div>
                   <h1 className="text-4xl font-black tracking-tighter text-primary italic">Kids<span className="text-foreground/80">yee</span></h1>
-                  <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mt-1">Family Digital Wellness Summary</p>
+                  <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mt-1">Smart Screen Time Guardian</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Report Date</p>
-                  <p className="text-lg font-bold">{new Date().toLocaleDateString()}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Report Period</p>
+                  <p className="text-lg font-bold">Weekly Update</p>
                 </div>
               </div>
 
               <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10">
-                <h2 className="text-xl font-black text-primary mb-3">Parental Guidance Summary</h2>
+                <h2 className="text-xl font-black text-primary mb-3">Health Assistant Note</h2>
                 <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-sm font-medium">
                   {testReport?.body}
                 </div>
@@ -290,10 +272,9 @@ export default function ParentSettings() {
                           data={testReport.chartData}
                           cx="50%"
                           cy="50%"
-                          labelLine={true}
-                          label={({ name, value }) => `${name}: ${value}m`}
+                          innerRadius={60}
                           outerRadius={100}
-                          fill="#1996C5"
+                          paddingAngle={5}
                           dataKey="value"
                           nameKey="name"
                           isAnimationActive={false}
@@ -303,7 +284,7 @@ export default function ParentSettings() {
                           ))}
                         </Pie>
                         <RechartsTooltip />
-                        <Legend verticalAlign="bottom" height={36} />
+                        <Legend verticalAlign="bottom" height={36}/>
                       </PieChart>
                     </ResponsiveContainer>
                   </div>
@@ -312,18 +293,18 @@ export default function ParentSettings() {
 
               <div className="space-y-4">
                 <h2 className="text-xl font-black flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" /> Child-Specific Breakdown
+                  <BarChart3 className="h-5 w-5 text-primary" /> Individual Breakdown
                 </h2>
-                <div className="whitespace-pre-wrap text-sm leading-relaxed p-6 bg-muted/10 rounded-3xl border border-muted font-medium text-foreground">
+                <div className="whitespace-pre-wrap text-sm leading-relaxed p-6 bg-muted/5 rounded-3xl border font-medium text-foreground">
                   {testReport?.formal}
                 </div>
               </div>
 
               <div className="pt-8 border-t flex flex-col items-center gap-2 text-center">
                 <div className="bg-accent/10 text-accent-foreground font-black text-[10px] px-3 py-1 rounded-full">
-                  SECURELY GENERATED BY KIDSYEE AI
+                  PROTECTED BY KIDSYEE AI
                 </div>
-                <p className="text-[10px] text-muted-foreground font-bold italic">Protecting vision, fostering mindfulness.</p>
+                <p className="text-[10px] text-muted-foreground font-bold italic">Generated on {new Date().toLocaleDateString()}</p>
               </div>
             </div>
           </ScrollArea>

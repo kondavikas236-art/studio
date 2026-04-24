@@ -1,18 +1,16 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Trophy, Lock, ShieldCheck, Share2, Loader2 } from "lucide-react";
+import { Lock, ShieldCheck, Loader2 } from "lucide-react";
 import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { toast } from "@/hooks/use-toast";
-import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
-import { collection } from "firebase/firestore";
+import { useFirebase, useUser, useCollection, useMemoFirebase, useDoc } from "@/firebase";
+import { collection, doc } from "firebase/firestore";
 
 export default function KidLayout({
   children,
@@ -23,57 +21,68 @@ export default function KidLayout({
   const { user, isUserLoading: isAuthLoading } = useUser();
   const { firestore: db } = useFirebase();
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
+  
   const [isBugModeActive, setIsBugModeActive] = useState(false);
+  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(130); // Default simulated high usage for demo
   const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Fetch children to get current kid
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return collection(db, "parentProfiles", user.uid, "childProfiles");
   }, [db, user]);
 
   const { data: childrenData, isLoading: isChildrenLoading } = useCollection(childrenQuery);
+  const child = childrenData?.[0];
+  const explorerName = child?.name || "Explorer";
 
-  const explorerName = childrenData?.[0]?.name || "Explorer";
+  // Watch specifically for this child's profile to get latest limits
+  const childRef = useMemoFirebase(() => {
+    if (!db || !user || !child?.id) return null;
+    return doc(db, "parentProfiles", user.uid, "childProfiles", child.id);
+  }, [db, user, child?.id]);
 
-  const isSafeZone = pathname === "/kid/diary";
-  const shouldDisplayBugs = isBugModeActive && !isSafeZone;
+  const { data: liveChild } = useDoc(childRef);
 
-  const handleShare = async () => {
-    const shareData = {
-      title: 'Kidsyee - Eye & Brain Wellness',
-      text: 'Check out Kidsyee!',
-      url: window.location.origin,
-    };
-    if (navigator.share) {
-      await navigator.share(shareData);
-    } else {
-      await navigator.clipboard.writeText(window.location.origin);
-      toast({ title: "Link Copied!" });
-    }
-  };
+  const isSafeZone = pathname === "/kid/diary" || pathname === "/kid/eye-health";
+  
+  // Cockroach Mode Logic:
+  // 1. Parent must have enabled it in settings.
+  // 2. Kid must be outside a "Safe Zone" (like eye-health gym).
+  // 3. Simulated/Actual usage must exceed the parent-set limit.
+  const limitReached = simulatedUsageMinutes >= (liveChild?.dailyScreenTimeLimitMinutes || 120);
+  const shouldDisplayBugs = isBugModeActive && limitReached && !isSafeZone;
 
   const checkSettingsAndSetTimer = () => {
     if (bugTimerRef.current) {
       clearTimeout(bugTimerRef.current);
       bugTimerRef.current = null;
     }
+    
     const savedSettings = localStorage.getItem('parent-settings');
     let settings = { enableBugDeterrent: true, eyeBreakInterval: 20 };
     if (savedSettings) {
       try { settings = JSON.parse(savedSettings); } catch (e) {}
     }
+
     if (settings.enableBugDeterrent) {
-      const intervalSeconds = settings.eyeBreakInterval || 20;
-      bugTimerRef.current = setTimeout(() => setIsBugModeActive(true), intervalSeconds * 1000);
+      // For demo purposes, we trigger "Bug Mode" intent after a short interval
+      // but the actual bugs only show if limitReached is also true.
+      bugTimerRef.current = setTimeout(() => {
+        setIsBugModeActive(true);
+      }, 5000); // Trigger check after 5s
     }
   };
 
   useEffect(() => {
     checkSettingsAndSetTimer();
+    
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
+      setSimulatedUsageMinutes(0); // Reset simulated usage after a break
       checkSettingsAndSetTimer();
     };
+
     window.addEventListener('mindful-play:break-completed', handleBreakCompleted);
     return () => {
       if (bugTimerRef.current) clearTimeout(bugTimerRef.current);

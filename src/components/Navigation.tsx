@@ -12,7 +12,7 @@ export function Navigation() {
   const isParentPath = pathname?.startsWith("/parent");
 
   const kidLinks = [
-    { href: "/kid/dashboard", label: "My Hub", icon: Gamepad2 },
+    { href: "/kid/dashboard", label: "Hero HQ", icon: Gamepad2 },
     { href: "/kid/eye-health", label: "Eye Gym", icon: ShieldCheck },
     { href: "/parent/settings", label: "Parents", icon: Lock },
     { href: "/kid/achievements", label: "Rewards", icon: Trophy },

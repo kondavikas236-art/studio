@@ -13,7 +13,7 @@ import { z } from 'genkit';
 import { googleAI } from '@genkit-ai/google-genai';
 import wav from 'wav';
 
-const TTSInputSchema = z.string();
+const TTSInputSchema = z.string().describe('The instructional text to convert to speech.');
 export type TTSInput = z.infer<typeof TTSInputSchema>;
 
 const TTSOutputSchema = z.object({
@@ -33,14 +33,14 @@ const ttsFlow = ai.defineFlow(
   },
   async (query) => {
     try {
-      // Use the specialized TTS model. 
-      // Ensure the prompt is just the raw text to avoid triggering text-generation responses.
+      // Specialized instruction for the TTS model to prevent refusals on short text
+      const finalPrompt = `Please speak this instruction clearly: "${query}"`;
+
       const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
-        prompt: query,
+        prompt: finalPrompt,
         config: {
           responseModalities: ['AUDIO'],
-          // Disable safety settings to prevent text-based refusals that break TTS only models
           safetySettings: [
             { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
@@ -49,7 +49,7 @@ const ttsFlow = ai.defineFlow(
           ],
           speechConfig: {
             voiceConfig: {
-              // 'Achernar' is a clear, feminine voice suitable for instructions.
+              // 'Achernar' is a clear, friendly voice suitable for children.
               prebuiltVoiceConfig: { voiceName: 'Achernar' }, 
             },
           },
@@ -69,7 +69,7 @@ const ttsFlow = ai.defineFlow(
       };
     } catch (error: any) {
       console.error('Genkit TTS Generation failed:', error);
-      // Return empty media to allow the UI to continue silently if quota is reached (429)
+      // Return empty media to allow the UI to continue silently if errors occur
       return {
         media: '',
       };

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -10,6 +11,44 @@ import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase
 import { collection } from "firebase/firestore";
 import { textToSpeech } from "@/ai/flows/tts-flow";
 
+const MISSIONS = [
+  { 
+    id: "blink", 
+    title: "Blink Buddy", 
+    description: "A full 1-minute routine to refresh and stretch your eyes!", 
+    duration: 60,
+    color: "bg-primary/10",
+    icon: Eye,
+    steps: [
+      "Ready...", 
+      "Blink fast like a butterfly!", 
+      "Now, blink slowly...", 
+      "Squeeze your eyes shut tight!", 
+      "Open them wide!", 
+      "Look left... and now right!",
+      "Look up... and now down!",
+      "Roll your eyes in a big circle!",
+      "Almost there!", 
+      "Eyes refreshed!"
+    ]
+  },
+  { 
+    id: "distance", 
+    title: "Distance Detective", 
+    description: "Find 3 different things far away in your room.", 
+    duration: 45, 
+    color: "bg-accent/10",
+    icon: Search,
+    steps: [
+      "Ready...", 
+      "Find something BLUE far away...", 
+      "Now find something ROUND far away...", 
+      "Finally, find something TALL far away...", 
+      "Great job, Detective!"
+    ]
+  }
+];
+
 function VisualEyeGym({ stepText }: { stepText: string }) {
   const text = stepText.toLowerCase();
   const isBlinkFast = text.includes("blink fast");
@@ -20,7 +59,6 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
   const isUpDown = text.includes("up") || text.includes("down");
   const isRoll = text.includes("roll");
   
-  // Distance Detective keywords
   const isBlue = text.includes("blue");
   const isRound = text.includes("round");
   const isTall = text.includes("tall");
@@ -36,7 +74,6 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
           isRound && "ring-accent/50",
           isTall && "ring-primary/50"
         )}>
-          {/* Lids */}
           <div className={cn(
             "absolute inset-0 bg-primary/40 z-20 origin-top transition-transform duration-500",
             isShutTight ? "scale-y-100" : "scale-y-0",
@@ -44,7 +81,6 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
             isBlinkSlow && "animate-blink-slow"
           )} />
           
-          {/* Eye Ball Content */}
           <div className={cn(
             "relative w-10 h-10 sm:w-14 sm:h-14 bg-foreground rounded-full transition-all duration-500",
             isWide && "scale-150",
@@ -53,16 +89,9 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
             isUpDown && "animate-eye-up-down left-1/2 top-1/2",
             isRoll && "animate-eye-roll"
           )}>
-             {/* Pupil Highlight */}
              <div className="w-2 h-2 sm:w-4 sm:h-4 bg-white rounded-full absolute top-1.5 left-1.5 opacity-60" />
-             
-             {/* Search Visual Cues */}
-             {isBlue && (
-               <div className="absolute inset-0 border-[3px] border-blue-400 rounded-full animate-ping opacity-40" />
-             )}
-             {isRound && (
-               <div className="absolute inset-0 border-[3px] border-accent rounded-full animate-pulse opacity-60" />
-             )}
+             {isBlue && <div className="absolute inset-0 border-[3px] border-blue-400 rounded-full animate-ping opacity-40" />}
+             {isRound && <div className="absolute inset-0 border-[3px] border-accent rounded-full animate-pulse opacity-60" />}
              {isTall && (
                <div className="absolute inset-0 flex items-center justify-center">
                  <div className="w-1 h-full bg-primary/50 animate-pulse" />
@@ -82,6 +111,7 @@ export default function EyeHealthPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isDone, setIsDone] = useState(false);
+  const [isAudioLoading, setIsAudioLoading] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const childrenQuery = useMemoFirebase(() => {
@@ -92,61 +122,28 @@ export default function EyeHealthPage() {
   const { data: childrenData, isLoading: isChildrenLoading } = useCollection(childrenQuery);
 
   const explorerName = childrenData?.[0]?.name || "Explorer";
-  
-  const missions = [
-    { 
-      id: "blink", 
-      title: "Blink Buddy", 
-      description: "A full 1-minute routine to refresh and stretch your eyes!", 
-      duration: 60,
-      color: "bg-primary/10",
-      icon: Eye,
-      steps: [
-        "Ready...", 
-        "Blink fast like a butterfly!", 
-        "Now, blink slowly...", 
-        "Squeeze your eyes shut tight!", 
-        "Open them wide!", 
-        "Look left... and now right!",
-        "Look up... and now down!",
-        "Roll your eyes in a big circle!",
-        "Almost there!", 
-        "Eyes refreshed!"
-      ]
-    },
-    { 
-      id: "distance", 
-      title: "Distance Detective", 
-      description: "Find 3 different things far away in your room.", 
-      duration: 45, 
-      color: "bg-accent/10",
-      icon: Search,
-      steps: [
-        "Ready...", 
-        "Find something BLUE far away...", 
-        "Now find something ROUND far away...", 
-        "Finally, find something TALL far away...", 
-        "Great job, Detective!"
-      ]
-    }
-  ];
-
-  const activeMission = missions.find(m => m.id === activeMissionId);
+  const activeMission = MISSIONS.find(m => m.id === activeMissionId);
 
   const playInstruction = async (text: string) => {
+    if (!text) return;
+    setIsAudioLoading(true);
     try {
       const result = await textToSpeech(text);
       if (result.media) {
-        if (audioRef.current) {
-          audioRef.current.pause();
-          audioRef.current.src = result.media;
-        } else {
-          audioRef.current = new Audio(result.media);
+        if (!audioRef.current) {
+          audioRef.current = new Audio();
         }
-        audioRef.current.play().catch(e => console.warn("Audio playback interrupted:", e));
+        audioRef.current.src = result.media;
+        audioRef.current.play().catch(e => {
+          if (e.name !== 'AbortError') {
+             console.warn("Audio playback interrupted:", e);
+          }
+        });
       }
     } catch (err) {
       console.error("TTS instruction failed:", err);
+    } finally {
+      setIsAudioLoading(false);
     }
   };
 
@@ -172,7 +169,6 @@ export default function EyeHealthPage() {
       if (activeMission && currentStep < activeMission.steps.length - 1) {
         const nextStep = currentStep + 1;
         setCurrentStep(nextStep);
-        // Step 0 is "Ready", so if the NEW step is > 0, it should be 10s.
         setTimer(10);
       } else {
         setIsDone(true);
@@ -184,13 +180,12 @@ export default function EyeHealthPage() {
   }, [activeMissionId, timer, currentStep, activeMission]);
 
   const startMission = (missionId: string) => {
-    const mission = missions.find(m => m.id === missionId);
+    const mission = MISSIONS.find(m => m.id === missionId);
     if (!mission) return;
     
     setIsDone(false);
     setActiveMissionId(missionId);
     setCurrentStep(0);
-    // First step "Ready..." is always 5 seconds
     setTimer(5);
   };
 
@@ -220,7 +215,10 @@ export default function EyeHealthPage() {
                  <VisualEyeGym stepText={activeMission.steps[currentStep]} />
                  <div className="flex flex-col items-center mt-6 sm:mt-10">
                     <div className="text-4xl sm:text-6xl font-black text-primary drop-shadow-md bg-white/80 px-6 sm:px-8 py-1 sm:py-2 rounded-full border-2 sm:border-4 border-primary/20">{timer}s</div>
-                    <div className="mt-2 text-[10px] sm:text-sm font-black text-primary/70 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">Step {currentStep + 1} of {activeMission.steps.length}</div>
+                    <div className="mt-2 text-[10px] sm:text-sm font-black text-primary/70 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full flex items-center gap-2">
+                      {isAudioLoading && <Loader2 className="h-3 w-3 animate-spin" />}
+                      Step {currentStep + 1} of {activeMission.steps.length}
+                    </div>
                  </div>
               </div>
             </div>
@@ -271,7 +269,7 @@ export default function EyeHealthPage() {
         </Card>
       ) : (
         <div className="grid grid-cols-1 gap-4">
-          {missions.map((m) => {
+          {MISSIONS.map((m) => {
             const Icon = m.icon;
             return (
               <Card key={m.id} className="rounded-[1.5rem] border-2 border-transparent hover:border-primary/20 transition-all kid-card-hover group bg-white">

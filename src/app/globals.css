@@ -104,10 +104,10 @@
   scrollbar-width: none;
 }
 
-/* Eye Gym Animations */
+/* Eye Gym Animations - Enhanced */
 @keyframes blink-fast {
   0%, 100% { transform: scaleY(1); }
-  10%, 30%, 50%, 70%, 90% { transform: scaleY(0.1); }
+  10%, 30%, 50%, 70%, 90% { transform: scaleY(0); }
 }
 
 @keyframes blink-slow {
@@ -116,24 +116,24 @@
 }
 
 @keyframes eye-left-right {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-15px); }
-  75% { transform: translateX(15px); }
+  0%, 100% { transform: translate(0, -50%); }
+  25% { transform: translate(-30px, -50%); }
+  75% { transform: translate(30px, -50%); }
 }
 
 @keyframes eye-up-down {
-  0%, 100% { transform: translateY(0); }
-  25% { transform: translateY(-15px); }
-  75% { transform: translateY(15px); }
+  0%, 100% { transform: translate(-50%, 0); }
+  25% { transform: translate(-50%, -30px); }
+  75% { transform: translate(-50%, 30px); }
 }
 
 @keyframes eye-roll {
-  0% { transform: rotate(0deg) translate(15px) rotate(0deg); }
-  100% { transform: rotate(360deg) translate(15px) rotate(-360deg); }
+  0% { transform: rotate(0deg) translate(30px) rotate(0deg); }
+  100% { transform: rotate(360deg) translate(30px) rotate(-360deg); }
 }
 
 .animate-blink-fast {
-  animation: blink-fast 1.5s infinite;
+  animation: blink-fast 1s infinite;
 }
 
 .animate-blink-slow {

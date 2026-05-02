@@ -11,21 +11,21 @@ import { collection } from "firebase/firestore";
 import { textToSpeech } from "@/ai/flows/tts-flow";
 
 function VisualEyeGym({ stepText }: { stepText: string }) {
-  const isBlinkFast = stepText.includes("blink fast");
-  const isBlinkSlow = stepText.includes("blink slowly");
-  const isShutTight = stepText.includes("shut tight");
-  const isWide = stepText.includes("wide");
-  const isLeftRight = stepText.includes("left") || stepText.includes("right");
-  const isUpDown = stepText.includes("up") || stepText.includes("down");
-  const isRoll = stepText.includes("Roll");
+  const isBlinkFast = stepText.toLowerCase().includes("blink fast");
+  const isBlinkSlow = stepText.toLowerCase().includes("blink slowly");
+  const isShutTight = stepText.toLowerCase().includes("shut tight");
+  const isWide = stepText.toLowerCase().includes("wide");
+  const isLeftRight = stepText.toLowerCase().includes("left") || stepText.toLowerCase().includes("right");
+  const isUpDown = stepText.toLowerCase().includes("up") || stepText.toLowerCase().includes("down");
+  const isRoll = stepText.toLowerCase().includes("roll");
 
   return (
-    <div className="flex gap-8 justify-center items-center py-4">
+    <div className="flex gap-12 justify-center items-center py-8">
       {[0, 1].map((i) => (
-        <div key={i} className="relative w-24 h-24 bg-white rounded-full border-4 border-primary shadow-inner flex items-center justify-center overflow-hidden">
+        <div key={i} className="relative w-32 h-32 bg-white rounded-full border-8 border-primary shadow-inner flex items-center justify-center overflow-hidden">
           {/* Lids */}
           <div className={cn(
-            "absolute inset-0 bg-primary/20 z-20 origin-top transition-transform duration-300",
+            "absolute inset-0 bg-primary/30 z-20 origin-top transition-transform duration-500",
             isShutTight ? "scale-y-100" : "scale-y-0",
             isBlinkFast && "animate-blink-fast",
             isBlinkSlow && "animate-blink-slow"
@@ -33,13 +33,14 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
           
           {/* Eye Ball Content */}
           <div className={cn(
-            "w-12 h-12 bg-foreground rounded-full transition-all duration-500",
-            isWide && "scale-125",
-            isLeftRight && "animate-eye-left-right",
-            isUpDown && "animate-eye-up-down",
+            "relative w-16 h-16 bg-foreground rounded-full transition-all duration-500",
+            isWide && "scale-150",
+            isLeftRight && "animate-eye-left-right left-1/2 top-1/2",
+            isUpDown && "animate-eye-up-down left-1/2 top-1/2",
             isRoll && "animate-eye-roll"
           )}>
-             <div className="w-4 h-4 bg-white rounded-full absolute top-2 left-2 opacity-40" />
+             {/* Pupil Highlight */}
+             <div className="w-5 h-5 bg-white rounded-full absolute top-2 left-2 opacity-40" />
           </div>
         </div>
       ))}
@@ -177,40 +178,40 @@ export default function EyeHealthPage() {
       {activeMissionId && activeMission ? (
         <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden animate-in zoom-in duration-300">
           <CardContent className="p-0">
-            <div className="h-64 bg-muted relative overflow-hidden flex flex-col items-center justify-center">
-              <img src={bgImage?.imageUrl} alt="Mission BG" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+            <div className="min-h-[400px] bg-muted relative overflow-hidden flex flex-col items-center justify-center bg-gradient-to-b from-muted to-white">
+              <img src={bgImage?.imageUrl} alt="Mission BG" className="absolute inset-0 w-full h-full object-cover opacity-10" />
               <div className="relative z-10 w-full px-8">
                  <VisualEyeGym stepText={activeMission.steps[currentStep]} />
-                 <div className="flex flex-col items-center mt-4">
-                    <div className="text-5xl font-black text-primary drop-shadow-md">{timer}s</div>
-                    <div className="text-xs font-bold text-primary/70 uppercase tracking-widest">Step {currentStep + 1} of {activeMission.steps.length - 1}</div>
+                 <div className="flex flex-col items-center mt-8">
+                    <div className="text-6xl font-black text-primary drop-shadow-md bg-white/80 px-8 py-2 rounded-full border-4 border-primary/20">{timer}s</div>
+                    <div className="mt-4 text-sm font-black text-primary/70 uppercase tracking-widest bg-primary/5 px-4 py-1 rounded-full">Step {currentStep + 1} of {activeMission.steps.length - 1}</div>
                  </div>
               </div>
             </div>
             
-            <div className="p-10 text-center space-y-8">
-              <div className="space-y-2">
+            <div className="p-10 text-center space-y-8 bg-white">
+              <div className="space-y-4">
                 <h2 className="text-3xl font-black text-primary">{activeMission.title}</h2>
-                <div className="bg-primary/5 p-6 rounded-3xl border-2 border-primary/10">
-                  <p className="text-2xl font-bold italic">"{activeMission.steps[currentStep]}"</p>
+                <div className="bg-primary/5 p-8 rounded-[2.5rem] border-4 border-primary/10 shadow-inner">
+                  <p className="text-3xl font-black italic text-primary leading-tight">"{activeMission.steps[currentStep]}"</p>
                 </div>
               </div>
 
               <div className="space-y-4">
-                <div className="flex justify-center gap-2">
+                <div className="flex justify-center gap-3">
                    {activeMission.steps.slice(0, -1).map((_, idx) => (
                      <div 
                       key={idx} 
                       className={cn(
-                        "h-3 w-3 rounded-full transition-colors",
-                        idx <= currentStep ? "bg-primary" : "bg-muted"
+                        "h-4 w-4 rounded-full transition-all duration-500",
+                        idx <= currentStep ? "bg-primary scale-125 shadow-md" : "bg-muted"
                       )} 
                      />
                    ))}
                 </div>
               </div>
 
-              <Button variant="ghost" onClick={() => setActiveMissionId(null)} className="rounded-full font-bold text-muted-foreground hover:text-destructive">
+              <Button variant="ghost" onClick={() => setActiveMissionId(null)} className="rounded-full font-black text-muted-foreground hover:text-destructive hover:bg-destructive/5 text-lg">
                 Cancel Mission
               </Button>
             </div>

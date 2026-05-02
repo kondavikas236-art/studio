@@ -34,23 +34,24 @@ const ttsFlow = ai.defineFlow(
   async (query) => {
     try {
       // Use the specialized TTS model. 
-      // We pass the query directly as the prompt to ensure it's treated as transcript only.
+      // We pass the query as a single text part to ensure the model treats it as a transcript.
       const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
         prompt: query,
         config: {
           responseModalities: ['AUDIO'],
-          // Block nothing to prevent text-based refusals that trigger 400 errors.
+          // Safety settings set to BLOCK_NONE to prevent the model from generating 
+          // text-based refusal messages which trigger 400 errors on this model.
           safetySettings: [
             { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_CIVIC_INTEGRITY', threshold: 'BLOCK_NONE' },
           ],
           speechConfig: {
             voiceConfig: {
-              // 'Achernar' is a clear, feminine voice. 
-              // Note: specific 'Indian' categorized voices are not currently exposed in prebuilt names for this model.
+              // 'Achernar' is a clear, feminine voice suitable for instructions.
               prebuiltVoiceConfig: { voiceName: 'Achernar' }, 
             },
           },

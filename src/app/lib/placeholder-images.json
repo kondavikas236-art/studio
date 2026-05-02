@@ -1,3 +1,4 @@
+
 {
   "placeholderImages": [
     {
@@ -20,9 +21,9 @@
     },
     {
       "id": "cockroach-image",
-      "description": "Realistic cockroach deterrent",
-      "imageUrl": "https://picsum.photos/seed/cockroach/200/200",
-      "imageHint": "cockroach bug"
+      "description": "Realistic cockroach top view",
+      "imageUrl": "https://picsum.photos/seed/realistic-bug-123/100/100",
+      "imageHint": "cockroach insect"
     }
   ]
 }

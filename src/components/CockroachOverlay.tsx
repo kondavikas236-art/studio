@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
@@ -19,13 +20,14 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
+      // Increase bug count for a more "active" infestation feel
+      const newBugs = Array.from({ length: 18 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 100}%`,
-        left: `${Math.random() * 100}%`,
-        duration: `${Math.random() * 10 + 10}s`,
-        delay: `${Math.random() * 5}s`,
-        scale: 0.8 + Math.random() * 0.7,
+        top: `${Math.random() * 90}%`,
+        left: `${Math.random() * 90}%`,
+        duration: `${Math.random() * 5 + 5}s`, // Faster scurry
+        delay: `${Math.random() * 3}s`,
+        scale: 0.4 + Math.random() * 0.4, // Smaller, more realistic size
       }));
       setBugs(newBugs);
     } else {
@@ -40,7 +42,7 @@ export function CockroachOverlay({ active }: { active: boolean }) {
       {bugs.map((bug) => (
         <div
           key={bug.id}
-          className="absolute animate-bug-roam"
+          className="absolute animate-bug-scurry"
           style={{
             top: bug.top,
             left: bug.left,
@@ -49,19 +51,19 @@ export function CockroachOverlay({ active }: { active: boolean }) {
             transform: `scale(${bug.scale})`,
           }}
         >
-          <div className="animate-bug-skitter origin-center">
+          <div className="animate-bug-vibrate origin-center">
             <Image 
               src={cockroachImg.imageUrl} 
               alt="Cockroach" 
-              width={100} 
-              height={100}
-              className="filter drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)]"
+              width={60} 
+              height={60}
+              className="filter drop-shadow-[0_8px_8px_rgba(0,0,0,0.5)] brightness-75 contrast-125"
               data-ai-hint={cockroachImg.imageHint}
             />
           </div>
         </div>
       ))}
-      <div className="absolute inset-0 bg-destructive/10 backdrop-blur-[1px] animate-pulse" />
+      <div className="absolute inset-0 bg-destructive/5 backdrop-blur-[0.5px] animate-pulse" />
     </div>
   );
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
@@ -15,7 +14,7 @@ const MISSIONS = [
   { 
     id: "blink", 
     title: "Blink Buddy", 
-    description: "A full 1-minute routine to refresh and stretch your eyes!", 
+    description: "A full routine to refresh and stretch your eyes!", 
     duration: 60,
     color: "bg-primary/10",
     icon: Eye,
@@ -74,20 +73,23 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
           isRound && "ring-accent/50",
           isTall && "ring-primary/50"
         )}>
+          {/* Lids */}
           <div className={cn(
-            "absolute inset-0 bg-primary/40 z-20 origin-top transition-transform duration-500",
+            "absolute inset-0 bg-primary/40 z-20 origin-top transition-transform duration-300",
             isShutTight ? "scale-y-100" : "scale-y-0",
             isBlinkFast && "animate-blink-fast",
             isBlinkSlow && "animate-blink-slow"
           )} />
           
+          {/* Pupil/Iris */}
           <div className={cn(
             "relative w-10 h-10 sm:w-14 sm:h-14 bg-foreground rounded-full transition-all duration-500",
             isWide && "scale-150",
-            isSearching && "animate-eye-focus-far",
+            isSearching && "animate-eye-focus-far left-1/2 top-1/2",
             isLeftRight && "animate-eye-left-right left-1/2 top-1/2",
             isUpDown && "animate-eye-up-down left-1/2 top-1/2",
-            isRoll && "animate-eye-roll"
+            isRoll && "animate-eye-roll left-1/2 top-1/2",
+            !isSearching && !isLeftRight && !isUpDown && !isRoll && "left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           )}>
              <div className="w-2 h-2 sm:w-4 sm:h-4 bg-white rounded-full absolute top-1.5 left-1.5 opacity-60" />
              {isBlue && <div className="absolute inset-0 border-[3px] border-blue-400 rounded-full animate-ping opacity-40" />}
@@ -147,8 +149,9 @@ export default function EyeHealthPage() {
     }
   };
 
+  // Sync instruction with current step change
   useEffect(() => {
-    if (activeMission && activeMissionId && !isDone) {
+    if (activeMission && !isDone) {
       playInstruction(activeMission.steps[currentStep]);
     }
   }, [currentStep, activeMissionId, isDone]);
@@ -169,7 +172,7 @@ export default function EyeHealthPage() {
       if (activeMission && currentStep < activeMission.steps.length - 1) {
         const nextStep = currentStep + 1;
         setCurrentStep(nextStep);
-        setTimer(10);
+        setTimer(7); // Give 7 seconds per active step
       } else {
         setIsDone(true);
         setActiveMissionId(null);
@@ -186,7 +189,7 @@ export default function EyeHealthPage() {
     setIsDone(false);
     setActiveMissionId(missionId);
     setCurrentStep(0);
-    setTimer(5);
+    setTimer(5); // Start first step with 5s delay
   };
 
   const bgImage = PlaceHolderImages.find(img => img.id === 'eye-health-bg');

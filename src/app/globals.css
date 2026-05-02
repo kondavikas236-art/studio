@@ -38,49 +38,97 @@
   }
 }
 
-/* Realistic Jerky Cockroach Movement - Path 1: TL to BR */
+/* Eye Gym Animations */
+@keyframes blink-fast {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.1); }
+}
+
+@keyframes blink-slow {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0); }
+}
+
+@keyframes eye-left-right {
+  0%, 100% { transform: translate(-50%, -50%) translateX(-25%); }
+  50% { transform: translate(-50%, -50%) translateX(25%); }
+}
+
+@keyframes eye-up-down {
+  0%, 100% { transform: translate(-50%, -50%) translateY(-25%); }
+  50% { transform: translate(-50%, -50%) translateY(25%); }
+}
+
+@keyframes eye-roll {
+  0% { transform: translate(-50%, -50%) rotate(0deg) translateX(20px) rotate(0deg); }
+  100% { transform: translate(-50%, -50%) rotate(360deg) translateX(20px) rotate(-360deg); }
+}
+
+@keyframes eye-focus-far {
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(0.6); }
+}
+
+@keyframes eye-healthy {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+@keyframes eye-strained {
+  0%, 100% { transform: scale(1) rotate(0deg); filter: hue-rotate(0deg); }
+  25% { transform: scale(0.95) rotate(-2deg); }
+  75% { transform: scale(0.95) rotate(2deg); filter: hue-rotate(10deg); }
+}
+
+.animate-blink-fast { animation: blink-fast 0.3s infinite; }
+.animate-blink-slow { animation: blink-slow 1.5s infinite; }
+.animate-eye-left-right { animation: eye-left-right 1.5s infinite ease-in-out; }
+.animate-eye-up-down { animation: eye-up-down 1.5s infinite ease-in-out; }
+.animate-eye-roll { animation: eye-roll 2s infinite linear; }
+.animate-eye-focus-far { animation: eye-focus-far 3s infinite ease-in-out; }
+.animate-eye-healthy { animation: eye-healthy 4s infinite ease-in-out; }
+.animate-eye-strained { animation: eye-strained 1s infinite ease-in-out; }
+
+/* Cockroach Scurry Animations */
 @keyframes scurry-tl-br {
   0% { transform: translate(-20vw, -20vh) rotate(45deg); }
   20% { transform: translate(15vw, 10vh) rotate(60deg); }
-  25% { transform: translate(15vw, 10vh) rotate(65deg); } /* Sudden Stop */
+  25% { transform: translate(15vw, 10vh) rotate(65deg); }
   40% { transform: translate(40vw, 40vh) rotate(120deg); }
   55% { transform: translate(45vw, 60vh) rotate(180deg); }
-  60% { transform: translate(45vw, 60vh) rotate(185deg); } /* Sudden Stop */
+  60% { transform: translate(45vw, 60vh) rotate(185deg); }
   80% { transform: translate(85vw, 85vh) rotate(160deg); }
   100% { transform: translate(120vw, 120vh) rotate(45deg); }
 }
 
-/* Path 2: TR to BL */
 @keyframes scurry-tr-bl {
   0% { transform: translate(120vw, -20vh) rotate(-45deg); }
   15% { transform: translate(80vw, 15vh) rotate(-60deg); }
-  20% { transform: translate(80vw, 15vh) rotate(-55deg); } /* Sudden Stop */
+  20% { transform: translate(80vw, 15vh) rotate(-55deg); }
   45% { transform: translate(50vw, 50vh) rotate(-130deg); }
   65% { transform: translate(20vw, 75vh) rotate(-190deg); }
-  70% { transform: translate(20vw, 75vh) rotate(-185deg); } /* Sudden Stop */
+  70% { transform: translate(20vw, 75vh) rotate(-185deg); }
   90% { transform: translate(-10vw, 95vh) rotate(-220deg); }
   100% { transform: translate(-30vw, 120vh) rotate(-45deg); }
 }
 
-/* Path 3: BL to TR */
 @keyframes scurry-bl-tr {
   0% { transform: translate(-20vw, 120vh) rotate(225deg); }
   25% { transform: translate(20vw, 80vh) rotate(240deg); }
-  30% { transform: translate(20vw, 80vh) rotate(235deg); } /* Sudden Stop */
+  30% { transform: translate(20vw, 80vh) rotate(235deg); }
   50% { transform: translate(55vw, 45vh) rotate(300deg); }
   70% { transform: translate(85vw, 15vh) rotate(340deg); }
-  75% { transform: translate(85vw, 15vh) rotate(345deg); } /* Sudden Stop */
+  75% { transform: translate(85vw, 15vh) rotate(345deg); }
   100% { transform: translate(120vw, -20vh) rotate(225deg); }
 }
 
-/* Path 4: BR to TL */
 @keyframes scurry-br-tl {
   0% { transform: translate(120vw, 120vh) rotate(-135deg); }
   20% { transform: translate(85vw, 85vh) rotate(-150deg); }
-  25% { transform: translate(85vw, 85vh) rotate(-155deg); } /* Sudden Stop */
+  25% { transform: translate(85vw, 85vh) rotate(-155deg); }
   50% { transform: translate(40vw, 40vh) rotate(-210deg); }
   75% { transform: translate(10vw, 15vh) rotate(-260deg); }
-  80% { transform: translate(10vw, 15vh) rotate(-255deg); } /* Sudden Stop */
+  80% { transform: translate(10vw, 15vh) rotate(-255deg); }
   100% { transform: translate(-20vw, -20vh) rotate(-135deg); }
 }
 
@@ -95,15 +143,7 @@
 .animate-scurry-2 { animation: scurry-tr-bl 8s infinite linear; }
 .animate-scurry-3 { animation: scurry-bl-tr 9s infinite linear; }
 .animate-scurry-4 { animation: scurry-br-tl 7.5s infinite linear; }
+.animate-bug-vibrate { animation: bug-vibrate 0.1s infinite linear; }
 
-.animate-bug-vibrate {
-  animation: bug-vibrate 0.1s infinite linear;
-}
-
-.scrollbar-hide::-webkit-scrollbar {
-  display: none;
-}
-.scrollbar-hide {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

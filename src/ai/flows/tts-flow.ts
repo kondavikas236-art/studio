@@ -36,13 +36,13 @@ const ttsFlow = ai.defineFlow(
     try {
       const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
-        // Note: We removed the 'system' property as it can cause 500 errors in TTS-only models.
-        // The prompt itself should contain only the text to be spoken.
+        // The model expects only the text to be spoken in the prompt.
         config: {
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
-              prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Using a standard stable voice
+              // 'Achernar' is a clear, feminine voice suitable for step-by-step instructions.
+              prebuiltVoiceConfig: { voiceName: 'Achernar' }, 
             },
           },
         },

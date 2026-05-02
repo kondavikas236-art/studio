@@ -1,4 +1,3 @@
-
 {
   "placeholderImages": [
     {
@@ -20,10 +19,10 @@
       "imageHint": "calm nature"
     },
     {
-      "id": "snake-image",
-      "description": "Realistic top-down photorealistic snake slithering, isolated on white background",
-      "imageUrl": "https://picsum.photos/seed/snake-realistic-top-down/300/300",
-      "imageHint": "realistic snake"
+      "id": "cockroach-image",
+      "description": "A top-down, macro photography shot of a highly realistic cockroach, photorealistic, intricate exoskeleton details, glossy dark brown, isolated on pure white background",
+      "imageUrl": "https://picsum.photos/seed/cockroach-realistic-top-down/300/300",
+      "imageHint": "realistic cockroach"
     }
   ]
 }

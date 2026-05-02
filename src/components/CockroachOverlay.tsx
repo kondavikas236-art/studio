@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -20,14 +19,14 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Create a small swarm of realistic bugs
-      const newBugs = Array.from({ length: 12 }).map((_, i) => ({
+      // Create a swarm of realistic bugs
+      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 85}%`,
-        left: `${Math.random() * 85}%`,
-        duration: `${Math.random() * 3 + 5}s`,
-        delay: `${Math.random() * 3}s`,
-        scale: 0.25 + Math.random() * 0.2, // Small, realistic scale
+        top: `${Math.random() * 90}%`,
+        left: `${Math.random() * 90}%`,
+        duration: `${Math.random() * 4 + 4}s`,
+        delay: `${Math.random() * 5}s`,
+        scale: 0.15 + Math.random() * 0.15, // Lifelike small size
       }));
       setBugs(newBugs);
     } else {
@@ -55,10 +54,10 @@ export function CockroachOverlay({ active }: { active: boolean }) {
             <Image 
               src={cockroachImg.imageUrl} 
               alt="Cockroach" 
-              width={100} 
-              height={100}
-              className="mix-blend-multiply brightness-50 contrast-125 filter drop-shadow-2xl"
-              data-ai-hint={cockroachImg.imageHint}
+              width={200} 
+              height={200}
+              className="mix-blend-multiply brightness-75 contrast-125 filter drop-shadow-2xl"
+              data-ai-hint="realistic cockroach"
             />
           </div>
         </div>

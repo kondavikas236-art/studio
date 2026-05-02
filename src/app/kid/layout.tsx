@@ -4,7 +4,7 @@ import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { Lock, Loader2 } from "lucide-react";
-import { SnakeOverlay } from "@/components/SnakeOverlay";
+import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -23,9 +23,9 @@ export default function KidLayout({
   const { firestore: db } = useFirebase();
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
   
-  const [isSnakeModeActive, setIsSnakeModeActive] = useState(false);
-  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(200); // High simulated usage to trigger limit immediately
-  const snakeTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const [isCockroachModeActive, setIsCockroachModeActive] = useState(false);
+  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(200);
+  const deterrentTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
@@ -45,26 +45,24 @@ export default function KidLayout({
 
   const isSafeZone = pathname === "/kid/eye-health";
   
-  // Logic to show snakes: limit is reached, we aren't in a safe zone (like Eye Gym), and mode is enabled.
   const limitReached = simulatedUsageMinutes >= (liveChild?.dailyScreenTimeLimitMinutes || 120);
-  const shouldDisplaySnakes = isSnakeModeActive && limitReached && !isSafeZone;
+  const shouldDisplayBugs = isCockroachModeActive && limitReached && !isSafeZone;
 
   const checkSettingsAndSetTimer = () => {
-    if (snakeTimerRef.current) {
-      clearTimeout(snakeTimerRef.current);
-      snakeTimerRef.current = null;
+    if (deterrentTimerRef.current) {
+      clearTimeout(deterrentTimerRef.current);
+      deterrentTimerRef.current = null;
     }
     
     const savedSettings = localStorage.getItem('parent-settings');
-    let settings = { enableSnakeDeterrent: true, eyeBreakInterval: 20 };
+    let settings = { enableCockroachDeterrent: true };
     if (savedSettings) {
       try { settings = JSON.parse(savedSettings); } catch (e) {}
     }
 
-    if (settings.enableSnakeDeterrent) {
-      // Small delay before snakes appear for dramatic effect
-      snakeTimerRef.current = setTimeout(() => {
-        setIsSnakeModeActive(true);
+    if (settings.enableCockroachDeterrent) {
+      deterrentTimerRef.current = setTimeout(() => {
+        setIsCockroachModeActive(true);
       }, 3000);
     }
   };
@@ -73,14 +71,14 @@ export default function KidLayout({
     checkSettingsAndSetTimer();
     
     const handleBreakCompleted = () => {
-      setIsSnakeModeActive(false);
+      setIsCockroachModeActive(false);
       setSimulatedUsageMinutes(0);
       checkSettingsAndSetTimer();
     };
 
     window.addEventListener('mindful-play:break-completed', handleBreakCompleted);
     return () => {
-      if (snakeTimerRef.current) clearTimeout(snakeTimerRef.current);
+      if (deterrentTimerRef.current) clearTimeout(deterrentTimerRef.current);
       window.removeEventListener('mindful-play:break-completed', handleBreakCompleted);
     };
   }, []);
@@ -95,7 +93,7 @@ export default function KidLayout({
 
   return (
     <div className="flex flex-col min-h-screen bg-background pb-20 md:pb-0 md:flex-row relative overflow-x-hidden">
-      <SnakeOverlay active={shouldDisplaySnakes} />
+      <CockroachOverlay active={shouldDisplayBugs} />
       
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">
         <div className="p-8">

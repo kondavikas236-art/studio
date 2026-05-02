@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -9,6 +10,7 @@ import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
+import { textToSpeech } from "@/ai/flows/tts-flow";
 
 export default function EyeHealthPage() {
   const { user } = useUser();
@@ -55,6 +57,31 @@ export default function EyeHealthPage() {
   ];
 
   const activeMission = missions.find(m => m.id === activeMissionId);
+
+  // Audio instruction handler
+  const playInstruction = async (text: string) => {
+    try {
+      const result = await textToSpeech(text);
+      if (result.media) {
+        const audio = new Audio(result.media);
+        audio.play().catch(e => console.warn("Audio playback interrupted or blocked:", e));
+      }
+    } catch (err) {
+      console.error("TTS instruction failed:", err);
+    }
+  };
+
+  useEffect(() => {
+    if (activeMission && activeMissionId && !isDone) {
+      playInstruction(activeMission.steps[currentStep]);
+    }
+  }, [currentStep, activeMissionId]);
+
+  useEffect(() => {
+    if (isDone) {
+      playInstruction(`Mission Complete, ${explorerName}! Your eyes feel supercharged!`);
+    }
+  }, [isDone, explorerName]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout;
@@ -125,10 +152,6 @@ export default function EyeHealthPage() {
               </div>
 
               <div className="space-y-4">
-                <Progress 
-                  value={((currentStep * (activeMission.duration / (activeMission.steps.length - 1)) + (Math.floor(activeMission.duration / (activeMission.steps.length - 1)) - timer)) / activeMission.duration) * 100} 
-                  className="h-4" 
-                />
                 <div className="flex justify-center gap-2">
                    {activeMission.steps.slice(0, -1).map((_, idx) => (
                      <div 

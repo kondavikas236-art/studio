@@ -39,36 +39,27 @@
   }
 }
 
-/* Highly Realistic Jerky Cockroach Movement */
-@keyframes bug-jerky-roam {
+/* Realistic Slithering Movement */
+@keyframes snake-slither {
   0% { transform: translate(0, 0) rotate(0deg); }
-  5% { transform: translate(15px, -10px) rotate(15deg); }
-  8% { transform: translate(15px, -10px) rotate(15deg); } /* Short Pause */
-  15% { transform: translate(60px, -40px) rotate(-10deg); }
-  20% { transform: translate(60px, -40px) rotate(-10deg); } /* Short Pause */
-  35% { transform: translate(80px, 120px) rotate(140deg); }
-  38% { transform: translate(80px, 120px) rotate(140deg); } /* Short Pause */
-  50% { transform: translate(-40px, 150px) rotate(220deg); }
-  55% { transform: translate(-40px, 150px) rotate(220deg); } /* Long Pause */
-  75% { transform: translate(120px, 20px) rotate(45deg); }
-  80% { transform: translate(120px, 20px) rotate(45deg); } /* Short Pause */
-  90% { transform: translate(30px, -20px) rotate(-30deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(100px, 20px) rotate(15deg); }
+  50% { transform: translate(200px, -20px) rotate(-15deg); }
+  75% { transform: translate(300px, 20px) rotate(15deg); }
+  100% { transform: translate(400px, 0) rotate(0deg); }
 }
 
-@keyframes bug-vibrate {
-  0%, 100% { transform: scale(1) rotate(0deg); }
-  25% { transform: scale(1.05) rotate(3deg); }
-  50% { transform: scale(0.95) rotate(-3deg); }
-  75% { transform: scale(1.02) rotate(1.5deg); }
+@keyframes snake-wave {
+  0%, 100% { transform: skewX(0deg); }
+  25% { transform: skewX(10deg); }
+  75% { transform: skewX(-10deg); }
 }
 
-.animate-bug-scurry {
-  animation: bug-jerky-roam 8s linear infinite;
+.animate-snake-move {
+  animation: snake-slither 12s linear infinite;
 }
 
-.animate-bug-vibrate {
-  animation: bug-vibrate 0.08s infinite;
+.animate-snake-body {
+  animation: snake-wave 1.5s ease-in-out infinite;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

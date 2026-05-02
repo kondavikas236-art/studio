@@ -28,7 +28,7 @@ export default function ParentSettings() {
   const [settings, setSettings] = useState({
     firstName: "",
     lastName: "",
-    enableBugDeterrent: true,
+    enableSnakeDeterrent: true,
     receiveWeeklyReportEmail: false,
   });
 
@@ -113,17 +113,17 @@ export default function ParentSettings() {
           <CardHeader>
              <div className="flex items-center gap-2 mb-2">
               <KidsyeeLogo className="h-6 w-6 text-primary" />
-              <CardTitle>Cockroach Mode</CardTitle>
+              <CardTitle>Snake Mode</CardTitle>
             </div>
-            <CardDescription>Bugs appear when screen time limits are exceeded.</CardDescription>
+            <CardDescription>Snakes slither across the screen when time limits are exceeded.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base font-bold">Enable Cockroach Mode</Label>
-                <p className="text-sm text-muted-foreground">Automatic visual deterrent when limits are hit.</p>
+                <Label className="text-base font-bold">Enable Snake Mode</Label>
+                <p className="text-sm text-muted-foreground">Automatic slithering deterrent when limits are hit.</p>
               </div>
-              <Switch checked={settings.enableBugDeterrent} onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} />
+              <Switch checked={settings.enableSnakeDeterrent} onCheckedChange={(val) => setSettings({...settings, enableSnakeDeterrent: val})} />
             </div>
           </CardContent>
         </Card>

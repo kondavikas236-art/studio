@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -39,27 +38,26 @@
   }
 }
 
-/* Realistic Slithering Movement */
+/* Realistic Slithering Movement across the entire screen */
 @keyframes snake-slither {
-  0% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(100px, 20px) rotate(15deg); }
-  50% { transform: translate(200px, -20px) rotate(-15deg); }
-  75% { transform: translate(300px, 20px) rotate(15deg); }
-  100% { transform: translate(400px, 0) rotate(0deg); }
+  0% { transform: translateX(-20vw) translateY(0) rotate(0deg); }
+  25% { transform: translateX(10vw) translateY(40px) rotate(15deg); }
+  50% { transform: translateX(40vw) translateY(-40px) rotate(-15deg); }
+  75% { transform: translateX(70vw) translateY(40px) rotate(15deg); }
+  100% { transform: translateX(120vw) translateY(0) rotate(0deg); }
 }
 
-@keyframes snake-wave {
-  0%, 100% { transform: skewX(0deg); }
-  25% { transform: skewX(10deg); }
-  75% { transform: skewX(-10deg); }
+@keyframes snake-body-wave {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0.85) skewX(5deg); }
 }
 
 .animate-snake-move {
-  animation: snake-slither 12s linear infinite;
+  animation: snake-slither 15s linear infinite;
 }
 
 .animate-snake-body {
-  animation: snake-wave 1.5s ease-in-out infinite;
+  animation: snake-body-wave 2s ease-in-out infinite;
 }
 
 .scrollbar-hide::-webkit-scrollbar {

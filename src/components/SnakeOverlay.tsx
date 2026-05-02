@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,7 +7,6 @@ import Image from "next/image";
 interface SnakeInstance {
   id: number;
   top: string;
-  left: string;
   duration: string;
   delay: string;
   scale: number;
@@ -20,13 +18,13 @@ export function SnakeOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      const newSnakes = Array.from({ length: 5 }).map((_, i) => ({
+      // Create a few snakes that will slither across
+      const newSnakes = Array.from({ length: 6 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 80}%`,
-        left: `${-20 + Math.random() * 10}%`, // Start slightly off-screen
-        duration: `${10 + Math.random() * 5}s`,
-        delay: `${Math.random() * 5}s`,
-        scale: 0.4 + Math.random() * 0.3,
+        top: `${10 + Math.random() * 70}%`, // Stay away from extreme top/bottom
+        duration: `${12 + Math.random() * 8}s`,
+        delay: `${Math.random() * 10}s`,
+        scale: 0.5 + Math.random() * 0.4,
       }));
       setSnakes(newSnakes);
     } else {
@@ -41,28 +39,29 @@ export function SnakeOverlay({ active }: { active: boolean }) {
       {snakes.map((snake) => (
         <div
           key={snake.id}
-          className="absolute animate-snake-move"
+          className="absolute animate-snake-move left-0"
           style={{
             top: snake.top,
-            left: snake.left,
             animationDuration: snake.duration,
             animationDelay: snake.delay,
-            transform: `scale(${snake.scale})`,
           }}
         >
-          <div className="animate-snake-body origin-center">
+          <div 
+            className="animate-snake-body origin-center"
+            style={{ transform: `scale(${snake.scale})` }}
+          >
             <Image 
               src={snakeImg.imageUrl} 
-              alt="Snake" 
-              width={300} 
-              height={300}
+              alt="Slithering Snake" 
+              width={400} 
+              height={400}
               className="mix-blend-multiply brightness-90 contrast-125 filter drop-shadow-2xl"
-              data-ai-hint={snakeImg.imageHint}
+              data-ai-hint="top-down snake"
             />
           </div>
         </div>
       ))}
-      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.1px] pointer-events-none" />
+      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.5px] pointer-events-none" />
     </div>
   );
 }

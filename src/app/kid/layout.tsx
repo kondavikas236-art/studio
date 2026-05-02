@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
@@ -25,7 +24,7 @@ export default function KidLayout({
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
   
   const [isSnakeModeActive, setIsSnakeModeActive] = useState(false);
-  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(130);
+  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(200); // High simulated usage to trigger limit immediately
   const snakeTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const childrenQuery = useMemoFirebase(() => {
@@ -46,6 +45,7 @@ export default function KidLayout({
 
   const isSafeZone = pathname === "/kid/eye-health";
   
+  // Logic to show snakes: limit is reached, we aren't in a safe zone (like Eye Gym), and mode is enabled.
   const limitReached = simulatedUsageMinutes >= (liveChild?.dailyScreenTimeLimitMinutes || 120);
   const shouldDisplaySnakes = isSnakeModeActive && limitReached && !isSafeZone;
 
@@ -62,9 +62,10 @@ export default function KidLayout({
     }
 
     if (settings.enableSnakeDeterrent) {
+      // Small delay before snakes appear for dramatic effect
       snakeTimerRef.current = setTimeout(() => {
         setIsSnakeModeActive(true);
-      }, 5000);
+      }, 3000);
     }
   };
 

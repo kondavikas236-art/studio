@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { ShieldCheck, Mail, Loader2, User, Sparkles, Printer, PieChart as PieChartIcon, BarChart3, Download } from "lucide-react";
+import { ShieldCheck, Mail, Loader2, User, Sparkles, PieChart as PieChartIcon, BarChart3, Download } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { useFirestore, useUser, useDoc, useMemoFirebase, useCollection } from "@/firebase";
 import { doc, collection } from "firebase/firestore";
@@ -15,7 +15,7 @@ import { generateWeeklyReport } from "@/ai/flows/ai-weekly-report-flow";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
-import { cn } from "@/lib/utils";
+import { KidsyeeLogo, KidsyeeTextLogo } from "@/components/Logo";
 
 const CHART_COLORS = ['#1996C5', '#CFE467', '#4FB0C6', '#A855F7', '#F97316'];
 
@@ -188,7 +188,7 @@ export default function ParentSettings() {
         <Card className="rounded-[2rem] border-none shadow-sm border-l-4 border-l-primary bg-white">
           <CardHeader>
              <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck className="h-5 w-5 text-primary" />
+              <KidsyeeLogo className="h-6 w-6 text-primary" />
               <CardTitle>Cockroach Deterrent</CardTitle>
             </div>
             <CardDescription>Bugs appear when screen time limits are exceeded or eye breaks are missed.</CardDescription>
@@ -228,7 +228,7 @@ export default function ParentSettings() {
           <DialogHeader className="p-8 pb-4 bg-primary text-white report-modal-header">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <ShieldCheck className="h-8 w-8" />
+                <KidsyeeLogo className="h-8 w-8" />
                 <div className="text-left">
                   <DialogTitle className="text-2xl font-black">Eye Wellness Summary</DialogTitle>
                   <p className="text-xs font-bold opacity-80 uppercase tracking-widest">AI Generated Preview</p>
@@ -243,9 +243,9 @@ export default function ParentSettings() {
           <ScrollArea className="flex-1 p-8 bg-[#F8FAFC]">
             <div id="pdf-report" className="bg-white p-10 rounded-[2.5rem] border shadow-sm space-y-8 text-foreground max-w-3xl mx-auto">
               <div className="flex justify-between items-center border-b pb-6 report-section">
-                <div>
-                  <h1 className="text-4xl font-black tracking-tighter text-primary italic">Kids<span className="text-foreground/80">yee</span></h1>
-                  <p className="text-[10px] font-black uppercase text-muted-foreground tracking-widest mt-1">Smart Screen Time Guardian</p>
+                <div className="flex items-center gap-2">
+                  <KidsyeeLogo className="h-8 w-8 text-primary" />
+                  <KidsyeeTextLogo className="text-4xl" />
                 </div>
                 <div className="text-right">
                   <p className="text-[10px] font-bold text-muted-foreground uppercase">Report Period</p>

@@ -3,7 +3,7 @@
 import { Navigation } from "@/components/Navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
-import { Lock, ShieldCheck, Loader2 } from "lucide-react";
+import { Lock, Loader2 } from "lucide-react";
 import { CockroachOverlay } from "@/components/CockroachOverlay";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
 import { useFirebase, useUser, useCollection, useMemoFirebase, useDoc } from "@/firebase";
 import { collection, doc } from "firebase/firestore";
+import { KidsyeeLogo, KidsyeeTextLogo } from "@/components/Logo";
 
 export default function KidLayout({
   children,
@@ -23,10 +24,9 @@ export default function KidLayout({
   const avatar = PlaceHolderImages.find(img => img.id === 'avatar-buddy');
   
   const [isBugModeActive, setIsBugModeActive] = useState(false);
-  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(130); // Default simulated high usage for demo
+  const [simulatedUsageMinutes, setSimulatedUsageMinutes] = useState(130);
   const bugTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Fetch children to get current kid
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return collection(db, "parentProfiles", user.uid, "childProfiles");
@@ -36,7 +36,6 @@ export default function KidLayout({
   const child = childrenData?.[0];
   const explorerName = child?.name || "Explorer";
 
-  // Watch specifically for this child's profile to get latest limits
   const childRef = useMemoFirebase(() => {
     if (!db || !user || !child?.id) return null;
     return doc(db, "parentProfiles", user.uid, "childProfiles", child.id);
@@ -46,10 +45,6 @@ export default function KidLayout({
 
   const isSafeZone = pathname === "/kid/eye-health";
   
-  // Cockroach Mode Logic:
-  // 1. Parent must have enabled it in settings.
-  // 2. Kid must be outside a "Safe Zone" (like eye-health gym).
-  // 3. Simulated/Actual usage must exceed the parent-set limit.
   const limitReached = simulatedUsageMinutes >= (liveChild?.dailyScreenTimeLimitMinutes || 120);
   const shouldDisplayBugs = isBugModeActive && limitReached && !isSafeZone;
 
@@ -66,11 +61,9 @@ export default function KidLayout({
     }
 
     if (settings.enableBugDeterrent) {
-      // For demo purposes, we trigger "Bug Mode" intent after a short interval
-      // but the actual bugs only show if limitReached is also true.
       bugTimerRef.current = setTimeout(() => {
         setIsBugModeActive(true);
-      }, 5000); // Trigger check after 5s
+      }, 5000);
     }
   };
 
@@ -79,7 +72,7 @@ export default function KidLayout({
     
     const handleBreakCompleted = () => {
       setIsBugModeActive(false);
-      setSimulatedUsageMinutes(0); // Reset simulated usage after a break
+      setSimulatedUsageMinutes(0);
       checkSettingsAndSetTimer();
     };
 
@@ -105,9 +98,10 @@ export default function KidLayout({
       <div className="hidden md:flex md:w-64 md:flex-col md:border-r bg-white/50 backdrop-blur-sm">
         <div className="p-8">
            <Link href="/">
-             <h1 className="text-2xl font-black text-primary italic hover:scale-105 transition-transform cursor-pointer flex items-center gap-2">
-               <ShieldCheck className="h-6 w-6" /> Kidsyee
-             </h1>
+             <div className="flex flex-col items-center gap-2 group cursor-pointer hover:scale-105 transition-transform">
+                <KidsyeeLogo className="h-12 w-12 text-primary" />
+                <KidsyeeTextLogo className="text-2xl" />
+             </div>
            </Link>
         </div>
         <Navigation />

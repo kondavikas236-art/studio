@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Activity, ShieldCheck, ChevronRight, LogIn, Smartphone, Eye, Trophy, Sparkles, Mail, Lock, UserPlus, Loader2 } from "lucide-react";
+import { Activity, ChevronRight, LogIn, Smartphone, Eye, Trophy, Sparkles, Mail, Lock, UserPlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser, useAuth, useDoc, useMemoFirebase, useFirestore } from "@/firebase";
 import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { doc } from "firebase/firestore";
+import { KidsyeeLogo, KidsyeeTextLogo } from "@/components/Logo";
 
 export default function Home() {
   const { user, isUserLoading } = useUser();
@@ -25,24 +26,6 @@ export default function Home() {
   }, [db, user]);
 
   const { data: parentProfile } = useDoc(parentRef);
-
-  const steps = [
-    {
-      icon: Smartphone,
-      title: "Set Boundaries",
-      desc: "Create a child profile and set the Health Break interval in the Parent Portal."
-    },
-    {
-      icon: Eye,
-      title: "Active Protection",
-      desc: "Switch to Eye Data. If the limit is reached, Cockroach Mode triggers automatically."
-    },
-    {
-      icon: Trophy,
-      title: "Earn Rewards",
-      desc: "Your child clears the bugs by completing fun Eye Gym missions and building healthy habits."
-    }
-  ];
 
   const handleAuthSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -66,12 +49,10 @@ export default function Home() {
     return (
       <div className="flex-1 flex flex-col items-center bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background min-h-screen p-6">
         <div className="w-full max-w-md mt-12 mb-12 text-center space-y-4">
-          <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20">
-            <ShieldCheck className="h-12 w-12 text-primary" />
+          <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20 text-primary">
+            <KidsyeeLogo className="h-16 w-16" />
           </div>
-          <h1 className="text-5xl font-black tracking-tighter text-foreground italic leading-none">
-            Kids<span className="text-primary">yee</span>
-          </h1>
+          <KidsyeeTextLogo className="text-5xl" />
           <p className="text-muted-foreground font-semibold">The Smart Screen Time Guardian</p>
         </div>
 
@@ -142,12 +123,10 @@ export default function Home() {
     <div className="flex-1 flex flex-col items-center bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background min-h-screen">
       <div className="w-full max-w-6xl px-6 py-20 flex flex-col items-center">
         <div className="text-center space-y-4 max-w-3xl mb-16 animate-in fade-in zoom-in duration-700">
-          <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20">
-            <ShieldCheck className="h-14 w-14 text-primary" />
+          <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20 text-primary">
+            <KidsyeeLogo className="h-20 w-20" />
           </div>
-          <h1 className="text-6xl font-black tracking-tighter text-foreground md:text-8xl italic leading-none">
-            Kids<span className="text-primary">yee</span>
-          </h1>
+          <KidsyeeTextLogo className="text-6xl md:text-8xl" />
           <p className="text-xl text-muted-foreground font-semibold max-w-xl mx-auto leading-relaxed">
             Welcome back, {parentName}! Choose your destination.
           </p>
@@ -172,14 +151,14 @@ export default function Home() {
           <Link href="/parent/dashboard" className="group">
             <div className="h-full bg-card border-4 border-accent/20 p-10 rounded-[3rem] transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center text-center space-y-8 relative overflow-hidden">
               <div className="p-8 rounded-full bg-accent/10 group-hover:bg-accent group-hover:text-accent-foreground transition-all duration-500 shadow-inner">
-                <ShieldCheck className="h-20 w-20" />
+                <KidsyeeLogo className="h-20 w-20" />
               </div>
               <div className="space-y-3">
                 <h2 className="text-4xl font-black">Parent Portal</h2>
                 <p className="text-muted-foreground font-medium text-lg">Manage limits and view insights.</p>
               </div>
               <Button variant="secondary" size="lg" className="w-full rounded-full text-xl h-16 font-black shadow-xl group-hover:scale-105 transition-transform border-2 border-accent/20">
-                Manage Family <ShieldCheck className="ml-2 h-6 w-6" />
+                Manage Family <ChevronRight className="ml-2 h-6 w-6" />
               </Button>
             </div>
           </Link>

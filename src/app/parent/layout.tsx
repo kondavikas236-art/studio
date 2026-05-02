@@ -1,7 +1,7 @@
 "use client";
 
 import { Navigation } from "@/components/Navigation";
-import { ShieldCheck, Activity, LogOut, Loader2, Share2 } from "lucide-react";
+import { LogOut, Loader2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -11,6 +11,7 @@ import { useEffect } from "react";
 import { signOut } from "firebase/auth";
 import { toast } from "@/hooks/use-toast";
 import { doc } from "firebase/firestore";
+import { KidsyeeLogo, KidsyeeTextLogo } from "@/components/Logo";
 
 export default function ParentLayout({
   children,
@@ -75,11 +76,9 @@ export default function ParentLayout({
         <div className="flex items-center space-x-3">
            <Link href="/" className="flex items-center space-x-2 group">
              <div className="bg-primary p-2 rounded-xl text-white group-hover:rotate-12 transition-transform shadow-md">
-                <ShieldCheck className="h-5 w-5" />
+                <KidsyeeLogo className="h-6 w-6" />
              </div>
-             <h1 className="text-xl font-black tracking-tighter text-foreground">
-               Kids<span className="text-primary">yee</span>
-             </h1>
+             <KidsyeeTextLogo className="text-xl" />
            </Link>
         </div>
         
@@ -89,7 +88,7 @@ export default function ParentLayout({
                 <TooltipTrigger asChild>
                   <Link href="/kid/dashboard">
                     <Button variant="outline" size="sm" className="hidden sm:flex rounded-full border-primary/20 hover:bg-primary/5 text-primary font-bold">
-                      <Activity className="mr-2 h-4 w-4" /> Eye Data
+                      <KidsyeeLogo className="mr-2 h-4 w-4" /> Eye Data
                     </Button>
                   </Link>
                 </TooltipTrigger>

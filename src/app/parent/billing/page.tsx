@@ -19,7 +19,7 @@ const PLAN = {
   price: "$1",
   period: "/year",
   trialPeriod: "20 Days Free",
-  description: "Complete digital protection for your entire family.",
+  description: "Complete digital protection for your entire family. Secure payments via Credit or Debit card.",
   features: [
     "Unlimited Child Profiles",
     "Detailed Eye Health Analytics",
@@ -75,13 +75,13 @@ export default function BillingPage() {
   const isPro = parentProfile?.isPro || false;
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto pb-12">
+    <div className="space-y-8 max-w-4xl mx-auto pb-12 px-4">
       <div className="text-center space-y-4">
         <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-2">
           <Sparkles className="h-10 w-10 text-primary animate-pulse" />
         </div>
-        <h1 className="text-4xl font-black text-foreground tracking-tight">Family Pro Subscription</h1>
-        <p className="text-muted-foreground font-semibold max-w-xl mx-auto text-lg leading-relaxed">
+        <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">Family Pro Subscription</h1>
+        <p className="text-muted-foreground font-semibold max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
           Protect your family's eyes and build healthy digital habits. Start your 20-day trial for just $1/year.
         </p>
       </div>
@@ -96,37 +96,37 @@ export default function BillingPage() {
             <Badge className="w-fit mx-auto bg-primary text-white font-black px-6 py-1.5 rounded-full shadow-lg mb-4 text-sm">
               MOST POPULAR
             </Badge>
-            <CardTitle className="text-4xl font-black italic">{PLAN.name}</CardTitle>
+            <CardTitle className="text-3xl sm:text-4xl font-black italic">{PLAN.name}</CardTitle>
             <div className="flex flex-col items-center justify-center mt-6">
               <div className="flex items-center gap-1">
-                <span className="text-6xl font-black">{PLAN.price}</span>
-                <span className="text-muted-foreground font-bold text-xl">{PLAN.period}</span>
+                <span className="text-5xl sm:text-6xl font-black">{PLAN.price}</span>
+                <span className="text-muted-foreground font-bold text-lg sm:text-xl">{PLAN.period}</span>
               </div>
               <Badge variant="secondary" className="mt-4 bg-accent/20 text-accent-foreground border-accent/30 font-bold px-4 py-1.5 rounded-full">
                 <Clock className="h-4 w-4 mr-2" /> {PLAN.trialPeriod} Trial
               </Badge>
             </div>
-            <CardDescription className="font-medium mt-6 px-4 text-base leading-relaxed">
+            <CardDescription className="font-medium mt-6 px-4 text-sm sm:text-base leading-relaxed">
               {PLAN.description}
             </CardDescription>
           </CardHeader>
 
-          <CardContent className="space-y-5 pt-8 px-10">
+          <CardContent className="space-y-4 pt-8 px-6 sm:px-10">
             {PLAN.features.map((feature, i) => (
               <div key={i} className="flex items-start gap-4">
                 <div className="mt-1 bg-green-100 p-1 rounded-full shrink-0">
                   <Check className="h-4 w-4 text-green-600" />
                 </div>
-                <span className="text-base font-bold text-foreground/80">{feature}</span>
+                <span className="text-sm sm:text-base font-bold text-foreground/80">{feature}</span>
               </div>
             ))}
           </CardContent>
 
-          <CardFooter className="pb-12 px-10 pt-8">
+          <CardFooter className="pb-12 px-6 sm:px-10 pt-8">
             <Button 
               onClick={() => setShowCheckout(true)}
               disabled={isPro}
-              className="w-full rounded-full h-16 font-black text-xl shadow-xl hover:scale-105 transition-transform bg-primary hover:bg-primary/90"
+              className="w-full rounded-full h-14 sm:h-16 font-black text-lg sm:text-xl shadow-xl hover:scale-105 transition-transform bg-primary hover:bg-primary/90"
             >
               {isPro ? "Current Subscription" : PLAN.cta}
             </Button>
@@ -135,29 +135,29 @@ export default function BillingPage() {
       </div>
 
       <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
-        <DialogContent className="rounded-[2.5rem] sm:max-w-[450px] p-0 overflow-hidden border-none shadow-2xl">
-          <DialogHeader className="p-8 pb-4 bg-primary/5">
+        <DialogContent className="rounded-[2.5rem] sm:max-w-[450px] p-0 overflow-hidden border-none shadow-2xl mx-4">
+          <DialogHeader className="p-6 sm:p-8 pb-4 bg-primary/5">
             <div className="flex items-center gap-3 mb-2">
                <div className="p-2 bg-primary rounded-xl text-white">
                  <CreditCard className="h-6 w-6" />
                </div>
-               <DialogTitle className="text-2xl font-black">Checkout</DialogTitle>
+               <DialogTitle className="text-xl sm:text-2xl font-black">Checkout</DialogTitle>
             </div>
-            <DialogDescription className="font-medium text-foreground/80">
-              You will start your 20-day free trial today. No charges until after the trial ends.
+            <DialogDescription className="font-medium text-foreground/80 text-sm">
+              Enter your Credit or Debit card details to start your 20-day free trial.
             </DialogDescription>
           </DialogHeader>
           
           <form onSubmit={handleConfirmPurchase}>
-            <div className="px-8 py-6 space-y-6">
+            <div className="px-6 sm:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6">
               <div className="bg-primary/5 p-4 rounded-2xl flex items-center justify-between border border-primary/10">
-                <span className="font-bold text-primary">Family Pro Trial</span>
-                <span className="font-black text-primary">$0.00 Today</span>
+                <span className="font-bold text-primary text-sm sm:text-base">Family Pro Trial</span>
+                <span className="font-black text-primary text-sm sm:text-base">$0.00 Today</span>
               </div>
 
               <div className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="cardNumber" className="font-bold">Card Number</Label>
+                  <Label htmlFor="cardNumber" className="font-bold text-sm">Credit or Debit Card Number</Label>
                   <div className="relative">
                     <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input 
@@ -172,7 +172,7 @@ export default function BillingPage() {
                 </div>
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-2">
-                    <Label htmlFor="expiry" className="font-bold">Expiry Date</Label>
+                    <Label htmlFor="expiry" className="font-bold text-sm">Expiry Date</Label>
                     <Input 
                       id="expiry" 
                       placeholder="MM/YY" 
@@ -183,7 +183,7 @@ export default function BillingPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="cvc" className="font-bold">CVC</Label>
+                    <Label htmlFor="cvc" className="font-bold text-sm">CVC</Label>
                     <Input 
                       id="cvc" 
                       placeholder="123" 
@@ -198,15 +198,15 @@ export default function BillingPage() {
 
               <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium bg-muted/30 p-3 rounded-xl border border-dashed leading-normal">
                 <Lock className="h-3 w-3 shrink-0" />
-                <span>Prototype Note: This is a secure simulation. In a live production environment, this would integrate with a provider like Stripe or PayPal.</span>
+                <span>Prototype Note: This secure simulation accepts all standard credit and debit cards.</span>
               </div>
             </div>
 
-            <DialogFooter className="px-8 pb-8 pt-2">
+            <DialogFooter className="px-6 sm:px-8 pb-8 pt-2">
               <Button 
                 type="submit"
                 disabled={isProcessing}
-                className="w-full rounded-full h-14 font-black text-lg shadow-lg"
+                className="w-full rounded-full h-12 sm:h-14 font-black text-base sm:text-lg shadow-lg"
               >
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
@@ -223,8 +223,8 @@ export default function BillingPage() {
       </Dialog>
 
       <div className="text-center opacity-60">
-        <p className="text-sm font-bold flex items-center justify-center gap-2">
-          <ShieldCheck className="h-4 w-4" /> Secure yearly billing of $1 starts after 20 days. Cancel anytime via settings.
+        <p className="text-xs sm:text-sm font-bold flex items-center justify-center gap-2">
+          <ShieldCheck className="h-4 w-4" /> Secure yearly billing of $1 starts after 20 days. Cancel anytime.
         </p>
       </div>
     </div>

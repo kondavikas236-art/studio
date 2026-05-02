@@ -71,12 +71,14 @@ export default function EyeHealthPage() {
     }
   };
 
+  // Trigger audio immediately on step change or mission start
   useEffect(() => {
     if (activeMission && activeMissionId && !isDone) {
       playInstruction(activeMission.steps[currentStep]);
     }
-  }, [currentStep, activeMissionId]);
+  }, [currentStep, activeMissionId, isDone]);
 
+  // Trigger final success audio
   useEffect(() => {
     if (isDone) {
       playInstruction(`Mission Complete, ${explorerName}! Your eyes feel supercharged!`);
@@ -108,11 +110,11 @@ export default function EyeHealthPage() {
     const mission = missions.find(m => m.id === missionId);
     if (!mission) return;
     
+    setIsDone(false);
     setActiveMissionId(missionId);
     setCurrentStep(0);
     // Initial timer for the first step
     setTimer(Math.floor(mission.duration / (mission.steps.length - 1)));
-    setIsDone(false);
   };
 
   const bgImage = PlaceHolderImages.find(img => img.id === 'eye-health-bg');

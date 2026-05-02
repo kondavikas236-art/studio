@@ -14,7 +14,6 @@ const ChildSummarySchema = z.object({
   name: z.string(),
   usageMinutes: z.number(),
   missionsCompleted: z.number(),
-  diaryEntries: z.number(),
   healthStatus: z.enum(['excellent', 'good', 'needs_attention']),
 });
 
@@ -39,9 +38,9 @@ const weeklyReportPrompt = ai.definePrompt({
   name: 'weeklyReportPrompt',
   input: { schema: WeeklyReportInputSchema },
   output: { schema: WeeklyReportOutputSchema },
-  prompt: `You are the Kidsyee Digital Wellness Assistant. Your job is to write a weekly "Family Wellness Summary" for a parent named {{{parentName}}}.
+  prompt: `You are the Kidsyee Eye Health Assistant. Your job is to write a weekly "Family Eye Wellness Summary" for a parent named {{{parentName}}}.
 
-For the 'emailBody', write a warm and encouraging summary of the family's progress this week. Address the parent directly and highlight the overall health of the digital environment.
+For the 'emailBody', write a warm and encouraging summary of the family's eye health progress this week. Address the parent directly and highlight the overall health of the digital environment.
 
 For the 'formalReportContent', generate a structured breakdown for each child. Use clear labels and avoid complex markdown tables. Instead, use bulleted lists and headers.
 
@@ -49,11 +48,10 @@ Structure the 'formalReportContent' like this for each child:
 
 - Child: [Name]
 - Screen Time: [Minutes] (Add a short note if this is healthy or needs care)
-- Wellness Missions: [Count] Completed
-- Diary Engagement: [Count] Entries
+- Eye Gym Missions: [Count] Completed
 - Status: [Status]
 
-Then, add a "Pro Tip" section at the end for the family.
+Then, add a "Pro Tip" section at the end for the family regarding eye health and the 20-20-20 rule.
 
 Keep the tone encouraging, professional, and supportive.
 
@@ -62,7 +60,6 @@ Children Data:
 - Name: {{name}}
 - Screen Time: {{usageMinutes}} minutes
 - Missions Done: {{missionsCompleted}}
-- Diary Entries: {{diaryEntries}}
 - Overall Status: {{healthStatus}}
 {{/each}}
 `,
@@ -82,9 +79,9 @@ const weeklyReportFlow = ai.defineFlow(
     } catch (error) {
       console.error('AI Weekly Report failed:', error);
       return {
-        emailSubject: "Your Kidsyee Weekly Family Update 🛡️",
-        emailBody: `Hi ${input.parentName},\n\nYour children are making great progress with their digital habits! Check your dashboard for the full breakdown.\n\nKeep up the great work!`,
-        formalReportContent: "KIDSYEE WEEKLY WELLNESS REPORT\n\nSummary for the family of " + input.parentName + ".\n\nIndividual stats are currently being processed."
+        emailSubject: "Your Kidsyee Weekly Eye Health Update 🛡️",
+        emailBody: `Hi ${input.parentName},\n\nYour children are making great progress with their eye health habits! Check your dashboard for the full breakdown.\n\nKeep up the great work!`,
+        formalReportContent: "KIDSYEE WEEKLY EYE WELLNESS REPORT\n\nSummary for the family of " + input.parentName + ".\n\nIndividual stats are currently being processed."
       };
     }
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Trophy, Star, ShieldCheck, Zap, Heart, Eye, Book } from "lucide-react";
+import { Trophy, Star, ShieldCheck, Zap, Heart, Eye } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
@@ -19,35 +19,35 @@ export default function AchievementsPage() {
     },
     {
       id: 2,
-      name: "Journal Genius",
-      description: "Logged 5 diary entries with Buddy",
-      icon: Book,
-      color: "bg-purple-500",
+      name: "Horizon Hero",
+      description: "Used the 20-20-20 rule all week",
+      icon: ShieldCheck,
+      color: "bg-green-500",
       earned: true,
       progress: 100,
     },
     {
       id: 3,
-      name: "Horizon Hero",
-      description: "Used the 20-20-20 rule all week",
-      icon: ShieldCheck,
-      color: "bg-green-500",
-      earned: false,
-      progress: 60,
-    },
-    {
-      id: 4,
       name: "Focus Champion",
       description: "Kept energy bar green for 2 hours",
       icon: Zap,
       color: "bg-yellow-500",
       earned: false,
+      progress: 60,
+    },
+    {
+      id: 4,
+      name: "Play Guardian",
+      description: "Took 5 breaks before being asked",
+      icon: Star,
+      color: "bg-purple-500",
+      earned: false,
       progress: 25,
     },
     {
       id: 5,
-      name: "Mindful Maven",
-      description: "Took 5 breaks before being asked",
+      name: "Sight Sentinel",
+      description: "Completed 30 Eye Gym sessions",
       icon: Heart,
       color: "bg-red-500",
       earned: false,
@@ -63,8 +63,8 @@ export default function AchievementsPage() {
         <div className="inline-block p-4 rounded-full bg-accent/20 border-2 border-accent/40 shadow-lg animate-float">
           <Trophy className="h-16 w-16 text-accent-foreground" />
         </div>
-        <h1 className="text-4xl font-black text-primary">Hall of Fame</h1>
-        <p className="text-muted-foreground font-semibold">You have earned {earnedCount} badges! Keep it up!</p>
+        <h1 className="text-4xl font-black text-primary">Eye Gym Hall of Fame</h1>
+        <p className="text-muted-foreground font-semibold">You have earned {earnedCount} badges for protecting your sight!</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

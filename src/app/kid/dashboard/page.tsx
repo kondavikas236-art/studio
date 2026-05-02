@@ -1,10 +1,9 @@
-
 "use client";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, Book, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy, Loader2 } from "lucide-react";
+import { Eye, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
@@ -17,7 +16,7 @@ import { collection } from "firebase/firestore";
 const DATA = [
   { name: 'Video', mins: 45, color: '#FF0000' },
   { name: 'Study', mins: 120, color: '#CFE467' },
-  { name: 'Diary', mins: 30, color: '#A855F7' },
+  { name: 'Gaming', mins: 30, color: '#1996C5' },
 ];
 
 export default function KidDashboard() {
@@ -191,15 +190,15 @@ export default function KidDashboard() {
               </Card>
             </Link>
 
-            <Link href="/kid/diary">
+            <Link href="/kid/story-chain">
               <Card className="rounded-3xl border-2 border-transparent hover:border-purple-400/40 transition-all kid-card-hover cursor-pointer group">
                 <CardHeader className="flex flex-row items-center space-x-4">
                   <div className="p-4 bg-purple-100 rounded-2xl group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                    <Book className="h-8 w-8" />
+                    <Sparkles className="h-8 w-8" />
                   </div>
                   <div>
-                    <CardTitle className="text-xl">Diary Buddy</CardTitle>
-                    <p className="text-sm text-muted-foreground">Chat about your amazing day</p>
+                    <CardTitle className="text-xl">Story Chain</CardTitle>
+                    <p className="text-sm text-muted-foreground">Collaborative imagination quest</p>
                   </div>
                 </CardHeader>
               </Card>
@@ -221,10 +220,10 @@ export default function KidDashboard() {
                  <span className="text-[10px] font-bold text-center">Blink<br/>Master</span>
               </div>
               <div className="flex-shrink-0 flex flex-col items-center gap-2">
-                 <div className="p-4 bg-purple-500 rounded-2xl text-white shadow-md">
-                   <Book className="h-8 w-8" />
+                 <div className="p-4 bg-yellow-500 rounded-2xl text-white shadow-md">
+                   <Trophy className="h-8 w-8" />
                  </div>
-                 <span className="text-[10px] font-bold text-center">Journal<br/>Genius</span>
+                 <span className="text-[10px] font-bold text-center">Focus<br/>Champ</span>
               </div>
               <div className="flex-shrink-0 flex flex-col items-center gap-2 opacity-30">
                  <div className="p-4 bg-gray-200 rounded-2xl text-gray-500">
@@ -238,7 +237,7 @@ export default function KidDashboard() {
       </div>
 
       <section className="space-y-4">
-        <h2 className="text-2xl font-bold">{explorerName}'s Play Mix</h2>
+        <h2 className="text-2xl font-bold">{explorerName}'s Eye Health Mix</h2>
         <Card className="rounded-3xl border-none shadow-lg bg-white/50">
           <CardContent className="p-6">
             <div className="h-[200px] w-full">

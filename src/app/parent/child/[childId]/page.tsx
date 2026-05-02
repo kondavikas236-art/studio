@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useDoc, useMemoFirebase, useUser, useFirebase } from "@/firebase";
@@ -95,7 +94,7 @@ export default function ChildReportPage() {
         <div className="flex items-center gap-4">
            <img src={child.avatarUrl} alt={child.name} className="h-14 w-14 rounded-2xl object-cover shadow-lg" />
            <div>
-             <h1 className="text-3xl font-black text-foreground">{child.name}'s Report</h1>
+             <h1 className="text-3xl font-black text-foreground">{child.name}'s Eye Health Report</h1>
              <p className="text-muted-foreground font-bold text-xs uppercase tracking-widest">Individual Wellness Tracking</p>
            </div>
         </div>
@@ -117,7 +116,7 @@ export default function ChildReportPage() {
         <Card className="rounded-[2.5rem] border-none shadow-sm bg-white">
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2 font-bold text-accent-foreground">
-              <Eye className="h-4 w-4" /> Eye Health
+              <Eye className="h-4 w-4" /> Eye Health Score
             </CardDescription>
             <CardTitle className="text-3xl font-black">92%</CardTitle>
           </CardHeader>
@@ -129,12 +128,12 @@ export default function ChildReportPage() {
         <Card className="rounded-[2.5rem] border-none shadow-sm bg-white">
           <CardHeader className="pb-2">
             <CardDescription className="flex items-center gap-2 font-bold text-purple-500">
-              <Star className="h-4 w-4" /> Diary Entries
+              <Trophy className="h-4 w-4" /> Gym Badges
             </CardDescription>
-            <CardTitle className="text-3xl font-black">12</CardTitle>
+            <CardTitle className="text-3xl font-black">8</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-xs font-bold text-purple-600">Weekly streak: 3 days</div>
+            <div className="text-xs font-bold text-purple-600">Sight Sentinel Level 2</div>
           </CardContent>
         </Card>
       </div>
@@ -143,7 +142,7 @@ export default function ChildReportPage() {
         <div className="lg:col-span-2 space-y-6">
           <Card className="rounded-[3rem] border-none shadow-xl bg-white overflow-hidden">
             <CardHeader>
-              <CardTitle>Activity History</CardTitle>
+              <CardTitle>Usage History</CardTitle>
               <CardDescription>Daily screen time over the last 7 days</CardDescription>
             </CardHeader>
             <CardContent>
@@ -164,14 +163,14 @@ export default function ChildReportPage() {
 
           <Card className="rounded-[3rem] border-none shadow-xl bg-white">
             <CardHeader>
-              <CardTitle>Recent Achievements</CardTitle>
+              <CardTitle>Recent Gym Achievements</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                {[
                  { icon: Eye, label: "Blink Master", color: "bg-blue-500" },
                  { icon: Trophy, label: "Level 10", color: "bg-yellow-500" },
                  { icon: Timer, label: "Break King", color: "bg-green-500" },
-                 { icon: Star, label: "Journalist", color: "bg-purple-500" }
+                 { icon: Star, label: "Horizon Hero", color: "bg-purple-500" }
                ].map((badge, i) => (
                  <div key={i} className="flex flex-col items-center text-center gap-2 p-4 bg-muted/20 rounded-3xl">
                    <div className={`${badge.color} p-3 rounded-2xl text-white shadow-md`}>
@@ -188,7 +187,7 @@ export default function ChildReportPage() {
           <Card className="rounded-[3rem] border-none shadow-xl bg-white sticky top-24">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
-                <Timer className="h-5 w-5 text-primary" /> Boundary Controls
+                <Timer className="h-5 w-5 text-primary" /> Eye Health Limits
               </CardTitle>
               <CardDescription>Set specific limits for {child.name}</CardDescription>
             </CardHeader>
@@ -209,7 +208,7 @@ export default function ChildReportPage() {
 
               <div className="space-y-4">
                 <div className="flex justify-between items-center">
-                  <Label className="font-bold">Gaming Time Limit</Label>
+                  <Label className="font-bold">Max Session Time</Label>
                   <Badge className="bg-accent/20 text-accent-foreground">{limits.gaming} Minutes</Badge>
                 </div>
                 <Slider 

@@ -89,7 +89,7 @@ export default function ParentSettings() {
 
     toast({
       title: "Settings Saved! 🛡️",
-      description: "Cockroach deterrents and wellness policies updated.",
+      description: "Cockroach deterrents and eye health policies updated.",
     });
   };
 
@@ -109,8 +109,6 @@ export default function ParentSettings() {
         name: c.name,
         usageMinutes: Math.floor(Math.random() * 500) + 200,
         missionsCompleted: Math.floor(Math.random() * 10) + 2,
-        description: "",
-        diaryEntries: Math.floor(Math.random() * 7),
         healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
       }));
 
@@ -154,7 +152,7 @@ export default function ParentSettings() {
           <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
             Control Center <ShieldCheck className="text-primary h-8 w-8" />
           </h2>
-          <p className="text-muted-foreground">Configure boundaries and digital wellness habits.</p>
+          <p className="text-muted-foreground">Configure boundaries and digital eye wellness habits.</p>
         </div>
         <div className="flex gap-2">
            <Button variant="outline" onClick={handleTriggerTestReport} disabled={isReportLoading} className="rounded-full font-bold">
@@ -199,7 +197,7 @@ export default function ParentSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base font-bold">Enable Cockroach Mode</Label>
-                <p className="text-sm text-muted-foreground">Automatic deterrent when healthy limits are hit.</p>
+                <p className="text-sm text-muted-foreground">Automatic deterrent when eye health limits are hit.</p>
               </div>
               <Switch checked={settings.enableBugDeterrent} onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} />
             </div>
@@ -216,8 +214,8 @@ export default function ParentSettings() {
           <CardContent>
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
-                <Label className="text-base font-bold">Weekly Wellness Email</Label>
-                <p className="text-sm text-muted-foreground">Receive a consolidated summary of all children's activity.</p>
+                <Label className="text-base font-bold">Weekly Eye Wellness Email</Label>
+                <p className="text-sm text-muted-foreground">Receive a consolidated summary of all children's eye health activity.</p>
               </div>
               <Switch checked={settings.receiveWeeklyReportEmail} onCheckedChange={(val) => setSettings({...settings, receiveWeeklyReportEmail: val})} />
             </div>
@@ -232,7 +230,7 @@ export default function ParentSettings() {
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-8 w-8" />
                 <div className="text-left">
-                  <DialogTitle className="text-2xl font-black">Family Wellness Summary</DialogTitle>
+                  <DialogTitle className="text-2xl font-black">Eye Wellness Summary</DialogTitle>
                   <p className="text-xs font-bold opacity-80 uppercase tracking-widest">AI Generated Preview</p>
                 </div>
               </div>
@@ -256,7 +254,7 @@ export default function ParentSettings() {
               </div>
 
               <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 report-section">
-                <h2 className="text-xl font-black text-primary mb-3">Health Assistant Note</h2>
+                <h2 className="text-xl font-black text-primary mb-3">Eye Health Assistant Note</h2>
                 <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-sm font-medium">
                   {testReport?.body}
                 </div>
@@ -295,7 +293,7 @@ export default function ParentSettings() {
 
               <div className="space-y-4 report-section">
                 <h2 className="text-xl font-black flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" /> Individual Breakdown
+                  <BarChart3 className="h-5 w-5 text-primary" /> Eye Health Breakdown
                 </h2>
                 <div className="whitespace-pre-wrap text-sm leading-relaxed p-6 bg-muted/5 rounded-3xl border font-medium text-foreground">
                   {testReport?.formal}

@@ -34,8 +34,8 @@ export default function EyeHealthPage() {
     { 
       id: "blink", 
       title: "Blink Buddy", 
-      description: "Blink 10 times quickly to refresh your eyes!", 
-      duration: 15, 
+      description: "Blink quickly to refresh your eyes!", 
+      duration: 30, 
       color: "bg-primary/10",
       icon: Eye,
       steps: ["Ready...", "Blink fast like a butterfly!", "Almost there!", "Eyes refreshed!"]

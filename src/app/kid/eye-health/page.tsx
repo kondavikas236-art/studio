@@ -72,7 +72,7 @@ export default function EyeHealthPage() {
     { 
       id: "blink", 
       title: "Blink Buddy", 
-      description: "A full 1-minute routine to refresh and stretch your eyes!", 
+      description: "A full routine to refresh and stretch your eyes!", 
       duration: 60,
       color: "bg-primary/10",
       icon: Eye,
@@ -144,8 +144,11 @@ export default function EyeHealthPage() {
       }, 1000);
     } else if (timer === 0 && activeMissionId) {
       if (activeMission && currentStep < activeMission.steps.length - 1) {
-        setCurrentStep(prev => prev + 1);
-        setTimer(Math.floor(activeMission.duration / (activeMission.steps.length - 1)));
+        const nextStep = currentStep + 1;
+        setCurrentStep(nextStep);
+        // Step 0 is "Ready", so if the NEW step is > 0, it should be 10s.
+        // If we just finished step 0, currentStep becomes 1.
+        setTimer(10);
       } else {
         setIsDone(true);
         setActiveMissionId(null);
@@ -162,7 +165,8 @@ export default function EyeHealthPage() {
     setIsDone(false);
     setActiveMissionId(missionId);
     setCurrentStep(0);
-    setTimer(Math.floor(mission.duration / (mission.steps.length - 1)));
+    // First step "Ready..." is always 5 seconds
+    setTimer(5);
   };
 
   const bgImage = PlaceHolderImages.find(img => img.id === 'eye-health-bg');
@@ -191,7 +195,7 @@ export default function EyeHealthPage() {
                  <VisualEyeGym stepText={activeMission.steps[currentStep]} />
                  <div className="flex flex-col items-center mt-4 sm:mt-8">
                     <div className="text-4xl sm:text-6xl font-black text-primary drop-shadow-md bg-white/80 px-6 sm:px-8 py-1 sm:py-2 rounded-full border-2 sm:border-4 border-primary/20">{timer}s</div>
-                    <div className="mt-2 text-[10px] sm:text-sm font-black text-primary/70 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">Step {currentStep + 1} of {activeMission.steps.length - 1}</div>
+                    <div className="mt-2 text-[10px] sm:text-sm font-black text-primary/70 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">Step {currentStep + 1} of {activeMission.steps.length}</div>
                  </div>
               </div>
             </div>
@@ -206,7 +210,7 @@ export default function EyeHealthPage() {
 
               <div className="space-y-3">
                 <div className="flex justify-center gap-2">
-                   {activeMission.steps.slice(0, -1).map((_, idx) => (
+                   {activeMission.steps.map((_, idx) => (
                      <div 
                       key={idx} 
                       className={cn(
@@ -259,7 +263,7 @@ export default function EyeHealthPage() {
                   <p className="text-muted-foreground font-semibold leading-snug text-sm">{m.description}</p>
                   <div className="flex items-center justify-center text-xs font-black text-primary/60 space-x-2 bg-muted/30 py-1.5 rounded-full">
                     <Timer className="h-3.5 w-3.5" />
-                    <span>{m.duration} Seconds</span>
+                    <span>Timed Routine</span>
                   </div>
                   <Button onClick={() => startMission(m.id)} className="w-full rounded-full h-12 font-black text-lg shadow-md group-hover:bg-primary group-hover:text-white transition-colors">
                     Start <ChevronRight className="ml-1 h-5 w-5" />

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -5,19 +6,13 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { ShieldCheck, Mail, Loader2, User, Sparkles, PieChart as PieChartIcon, BarChart3, Download } from "lucide-react";
+import { ShieldCheck, Mail, Loader2, User, Sparkles } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
-import { useFirestore, useUser, useDoc, useMemoFirebase, useCollection } from "@/firebase";
-import { doc, collection } from "firebase/firestore";
+import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
+import { doc } from "firebase/firestore";
 import { setDocumentNonBlocking } from "@/firebase/non-blocking-updates";
 import { Input } from "@/components/ui/input";
-import { generateWeeklyReport } from "@/ai/flows/ai-weekly-report-flow";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from "recharts";
-import { KidsyeeLogo, KidsyeeTextLogo } from "@/components/Logo";
-
-const CHART_COLORS = ['#1996C5', '#CFE467', '#4FB0C6', '#A855F7', '#F97316'];
+import { KidsyeeLogo } from "@/components/Logo";
 
 export default function ParentSettings() {
   const { user } = useUser();
@@ -30,30 +25,12 @@ export default function ParentSettings() {
 
   const { data: parentProfile, isLoading } = useDoc(parentRef);
 
-  const childrenQuery = useMemoFirebase(() => {
-    if (!db || !user) return null;
-    return collection(db, "parentProfiles", user.uid, "childProfiles");
-  }, [db, user]);
-
-  const { data: children } = useCollection(childrenQuery);
-
   const [settings, setSettings] = useState({
     firstName: "",
     lastName: "",
     enableBugDeterrent: true,
-    eyeBreakInterval: 20,
     receiveWeeklyReportEmail: false,
-    weeklyReportDayOfWeek: "Monday",
-    weeklyReportSendTime: "09:00",
   });
-
-  const [isReportLoading, setIsReportLoading] = useState(false);
-  const [testReport, setTestReport] = useState<{ 
-    subject: string, 
-    body: string, 
-    formal: string,
-    chartData: { name: string, value: number }[] 
-  } | null>(null);
 
   useEffect(() => {
     if (parentProfile) {
@@ -88,53 +65,9 @@ export default function ParentSettings() {
     localStorage.setItem('parent-settings', JSON.stringify(settings));
 
     toast({
-      title: "Settings Saved! 🛡️",
-      description: "Cockroach Mode and eye health policies updated.",
+      title: "Settings Saved!",
+      description: "Control Center preferences updated.",
     });
-  };
-
-  const handleTriggerTestReport = async () => {
-    if (!children || children.length === 0) {
-      toast({
-        variant: "destructive",
-        title: "No Profiles Found",
-        description: "Please add a child profile before testing reports.",
-      });
-      return;
-    }
-
-    setIsReportLoading(true);
-    try {
-      const simulatedChildren = children.map(c => ({
-        name: c.name,
-        usageMinutes: Math.floor(Math.random() * 500) + 200,
-        missionsCompleted: Math.floor(Math.random() * 10) + 2,
-        healthStatus: (['excellent', 'good', 'needs_attention'] as const)[Math.floor(Math.random() * 3)],
-      }));
-
-      const result = await generateWeeklyReport({
-        parentName: settings.firstName || "Parent",
-        children: simulatedChildren,
-      });
-      
-      setTestReport({ 
-        subject: result.emailSubject, 
-        body: result.emailBody,
-        formal: result.formalReportContent,
-        chartData: simulatedChildren.map(c => ({ name: c.name, value: c.usageMinutes }))
-      });
-    } catch (error) {
-      console.error(error);
-      toast({ variant: "destructive", title: "Report Generation Failed" });
-    } finally {
-      setIsReportLoading(false);
-    }
-  };
-
-  const handlePrintReport = () => {
-    if (typeof window !== "undefined") {
-      window.print();
-    }
   };
 
   if (isLoading) {
@@ -149,18 +82,9 @@ export default function ParentSettings() {
     <div className="space-y-8 max-w-4xl mx-auto pb-12">
       <div className="flex justify-between items-end">
         <div>
-          <h2 className="text-3xl font-extrabold tracking-tight text-foreground flex items-center gap-2">
-            Control Center <ShieldCheck className="text-primary h-8 w-8" />
-          </h2>
-          <p className="text-muted-foreground">Configure boundaries and digital eye wellness habits.</p>
+          <h2 className="text-3xl font-extrabold tracking-tight text-foreground">Control Center</h2>
         </div>
-        <div className="flex gap-2">
-           <Button variant="outline" onClick={handleTriggerTestReport} disabled={isReportLoading} className="rounded-full font-bold">
-             {isReportLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Sparkles className="mr-2 h-4 w-4" />}
-             Preview Report
-           </Button>
-           <Button onClick={handleSave} className="rounded-full px-8 font-bold shadow-lg">Save Changes</Button>
-        </div>
+        <Button onClick={handleSave} className="rounded-full px-8 font-bold shadow-lg">Save Changes</Button>
       </div>
 
       <div className="grid gap-6">
@@ -191,7 +115,7 @@ export default function ParentSettings() {
               <KidsyeeLogo className="h-6 w-6 text-primary" />
               <CardTitle>Cockroach Mode</CardTitle>
             </div>
-            <CardDescription>Bugs appear when screen time limits are exceeded or eye breaks are missed.</CardDescription>
+            <CardDescription>Bugs appear when screen time limits are exceeded.</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
             <div className="flex items-center justify-between">
@@ -222,94 +146,6 @@ export default function ParentSettings() {
           </CardContent>
         </Card>
       </div>
-
-      <Dialog open={!!testReport} onOpenChange={() => setTestReport(null)}>
-        <DialogContent className="rounded-[3rem] max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-none shadow-2xl">
-          <DialogHeader className="p-8 pb-4 bg-primary text-white report-modal-header">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <KidsyeeLogo className="h-8 w-8" />
-                <div className="text-left">
-                  <DialogTitle className="text-2xl font-black">Eye Wellness Summary</DialogTitle>
-                  <p className="text-xs font-bold opacity-80 uppercase tracking-widest">AI Generated Preview</p>
-                </div>
-              </div>
-              <Button onClick={handlePrintReport} className="rounded-full bg-white text-primary hover:bg-white/90 font-bold">
-                <Download className="h-4 w-4 mr-2" /> Save PDF
-              </Button>
-            </div>
-          </DialogHeader>
-          
-          <ScrollArea className="flex-1 p-8 bg-[#F8FAFC]">
-            <div id="pdf-report" className="bg-white p-10 rounded-[2.5rem] border shadow-sm space-y-8 text-foreground max-w-3xl mx-auto">
-              <div className="flex justify-between items-center border-b pb-6 report-section">
-                <div className="flex items-center gap-2">
-                  <KidsyeeLogo className="h-8 w-8 text-primary" />
-                  <KidsyeeTextLogo className="text-4xl" />
-                </div>
-                <div className="text-right">
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase">Report Period</p>
-                  <p className="text-lg font-bold">Weekly Update</p>
-                </div>
-              </div>
-
-              <div className="bg-primary/5 p-6 rounded-3xl border border-primary/10 report-section">
-                <h2 className="text-xl font-black text-primary mb-3">Eye Health Assistant Note</h2>
-                <div className="text-foreground/80 leading-relaxed whitespace-pre-wrap text-sm font-medium">
-                  {testReport?.body}
-                </div>
-              </div>
-
-              {testReport?.chartData && testReport.chartData.length > 0 && (
-                <div className="space-y-4 report-section">
-                  <h2 className="text-xl font-black flex items-center gap-2">
-                    <PieChartIcon className="h-5 w-5 text-primary" /> Family Screen Time Distribution
-                  </h2>
-                  <div className="report-chart-container h-[400px] w-full bg-white rounded-3xl border flex items-center justify-center p-4">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={testReport.chartData}
-                          cx="50%"
-                          cy="50%"
-                          innerRadius={60}
-                          outerRadius={100}
-                          paddingAngle={5}
-                          dataKey="value"
-                          nameKey="name"
-                          isAnimationActive={false}
-                        >
-                          {testReport.chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={CHART_COLORS[index % CHART_COLORS.length]} />
-                          ))}
-                        </Pie>
-                        <RechartsTooltip />
-                        <Legend verticalAlign="bottom" height={36}/>
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
-                </div>
-              )}
-
-              <div className="space-y-4 report-section">
-                <h2 className="text-xl font-black flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5 text-primary" /> Eye Health Breakdown
-                </h2>
-                <div className="whitespace-pre-wrap text-sm leading-relaxed p-6 bg-muted/5 rounded-3xl border font-medium text-foreground">
-                  {testReport?.formal}
-                </div>
-              </div>
-
-              <div className="pt-8 border-t flex flex-col items-center gap-2 text-center report-section">
-                <div className="bg-accent/10 text-accent-foreground font-black text-[10px] px-3 py-1 rounded-full">
-                  PROTECTED BY KIDSYEE AI
-                </div>
-                <p className="text-[10px] text-muted-foreground font-bold italic">Generated on {new Date().toLocaleDateString()}</p>
-              </div>
-            </div>
-          </ScrollArea>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 }

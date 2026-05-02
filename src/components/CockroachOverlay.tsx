@@ -20,14 +20,13 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Increase bug count for a more "active" infestation feel
-      const newBugs = Array.from({ length: 18 }).map((_, i) => ({
+      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
         id: i,
         top: `${Math.random() * 90}%`,
         left: `${Math.random() * 90}%`,
-        duration: `${Math.random() * 5 + 5}s`, // Faster scurry
-        delay: `${Math.random() * 3}s`,
-        scale: 0.4 + Math.random() * 0.4, // Smaller, more realistic size
+        duration: `${Math.random() * 4 + 6}s`,
+        delay: `${Math.random() * 2}s`,
+        scale: 0.3 + Math.random() * 0.3, // Realistic small size
       }));
       setBugs(newBugs);
     } else {
@@ -55,9 +54,9 @@ export function CockroachOverlay({ active }: { active: boolean }) {
             <Image 
               src={cockroachImg.imageUrl} 
               alt="Cockroach" 
-              width={60} 
-              height={60}
-              className="filter drop-shadow-[0_8px_8px_rgba(0,0,0,0.5)] brightness-75 contrast-125"
+              width={80} 
+              height={80}
+              className="mix-blend-multiply brightness-75 contrast-125 filter drop-shadow-md"
               data-ai-hint={cockroachImg.imageHint}
             />
           </div>

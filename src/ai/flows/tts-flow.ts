@@ -33,13 +33,14 @@ const ttsFlow = ai.defineFlow(
   },
   async (query) => {
     try {
+      // Use the specialized TTS model. 
+      // We pass the query directly as the prompt to ensure it's treated as transcript only.
       const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
-        prompt: [{ text: query }],
+        prompt: query,
         config: {
           responseModalities: ['AUDIO'],
-          // We set safety thresholds to BLOCK_NONE because this model occasionally 
-          // triggers a text-based refusal which causes a 400 error on the audio-only modality.
+          // Block nothing to prevent text-based refusals that trigger 400 errors.
           safetySettings: [
             { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
@@ -48,7 +49,8 @@ const ttsFlow = ai.defineFlow(
           ],
           speechConfig: {
             voiceConfig: {
-              // 'Achernar' is a clear, supportive feminine voice.
+              // 'Achernar' is a clear, feminine voice. 
+              // Note: specific 'Indian' categorized voices are not currently exposed in prebuilt names for this model.
               prebuiltVoiceConfig: { voiceName: 'Achernar' }, 
             },
           },
@@ -59,11 +61,8 @@ const ttsFlow = ai.defineFlow(
         throw new Error('No audio media returned from Genkit');
       }
 
-      // Extract the PCM data from the base64 URL
       const pcmBase64 = media.url.substring(media.url.indexOf(',') + 1);
       const pcmData = Buffer.from(pcmBase64, 'base64');
-
-      // Convert raw PCM to WAV format
       const wavBase64 = await toWav(pcmData);
 
       return {
@@ -76,9 +75,6 @@ const ttsFlow = ai.defineFlow(
   }
 );
 
-/**
- * Converts raw PCM data to WAV format using the wav package.
- */
 async function toWav(
   pcmData: Buffer,
   channels = 1,

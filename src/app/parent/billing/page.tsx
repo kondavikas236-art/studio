@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Check, ShieldCheck, Clock, Sparkles, Loader2, CreditCard, Lock } from "lucide-react";
+import { Check, ShieldCheck, Clock, Sparkles, Loader2, CreditCard, Lock, Info } from "lucide-react";
 import { useFirestore, useUser, useDoc, useMemoFirebase } from "@/firebase";
 import { doc } from "firebase/firestore";
 import { updateDocumentNonBlocking } from "@/firebase/non-blocking-updates";
@@ -78,7 +78,7 @@ export default function BillingPage() {
     <div className="space-y-8 max-w-4xl mx-auto pb-12 px-4">
       <div className="text-center space-y-4">
         <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-2">
-          <Sparkles className="h-10 w-10 text-primary animate-pulse" />
+          <Sparkles className="h-10 w-10 text-primary animate-float" />
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">Family Pro Subscription</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
@@ -134,6 +134,18 @@ export default function BillingPage() {
         </Card>
       </div>
 
+      <div className="max-w-2xl mx-auto bg-white/50 border-2 border-dashed border-primary/20 p-6 rounded-[2.5rem] flex items-start gap-4 shadow-sm">
+        <div className="bg-primary/10 p-3 rounded-2xl text-primary">
+          <Info className="h-6 w-6" />
+        </div>
+        <div className="space-y-1">
+          <h4 className="font-black text-primary italic">How real payments work</h4>
+          <p className="text-sm text-muted-foreground font-medium leading-relaxed">
+            In a real production app, we would connect to <strong>Stripe</strong>. When a parent pays, the funds are deposited into your connected business bank account. For this prototype, we've built a <strong>simulated checkout</strong> so you can see the user experience without any real money moving.
+          </p>
+        </div>
+      </div>
+
       <Dialog open={showCheckout} onOpenChange={setShowCheckout}>
         <DialogContent className="rounded-[2.5rem] sm:max-w-[450px] p-0 overflow-hidden border-none shadow-2xl mx-4">
           <DialogHeader className="p-6 sm:p-8 pb-4 bg-primary/5">
@@ -141,10 +153,10 @@ export default function BillingPage() {
                <div className="p-2 bg-primary rounded-xl text-white">
                  <CreditCard className="h-6 w-6" />
                </div>
-               <DialogTitle className="text-xl sm:text-2xl font-black">Checkout</DialogTitle>
+               <DialogTitle className="text-xl sm:text-2xl font-black">Secure Checkout</DialogTitle>
             </div>
             <DialogDescription className="font-medium text-foreground/80 text-sm">
-              Enter your Credit or Debit card details to start your 7-day free trial.
+              Enter details for your Credit or Debit card. No real money will be processed.
             </DialogDescription>
           </DialogHeader>
           
@@ -198,7 +210,7 @@ export default function BillingPage() {
 
               <div className="flex items-center gap-2 text-[10px] text-muted-foreground font-medium bg-muted/30 p-3 rounded-xl border border-dashed leading-normal">
                 <Lock className="h-3 w-3 shrink-0" />
-                <span>Prototype Note: This secure simulation accepts all standard credit and debit cards.</span>
+                <span>Prototype Note: Secure simulation accepts all cards. In production, funds deposit via Stripe to your business account.</span>
               </div>
             </div>
 
@@ -211,10 +223,10 @@ export default function BillingPage() {
                 {isProcessing ? (
                   <div className="flex items-center gap-2">
                     <Loader2 className="h-5 w-5 animate-spin" />
-                    <span>Verifying...</span>
+                    <span>Processing...</span>
                   </div>
                 ) : (
-                  "Confirm & Start Trial"
+                  "Confirm & Start 7-Day Trial"
                 )}
               </Button>
             </DialogFooter>

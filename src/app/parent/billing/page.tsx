@@ -18,7 +18,7 @@ const PLAN = {
   name: "Family Pro",
   price: "$1",
   period: "/year",
-  trialPeriod: "20 Days Free",
+  trialPeriod: "7 Days Free",
   description: "Complete digital protection for your entire family. Secure payments via Credit or Debit card.",
   features: [
     "Unlimited Child Profiles",
@@ -28,7 +28,7 @@ const PLAN = {
     "Priority AI Generation Quotas",
     "Ad-Free Secure Experience"
   ],
-  cta: "Start 20-Day Free Trial",
+  cta: "Start 7-Day Free Trial",
 };
 
 export default function BillingPage() {
@@ -67,7 +67,7 @@ export default function BillingPage() {
 
       toast({
         title: "Subscription Active! 🚀",
-        description: "Welcome to Family Pro. Your 20-day free trial has started.",
+        description: "Welcome to Family Pro. Your 7-day free trial has started.",
       });
     }, 2500);
   };
@@ -82,7 +82,7 @@ export default function BillingPage() {
         </div>
         <h1 className="text-3xl sm:text-4xl font-black text-foreground tracking-tight">Family Pro Subscription</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto text-base sm:text-lg leading-relaxed">
-          Protect your family's eyes and build healthy digital habits. Start your 20-day trial for just $1/year.
+          Protect your family's eyes and build healthy digital habits. Start your 7-day trial for just $1/year.
         </p>
       </div>
 
@@ -144,7 +144,7 @@ export default function BillingPage() {
                <DialogTitle className="text-xl sm:text-2xl font-black">Checkout</DialogTitle>
             </div>
             <DialogDescription className="font-medium text-foreground/80 text-sm">
-              Enter your Credit or Debit card details to start your 20-day free trial.
+              Enter your Credit or Debit card details to start your 7-day free trial.
             </DialogDescription>
           </DialogHeader>
           
@@ -224,7 +224,7 @@ export default function BillingPage() {
 
       <div className="text-center opacity-60">
         <p className="text-xs sm:text-sm font-bold flex items-center justify-center gap-2">
-          <ShieldCheck className="h-4 w-4" /> Secure yearly billing of $1 starts after 20 days. Cancel anytime.
+          <ShieldCheck className="h-4 w-4" /> Secure yearly billing of $1 starts after 7 days. Cancel anytime.
         </p>
       </div>
     </div>

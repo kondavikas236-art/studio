@@ -50,7 +50,7 @@ export default function Home() {
       <div className="flex-1 flex flex-col items-center bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-primary/10 via-background to-background min-h-screen p-6">
         <div className="w-full max-w-md mt-12 mb-12 text-center space-y-4">
           <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20 text-primary">
-            <KidsyeeLogo className="h-16 w-16" />
+            <KidsyeeLogo className="h-20 w-20" />
           </div>
           <KidsyeeTextLogo className="text-5xl" />
           <p className="text-muted-foreground font-semibold">The Smart Screen Time Guardian</p>
@@ -61,9 +61,9 @@ export default function Home() {
             <CardTitle className="text-2xl font-black">
               {isSignUp ? "Create Account" : "Parent Login"}
             </CardTitle>
-            <CardDescription className="text-sm font-medium">
-              {isSignUp ? "Start protecting your family today" : "Access your secure family dashboard"}
-            </CardDescription>
+            <CardTitle className="text-sm font-medium opacity-70">
+              Protect your child's sight
+            </CardTitle>
           </CardHeader>
           <form onSubmit={handleAuthSubmit}>
             <CardContent className="space-y-4 p-8">
@@ -124,11 +124,11 @@ export default function Home() {
       <div className="w-full max-w-6xl px-6 py-20 flex flex-col items-center">
         <div className="text-center space-y-4 max-w-3xl mb-16 animate-in fade-in zoom-in duration-700">
           <div className="inline-block p-4 rounded-3xl bg-primary/10 mb-4 animate-float shadow-sm border-2 border-primary/20 text-primary">
-            <KidsyeeLogo className="h-20 w-20" />
+            <KidsyeeLogo className="h-24 w-24" />
           </div>
           <KidsyeeTextLogo className="text-6xl md:text-8xl" />
           <p className="text-xl text-muted-foreground font-semibold max-w-xl mx-auto leading-relaxed">
-            Welcome back, {parentName}! Choose your destination.
+            Welcome back, {parentName}! Protect your family's wellness.
           </p>
         </div>
 

@@ -1,10 +1,11 @@
+
 "use client";
 
 import { cn } from "@/lib/utils";
 
 /**
- * KidsyeeLogo - A custom "Healthy Eye" logo with the name integrated.
- * This ensures no copyright issues and directly follows the brand mission.
+ * KidsyeeLogo - A simple, minimalist "Healthy Eye" logo.
+ * The brand name is integrated into the pupil for a clean, professional look.
  */
 export function KidsyeeLogo({ className }: { className?: string }) {
   return (
@@ -13,40 +14,39 @@ export function KidsyeeLogo({ className }: { className?: string }) {
       className={cn("h-12 w-12", className)} 
       xmlns="http://www.w3.org/2000/svg"
       role="img"
-      aria-label="Kidsyee Healthy Eye Logo"
+      aria-label="Kidsyee Simple Eye Logo"
     >
-      {/* Subtle outer glow for depth */}
-      <circle cx="50" cy="50" r="48" fill="currentColor" fillOpacity="0.05" />
-
-      {/* The Protective Eye Lids (Healthy Eye Shape) */}
+      {/* Protective Eye Lids - Simplified Curve */}
       <path 
-        d="M10 50 Q50 15 90 50 Q50 85 10 50" 
+        d="M10 50 C25 20 75 20 90 50" 
         stroke="currentColor" 
-        strokeWidth="6" 
+        strokeWidth="5" 
+        strokeLinecap="round" 
+        fill="none"
+      />
+      <path 
+        d="M10 50 C25 80 75 80 90 50" 
+        stroke="currentColor" 
+        strokeWidth="5" 
         strokeLinecap="round" 
         fill="none"
       />
       
-      {/* The Iris - representing focus and health */}
-      <circle cx="50" cy="50" r="26" fill="currentColor" />
+      {/* Pupil - The focus point */}
+      <circle cx="50" cy="50" r="22" fill="currentColor" />
       
-      {/* Integrated Brand Name in the Core */}
+      {/* Integrated Brand Name */}
       <text 
         x="50" 
-        y="53.5" 
+        y="53" 
         textAnchor="middle" 
         fill="white" 
-        fontSize="8" 
+        fontSize="7" 
         fontWeight="900"
-        fontFamily="system-ui, -apple-system, sans-serif"
-        letterSpacing="-0.2"
+        fontFamily="system-ui, sans-serif"
       >
         KIDSYEE
       </text>
-
-      {/* The Health Sparkle - reflecting a healthy digital environment */}
-      <circle cx="65" cy="40" r="4" fill="white" fillOpacity="0.6" />
-      <circle cx="68" cy="37" r="1.5" fill="white" fillOpacity="0.8" />
     </svg>
   );
 }

@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ShieldCheck, Gamepad2, BarChart3, Settings, Trophy, Lock, CreditCard } from "lucide-react";
+import { ShieldCheck, BarChart3, Settings, Trophy, Lock, CreditCard, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function Navigation() {
@@ -12,7 +12,7 @@ export function Navigation() {
   const isParentPath = pathname?.startsWith("/parent");
 
   const kidLinks = [
-    { href: "/kid/dashboard", label: "Hero HQ", icon: Gamepad2 },
+    { href: "/kid/dashboard", label: "Eye Data", icon: Activity },
     { href: "/kid/eye-health", label: "Eye Gym", icon: ShieldCheck },
     { href: "/parent/settings", label: "Parents", icon: Lock },
     { href: "/kid/achievements", label: "Rewards", icon: Trophy },

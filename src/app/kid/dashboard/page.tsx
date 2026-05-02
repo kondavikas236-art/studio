@@ -122,7 +122,7 @@ export default function KidDashboard() {
       <section className="space-y-4">
         <div className="flex justify-between items-end">
           <h2 className="text-2xl font-black text-foreground flex items-center gap-2">
-            {explorerName}'s Focus Meter <Sparkles className="text-accent-foreground h-6 w-6" />
+            {explorerName}'s Eye Data <Sparkles className="text-accent-foreground h-6 w-6" />
           </h2>
         </div>
 

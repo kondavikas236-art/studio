@@ -34,6 +34,7 @@ const ttsFlow = ai.defineFlow(
   async (query) => {
     const { media } = await ai.generate({
       model: googleAI.model('gemini-2.5-flash-preview-tts'),
+      system: "You are a high-fidelity Text-to-Speech engine. Your ONLY task is to convert the provided text into audio. DO NOT generate any text response or explanations. Speak the input exactly as provided.",
       config: {
         responseModalities: ['AUDIO'],
         speechConfig: {

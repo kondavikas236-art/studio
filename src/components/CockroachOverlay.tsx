@@ -20,13 +20,14 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
+      // Create a small swarm of realistic bugs
+      const newBugs = Array.from({ length: 12 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 90}%`,
-        left: `${Math.random() * 90}%`,
-        duration: `${Math.random() * 4 + 6}s`,
-        delay: `${Math.random() * 2}s`,
-        scale: 0.3 + Math.random() * 0.3, // Realistic small size
+        top: `${Math.random() * 85}%`,
+        left: `${Math.random() * 85}%`,
+        duration: `${Math.random() * 3 + 5}s`,
+        delay: `${Math.random() * 3}s`,
+        scale: 0.25 + Math.random() * 0.2, // Small, realistic scale
       }));
       setBugs(newBugs);
     } else {
@@ -54,15 +55,15 @@ export function CockroachOverlay({ active }: { active: boolean }) {
             <Image 
               src={cockroachImg.imageUrl} 
               alt="Cockroach" 
-              width={80} 
-              height={80}
-              className="mix-blend-multiply brightness-75 contrast-125 filter drop-shadow-md"
+              width={100} 
+              height={100}
+              className="mix-blend-multiply brightness-50 contrast-125 filter drop-shadow-2xl"
               data-ai-hint={cockroachImg.imageHint}
             />
           </div>
         </div>
       ))}
-      <div className="absolute inset-0 bg-destructive/5 backdrop-blur-[0.5px] animate-pulse" />
+      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.2px] pointer-events-none" />
     </div>
   );
 }

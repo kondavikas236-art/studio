@@ -17,6 +17,12 @@
       "description": "Calming nature scene for eye rest",
       "imageUrl": "https://picsum.photos/seed/nature/800/600",
       "imageHint": "calm nature"
+    },
+    {
+      "id": "cockroach-image",
+      "description": "Realistic cockroach deterrent",
+      "imageUrl": "https://picsum.photos/seed/cockroach/200/200",
+      "imageHint": "cockroach bug"
     }
   ]
 }

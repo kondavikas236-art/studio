@@ -24,7 +24,7 @@ const PLAN = {
     "Unlimited Child Profiles",
     "Detailed Eye Health Analytics",
     "AI-Generated Wellness Reports",
-    "Custom Cockroach Density Controls",
+    "Cockroach Mode Controls",
     "Priority AI Generation Quotas",
     "Ad-Free Secure Experience"
   ],

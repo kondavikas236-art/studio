@@ -89,7 +89,7 @@ export default function ParentSettings() {
 
     toast({
       title: "Settings Saved! 🛡️",
-      description: "Cockroach deterrents and eye health policies updated.",
+      description: "Cockroach Mode and eye health policies updated.",
     });
   };
 
@@ -189,7 +189,7 @@ export default function ParentSettings() {
           <CardHeader>
              <div className="flex items-center gap-2 mb-2">
               <KidsyeeLogo className="h-6 w-6 text-primary" />
-              <CardTitle>Cockroach Deterrent</CardTitle>
+              <CardTitle>Cockroach Mode</CardTitle>
             </div>
             <CardDescription>Bugs appear when screen time limits are exceeded or eye breaks are missed.</CardDescription>
           </CardHeader>
@@ -197,7 +197,7 @@ export default function ParentSettings() {
             <div className="flex items-center justify-between">
               <div className="space-y-0.5">
                 <Label className="text-base font-bold">Enable Cockroach Mode</Label>
-                <p className="text-sm text-muted-foreground">Automatic deterrent when eye health limits are hit.</p>
+                <p className="text-sm text-muted-foreground">Automatic visual deterrent when limits are hit.</p>
               </div>
               <Switch checked={settings.enableBugDeterrent} onCheckedChange={(val) => setSettings({...settings, enableBugDeterrent: val})} />
             </div>

@@ -11,6 +11,7 @@ interface BugInstance {
   duration: string;
   delay: string;
   scale: number;
+  rotation: number;
 }
 
 export function CockroachOverlay({ active }: { active: boolean }) {
@@ -19,14 +20,15 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Create a swarm of realistic bugs
-      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
+      // Create a swarm of lifelike bugs
+      const newBugs = Array.from({ length: 20 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 90}%`,
-        left: `${Math.random() * 90}%`,
-        duration: `${Math.random() * 4 + 4}s`,
-        delay: `${Math.random() * 5}s`,
-        scale: 0.15 + Math.random() * 0.15, // Lifelike small size
+        top: `${Math.random() * 95}%`,
+        left: `${Math.random() * 95}%`,
+        duration: `${Math.random() * 3 + 4}s`,
+        delay: `${Math.random() * 4}s`,
+        scale: 0.12 + Math.random() * 0.1, // Lifelike small size
+        rotation: Math.random() * 360,
       }));
       setBugs(newBugs);
     } else {
@@ -37,7 +39,7 @@ export function CockroachOverlay({ active }: { active: boolean }) {
   if (!active || !cockroachImg) return null;
 
   return (
-    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden">
+    <div className="fixed inset-0 pointer-events-none z-[9999] overflow-hidden select-none">
       {bugs.map((bug) => (
         <div
           key={bug.id}
@@ -47,22 +49,22 @@ export function CockroachOverlay({ active }: { active: boolean }) {
             left: bug.left,
             animationDuration: bug.duration,
             animationDelay: bug.delay,
-            transform: `scale(${bug.scale})`,
+            transform: `rotate(${bug.rotation}deg) scale(${bug.scale})`,
           }}
         >
           <div className="animate-bug-vibrate origin-center">
             <Image 
               src={cockroachImg.imageUrl} 
-              alt="Cockroach" 
-              width={200} 
-              height={200}
-              className="mix-blend-multiply brightness-75 contrast-125 filter drop-shadow-2xl"
+              alt="Realistic Cockroach" 
+              width={300} 
+              height={300}
+              className="mix-blend-multiply contrast-125 brightness-90 filter drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]"
               data-ai-hint="realistic cockroach"
             />
           </div>
         </div>
       ))}
-      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.2px] pointer-events-none" />
+      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.3px] pointer-events-none" />
     </div>
   );
 }

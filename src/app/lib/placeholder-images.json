@@ -20,8 +20,8 @@
     },
     {
       "id": "cockroach-image",
-      "description": "A top-down, macro photography shot of a highly realistic cockroach, photorealistic, intricate exoskeleton details, glossy dark brown, isolated on pure white background",
-      "imageUrl": "https://picsum.photos/seed/cockroach-realistic-top-down/300/300",
+      "description": "A top-down, photorealistic cockroach on white background, intricate legs and exoskeleton",
+      "imageUrl": "https://picsum.photos/seed/cockroach-macro-top/400/400",
       "imageHint": "realistic cockroach"
     }
   ]

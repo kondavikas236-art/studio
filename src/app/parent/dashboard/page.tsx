@@ -161,7 +161,7 @@ export default function ParentDashboard() {
           <CardContent className="p-8 flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="space-y-2">
               <h3 className="text-2xl font-black italic">Unlock Unlimited Potential</h3>
-              <p className="font-bold opacity-90 max-w-lg">Get unlimited child profiles, advanced AI diary insights, and custom cockroach deterrent settings with Family Pro.</p>
+              <p className="font-bold opacity-90 max-w-lg">Get unlimited child profiles, advanced eye wellness analytics, and custom cockroach deterrent settings with Family Pro.</p>
             </div>
             <Link href="/parent/billing">
               <Button className="bg-white text-primary hover:bg-white/90 rounded-full h-12 px-8 font-black text-lg">

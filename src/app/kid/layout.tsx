@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Navigation } from "@/components/Navigation";
@@ -44,7 +45,7 @@ export default function KidLayout({
 
   const { data: liveChild } = useDoc(childRef);
 
-  const isSafeZone = pathname === "/kid/diary" || pathname === "/kid/eye-health";
+  const isSafeZone = pathname === "/kid/eye-health";
   
   // Cockroach Mode Logic:
   // 1. Parent must have enabled it in settings.

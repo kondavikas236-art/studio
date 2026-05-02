@@ -16,18 +16,18 @@ const PLAN = {
   id: "family_pro",
   name: "Family Pro",
   price: "$1",
-  period: "/mo",
-  trialPeriod: "7 Days Free",
+  period: "/year",
+  trialPeriod: "20 Days Free",
   description: "Complete digital protection for your entire family.",
   features: [
     "Custom Cockroach Density", 
-    "AI Diary Buddy (Unlimited)", 
     "Detailed PDF Reports", 
     "Up to 5 Child Profiles", 
     "Priority AI Generation",
-    "Ad-Free Experience"
+    "Ad-Free Experience",
+    "Real-time Wellness Monitoring"
   ],
-  cta: "Start 7-Day Free Trial",
+  cta: "Start 20-Day Free Trial",
 };
 
 export default function BillingPage() {
@@ -60,7 +60,7 @@ export default function BillingPage() {
 
       toast({
         title: "Subscription Active! 🚀",
-        description: "Welcome to Family Pro. All premium features are now unlocked.",
+        description: "Welcome to Family Pro. Your 20-day free trial has started.",
       });
     }, 2000);
   };
@@ -75,7 +75,7 @@ export default function BillingPage() {
         </div>
         <h1 className="text-4xl font-black text-foreground">Family Pro Subscription</h1>
         <p className="text-muted-foreground font-semibold max-w-xl mx-auto">
-          Protect your family's digital health. Start your 7-day trial for just $1/month.
+          Protect your family's digital health. Start your 20-day trial for just $1/year.
         </p>
       </div>
 
@@ -132,7 +132,7 @@ export default function BillingPage() {
           <DialogHeader>
             <DialogTitle>Complete Subscription</DialogTitle>
             <DialogDescription>
-              Confirm your upgrade to Family Pro. You won't be charged until after your 7-day trial.
+              Confirm your upgrade to Family Pro. You won't be charged $1 until after your 20-day trial.
             </DialogDescription>
           </DialogHeader>
           <div className="py-6 space-y-4">
@@ -144,7 +144,7 @@ export default function BillingPage() {
               <span className="font-black">$0.00 today</span>
             </div>
             <p className="text-xs text-muted-foreground text-center">
-              Prototype Note: This is a simulated checkout. Clicking "Confirm" will update your account status in Firestore directly.
+              Prototype Note: This is a simulated checkout. After 20 days, you will be billed $1 for the full year.
             </p>
           </div>
           <DialogFooter>
@@ -160,7 +160,7 @@ export default function BillingPage() {
       </Dialog>
 
       <div className="text-center opacity-60">
-        <p className="text-sm font-medium">Cancel anytime during your 1-week trial to avoid charges.</p>
+        <p className="text-sm font-medium">Cancel anytime during your 20-day trial to avoid the $1 yearly charge.</p>
       </div>
     </div>
   );

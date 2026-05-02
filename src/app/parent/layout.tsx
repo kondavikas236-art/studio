@@ -1,8 +1,7 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
-import { ShieldCheck, Bell, Gamepad2, LogOut, Loader2, Share2 } from "lucide-react";
+import { ShieldCheck, Activity, LogOut, Loader2, Share2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -90,12 +89,12 @@ export default function ParentLayout({
                 <TooltipTrigger asChild>
                   <Link href="/kid/dashboard">
                     <Button variant="outline" size="sm" className="hidden sm:flex rounded-full border-primary/20 hover:bg-primary/5 text-primary font-bold">
-                      <Gamepad2 className="mr-2 h-4 w-4" /> Kid Zone
+                      <Activity className="mr-2 h-4 w-4" /> Eye Data
                     </Button>
                   </Link>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Switch to Child Dashboard</p>
+                  <p>Switch to Wellness Dashboard</p>
                 </TooltipContent>
               </Tooltip>
            </TooltipProvider>

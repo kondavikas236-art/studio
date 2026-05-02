@@ -1,9 +1,8 @@
-
 "use client";
 
 import { useState } from "react";
 import Link from "next/link";
-import { Gamepad2, ShieldCheck, ChevronRight, LogIn, Smartphone, Eye, Trophy, Sparkles, Mail, Lock, UserPlus, Loader2 } from "lucide-react";
+import { Activity, ShieldCheck, ChevronRight, LogIn, Smartphone, Eye, Trophy, Sparkles, Mail, Lock, UserPlus, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser, useAuth, useDoc, useMemoFirebase, useFirestore } from "@/firebase";
 import { initiateEmailSignIn, initiateEmailSignUp } from "@/firebase/non-blocking-login";
@@ -36,7 +35,7 @@ export default function Home() {
     {
       icon: Eye,
       title: "Active Protection",
-      desc: "Switch to Kid Zone. If the limit is reached, Cockroach Mode triggers automatically."
+      desc: "Switch to Eye Data. If the limit is reached, Cockroach Mode triggers automatically."
     },
     {
       icon: Trophy,
@@ -158,14 +157,14 @@ export default function Home() {
           <Link href="/kid/dashboard" className="group">
             <div className="h-full bg-card border-4 border-primary/20 p-10 rounded-[3rem] transition-all hover:scale-[1.02] hover:shadow-2xl flex flex-col items-center text-center space-y-8 relative overflow-hidden">
               <div className="p-8 rounded-full bg-primary/10 group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
-                <Gamepad2 className="h-20 w-20" />
+                <Activity className="h-20 w-20" />
               </div>
               <div className="space-y-3">
-                <h2 className="text-4xl font-black">Kid Zone</h2>
-                <p className="text-muted-foreground font-medium text-lg">Track focus and complete quests!</p>
+                <h2 className="text-4xl font-black">Eye Data</h2>
+                <p className="text-muted-foreground font-medium text-lg">Track focus and view health stats.</p>
               </div>
               <Button size="lg" className="w-full rounded-full text-xl h-16 font-black shadow-xl group-hover:scale-105 transition-transform">
-                Let's Play <ChevronRight className="ml-2 h-6 w-6" />
+                Check Wellness <ChevronRight className="ml-2 h-6 w-6" />
               </Button>
             </div>
           </Link>

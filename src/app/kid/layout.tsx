@@ -1,4 +1,3 @@
-
 "use client";
 
 import { Navigation } from "@/components/Navigation";
@@ -122,7 +121,7 @@ export default function KidLayout({
               <AvatarFallback>EX</AvatarFallback>
             </Avatar>
             <div>
-              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Kid Mode</p>
+              <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest leading-none mb-1">Eye Data</p>
               <p className="text-base font-black tracking-tight leading-none">{explorerName}</p>
             </div>
           </div>

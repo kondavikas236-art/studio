@@ -38,16 +38,50 @@
   }
 }
 
-/* Realistic Jerky Cockroach Movement - Corner to Corner */
-@keyframes bug-scurry {
+/* Realistic Jerky Cockroach Movement - Path 1: TL to BR */
+@keyframes scurry-tl-br {
   0% { transform: translate(-20vw, -20vh) rotate(45deg); }
-  10% { transform: translate(10vw, 5vh) rotate(60deg); }
-  25% { transform: translate(15vw, 5vh) rotate(60deg); } /* Sudden Stop */
-  40% { transform: translate(50vw, 40vh) rotate(120deg); }
-  55% { transform: translate(45vw, 60vh) rotate(200deg); }
-  65% { transform: translate(45vw, 60vh) rotate(200deg); } /* Sudden Stop */
-  85% { transform: translate(90vw, 85vh) rotate(160deg); }
+  20% { transform: translate(15vw, 10vh) rotate(60deg); }
+  25% { transform: translate(15vw, 10vh) rotate(65deg); } /* Sudden Stop */
+  40% { transform: translate(40vw, 40vh) rotate(120deg); }
+  55% { transform: translate(45vw, 60vh) rotate(180deg); }
+  60% { transform: translate(45vw, 60vh) rotate(185deg); } /* Sudden Stop */
+  80% { transform: translate(85vw, 85vh) rotate(160deg); }
   100% { transform: translate(120vw, 120vh) rotate(45deg); }
+}
+
+/* Path 2: TR to BL */
+@keyframes scurry-tr-bl {
+  0% { transform: translate(120vw, -20vh) rotate(-45deg); }
+  15% { transform: translate(80vw, 15vh) rotate(-60deg); }
+  20% { transform: translate(80vw, 15vh) rotate(-55deg); } /* Sudden Stop */
+  45% { transform: translate(50vw, 50vh) rotate(-130deg); }
+  65% { transform: translate(20vw, 75vh) rotate(-190deg); }
+  70% { transform: translate(20vw, 75vh) rotate(-185deg); } /* Sudden Stop */
+  90% { transform: translate(-10vw, 95vh) rotate(-220deg); }
+  100% { transform: translate(-30vw, 120vh) rotate(-45deg); }
+}
+
+/* Path 3: BL to TR */
+@keyframes scurry-bl-tr {
+  0% { transform: translate(-20vw, 120vh) rotate(225deg); }
+  25% { transform: translate(20vw, 80vh) rotate(240deg); }
+  30% { transform: translate(20vw, 80vh) rotate(235deg); } /* Sudden Stop */
+  50% { transform: translate(55vw, 45vh) rotate(300deg); }
+  70% { transform: translate(85vw, 15vh) rotate(340deg); }
+  75% { transform: translate(85vw, 15vh) rotate(345deg); } /* Sudden Stop */
+  100% { transform: translate(120vw, -20vh) rotate(225deg); }
+}
+
+/* Path 4: BR to TL */
+@keyframes scurry-br-tl {
+  0% { transform: translate(120vw, 120vh) rotate(-135deg); }
+  20% { transform: translate(85vw, 85vh) rotate(-150deg); }
+  25% { transform: translate(85vw, 85vh) rotate(-155deg); } /* Sudden Stop */
+  50% { transform: translate(40vw, 40vh) rotate(-210deg); }
+  75% { transform: translate(10vw, 15vh) rotate(-260deg); }
+  80% { transform: translate(10vw, 15vh) rotate(-255deg); } /* Sudden Stop */
+  100% { transform: translate(-20vw, -20vh) rotate(-135deg); }
 }
 
 @keyframes bug-vibrate {
@@ -57,9 +91,10 @@
   75% { transform: scale(1.02) rotate(1deg); }
 }
 
-.animate-bug-scurry {
-  animation: bug-scurry 8s infinite ease-in-out;
-}
+.animate-scurry-1 { animation: scurry-tl-br 7s infinite linear; }
+.animate-scurry-2 { animation: scurry-tr-bl 8s infinite linear; }
+.animate-scurry-3 { animation: scurry-bl-tr 9s infinite linear; }
+.animate-scurry-4 { animation: scurry-br-tl 7.5s infinite linear; }
 
 .animate-bug-vibrate {
   animation: bug-vibrate 0.1s infinite linear;

@@ -4,12 +4,10 @@ import { useEffect, useState } from "react";
 
 interface BugInstance {
   id: number;
-  top: string;
-  left: string;
+  animationClass: string;
   duration: string;
   delay: string;
   scale: number;
-  rotation: number;
 }
 
 /**
@@ -70,16 +68,21 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Create a swarm of lifelike insects that will invade from different corners
-      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
+      // Create a swarm of lifelike insects with different paths
+      const animationClasses = [
+        'animate-scurry-1',
+        'animate-scurry-2',
+        'animate-scurry-3',
+        'animate-scurry-4'
+      ];
+
+      const newBugs = Array.from({ length: 18 }).map((_, i) => ({
         id: i,
-        // Start them at random edges to make corner-to-corner crossing more varied
-        top: `${Math.random() * 100}%`,
-        left: `${Math.random() * 100}%`,
-        duration: `${Math.random() * 4 + 6}s`, 
-        delay: `${Math.random() * 5}s`,
-        scale: 0.3 + Math.random() * 0.2, 
-        rotation: Math.random() * 360,
+        // Randomly pick one of the corner-to-corner paths
+        animationClass: animationClasses[Math.floor(Math.random() * animationClasses.length)],
+        duration: `${Math.random() * 3 + 6}s`, 
+        delay: `${Math.random() * 8}s`,
+        scale: 0.25 + Math.random() * 0.2, 
       }));
       setBugs(newBugs);
     } else {
@@ -94,13 +97,11 @@ export function CockroachOverlay({ active }: { active: boolean }) {
       {bugs.map((bug) => (
         <div
           key={bug.id}
-          className="absolute animate-bug-scurry"
+          className={`absolute ${bug.animationClass}`}
           style={{
-            top: bug.top,
-            left: bug.left,
             animationDuration: bug.duration,
             animationDelay: bug.delay,
-            transform: `rotate(${bug.rotation}deg) scale(${bug.scale})`,
+            transform: `scale(${bug.scale})`,
             width: "80px",
             height: "120px",
           }}

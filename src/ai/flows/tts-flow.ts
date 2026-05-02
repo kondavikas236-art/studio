@@ -32,34 +32,41 @@ const ttsFlow = ai.defineFlow(
     outputSchema: TTSOutputSchema,
   },
   async (query) => {
-    const { media } = await ai.generate({
-      model: googleAI.model('gemini-2.5-flash-preview-tts'),
-      system: "You are a high-fidelity Text-to-Speech engine. Your ONLY task is to convert the provided text into audio. DO NOT generate any text response or explanations. Speak the input exactly as provided.",
-      config: {
-        responseModalities: ['AUDIO'],
-        speechConfig: {
-          voiceConfig: {
-            prebuiltVoiceConfig: { voiceName: 'Puck' }, // Puck is friendly and playful for kids
+    // We use a try-catch block to handle transient API errors gracefully
+    try {
+      const { media } = await ai.generate({
+        model: googleAI.model('gemini-2.5-flash-preview-tts'),
+        // Note: We removed the 'system' property as it can cause 500 errors in TTS-only models.
+        // The prompt itself should contain only the text to be spoken.
+        config: {
+          responseModalities: ['AUDIO'],
+          speechConfig: {
+            voiceConfig: {
+              prebuiltVoiceConfig: { voiceName: 'Algenib' }, // Using a standard stable voice
+            },
           },
         },
-      },
-      prompt: query,
-    });
+        prompt: query,
+      });
 
-    if (!media || !media.url) {
-      throw new Error('No audio media returned from Genkit');
+      if (!media || !media.url) {
+        throw new Error('No audio media returned from Genkit');
+      }
+
+      // Extract the PCM data from the base64 URL
+      const pcmBase64 = media.url.substring(media.url.indexOf(',') + 1);
+      const pcmData = Buffer.from(pcmBase64, 'base64');
+
+      // Convert raw PCM to WAV format so it can be played by browsers
+      const wavBase64 = await toWav(pcmData);
+
+      return {
+        media: 'data:audio/wav;base64,' + wavBase64,
+      };
+    } catch (error: any) {
+      console.error('Genkit TTS Generation failed:', error);
+      throw new Error(`TTS failed: ${error.message || 'Unknown error'}`);
     }
-
-    // Extract the PCM data from the base64 URL
-    const pcmBase64 = media.url.substring(media.url.indexOf(',') + 1);
-    const pcmData = Buffer.from(pcmBase64, 'base64');
-
-    // Convert raw PCM to WAV format so it can be played by browsers
-    const wavBase64 = await toWav(pcmData);
-
-    return {
-      media: 'data:audio/wav;base64,' + wavBase64,
-    };
   }
 );
 
@@ -80,7 +87,10 @@ async function toWav(
     });
 
     let bufs = [] as any[];
-    writer.on('error', reject);
+    writer.on('error', (err) => {
+      console.error('Wav Writer Error:', err);
+      reject(err);
+    });
     writer.on('data', function (d) {
       bufs.push(d);
     });

@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -45,19 +44,14 @@
 }
 
 @media print {
-  /* 1. Hide everything by default */
   body * {
     visibility: hidden !important;
   }
-
-  /* 2. Target the report and make it and all its children visible */
   #pdf-report,
   #pdf-report * {
     visibility: visible !important;
     color: black !important;
   }
-
-  /* 3. Position the report at the very top of the print page */
   #pdf-report {
     position: absolute !important;
     left: 0 !important;
@@ -71,30 +65,22 @@
     border: none !important;
     box-shadow: none !important;
   }
-
-  /* 4. Disable all scroll areas and force them to flow naturally */
   [data-radix-scroll-area-viewport] {
     height: auto !important;
     overflow: visible !important;
     display: block !important;
   }
-
-  /* 5. Force specific elements like charts to render properly */
   .report-chart-container {
     height: 400px !important;
     width: 100% !important;
     display: block !important;
     page-break-inside: avoid !important;
   }
-
-  /* Hide the UI elements like buttons and headers that aren't part of the report text */
   .print-hidden,
   button,
   [role="dialog"] > button {
     display: none !important;
   }
-
-  /* Prevent background colors from disappearing */
   * {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
@@ -116,6 +102,54 @@
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
+}
+
+/* Eye Gym Animations */
+@keyframes blink-fast {
+  0%, 100% { transform: scaleY(1); }
+  10%, 30%, 50%, 70%, 90% { transform: scaleY(0.1); }
+}
+
+@keyframes blink-slow {
+  0%, 100% { transform: scaleY(1); }
+  50% { transform: scaleY(0); }
+}
+
+@keyframes eye-left-right {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-15px); }
+  75% { transform: translateX(15px); }
+}
+
+@keyframes eye-up-down {
+  0%, 100% { transform: translateY(0); }
+  25% { transform: translateY(-15px); }
+  75% { transform: translateY(15px); }
+}
+
+@keyframes eye-roll {
+  0% { transform: rotate(0deg) translate(15px) rotate(0deg); }
+  100% { transform: rotate(360deg) translate(15px) rotate(-360deg); }
+}
+
+.animate-blink-fast {
+  animation: blink-fast 1.5s infinite;
+}
+
+.animate-blink-slow {
+  animation: blink-slow 3s infinite;
+}
+
+.animate-eye-left-right {
+  animation: eye-left-right 2s ease-in-out infinite;
+}
+
+.animate-eye-up-down {
+  animation: eye-up-down 2s ease-in-out infinite;
+}
+
+.animate-eye-roll {
+  animation: eye-roll 2s linear infinite;
 }
 
 .focus-meter-glow {

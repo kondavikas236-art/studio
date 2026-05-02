@@ -1,16 +1,51 @@
-
 "use client";
 
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
 import { Eye, Shield, Timer, Award, Compass, ChevronRight, CheckCircle2, Loader2 } from "lucide-react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
 import { collection } from "firebase/firestore";
 import { textToSpeech } from "@/ai/flows/tts-flow";
+
+function VisualEyeGym({ stepText }: { stepText: string }) {
+  const isBlinkFast = stepText.includes("blink fast");
+  const isBlinkSlow = stepText.includes("blink slowly");
+  const isShutTight = stepText.includes("shut tight");
+  const isWide = stepText.includes("wide");
+  const isLeftRight = stepText.includes("left") || stepText.includes("right");
+  const isUpDown = stepText.includes("up") || stepText.includes("down");
+  const isRoll = stepText.includes("Roll");
+
+  return (
+    <div className="flex gap-8 justify-center items-center py-4">
+      {[0, 1].map((i) => (
+        <div key={i} className="relative w-24 h-24 bg-white rounded-full border-4 border-primary shadow-inner flex items-center justify-center overflow-hidden">
+          {/* Lids */}
+          <div className={cn(
+            "absolute inset-0 bg-primary/20 z-20 origin-top transition-transform duration-300",
+            isShutTight ? "scale-y-100" : "scale-y-0",
+            isBlinkFast && "animate-blink-fast",
+            isBlinkSlow && "animate-blink-slow"
+          )} />
+          
+          {/* Eye Ball Content */}
+          <div className={cn(
+            "w-12 h-12 bg-foreground rounded-full transition-all duration-500",
+            isWide && "scale-125",
+            isLeftRight && "animate-eye-left-right",
+            isUpDown && "animate-eye-up-down",
+            isRoll && "animate-eye-roll"
+          )}>
+             <div className="w-4 h-4 bg-white rounded-full absolute top-2 left-2 opacity-40" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
 export default function EyeHealthPage() {
   const { user } = useUser();
@@ -34,8 +69,8 @@ export default function EyeHealthPage() {
     { 
       id: "blink", 
       title: "Blink Buddy", 
-      description: "A full routine to refresh and stretch your eyes!", 
-      duration: 60, // 1 minute
+      description: "A full 1-minute routine to refresh and stretch your eyes!", 
+      duration: 60,
       color: "bg-primary/10",
       icon: Eye,
       steps: [
@@ -69,27 +104,24 @@ export default function EyeHealthPage() {
 
   const activeMission = missions.find(m => m.id === activeMissionId);
 
-  // Audio instruction handler
   const playInstruction = async (text: string) => {
     try {
       const result = await textToSpeech(text);
       if (result.media) {
         const audio = new Audio(result.media);
-        audio.play().catch(e => console.warn("Audio playback interrupted or blocked:", e));
+        audio.play().catch(e => console.warn("Audio playback interrupted:", e));
       }
     } catch (err) {
       console.error("TTS instruction failed:", err);
     }
   };
 
-  // Trigger audio immediately on step change or mission start
   useEffect(() => {
     if (activeMission && activeMissionId && !isDone) {
       playInstruction(activeMission.steps[currentStep]);
     }
   }, [currentStep, activeMissionId, isDone]);
 
-  // Trigger final success audio
   useEffect(() => {
     if (isDone) {
       playInstruction(`Mission Complete, ${explorerName}! Your eyes feel supercharged!`);
@@ -104,11 +136,9 @@ export default function EyeHealthPage() {
       }, 1000);
     } else if (timer === 0 && activeMissionId) {
       if (activeMission && currentStep < activeMission.steps.length - 1) {
-        // Move to next step if it's a multi-step mission
         setCurrentStep(prev => prev + 1);
         setTimer(Math.floor(activeMission.duration / (activeMission.steps.length - 1)));
       } else {
-        // Mission complete
         setIsDone(true);
         setActiveMissionId(null);
         window.dispatchEvent(new CustomEvent('mindful-play:break-completed'));
@@ -124,7 +154,6 @@ export default function EyeHealthPage() {
     setIsDone(false);
     setActiveMissionId(missionId);
     setCurrentStep(0);
-    // Initial timer for the first step
     setTimer(Math.floor(mission.duration / (mission.steps.length - 1)));
   };
 
@@ -141,25 +170,28 @@ export default function EyeHealthPage() {
   return (
     <div className="space-y-8 max-w-3xl mx-auto pb-12">
       <div className="text-center space-y-3">
-        <h1 className="text-4xl font-black text-foreground italic underline decoration-primary decoration-4">{explorerName}'s Eye Gym</h1>
+        <h1 className="text-4xl font-black text-primary italic underline decoration-primary decoration-4">Hero HQ Eye Gym</h1>
         <p className="text-muted-foreground font-semibold">Give your eyes a super-powered workout, {explorerName}!</p>
       </div>
 
       {activeMissionId && activeMission ? (
         <Card className="rounded-[3rem] border-none shadow-2xl overflow-hidden animate-in zoom-in duration-300">
           <CardContent className="p-0">
-            <div className="h-48 bg-muted relative overflow-hidden flex items-center justify-center">
-              <img src={bgImage?.imageUrl} alt="Mission BG" className="absolute inset-0 w-full h-full object-cover opacity-40" />
-              <div className="relative z-10 flex flex-col items-center">
-                 <div className="text-6xl font-black text-primary drop-shadow-md">{timer}s</div>
-                 <div className="text-sm font-bold text-primary/70 uppercase tracking-widest mt-2">Step {currentStep + 1} of {activeMission.steps.length - 1}</div>
+            <div className="h-64 bg-muted relative overflow-hidden flex flex-col items-center justify-center">
+              <img src={bgImage?.imageUrl} alt="Mission BG" className="absolute inset-0 w-full h-full object-cover opacity-20" />
+              <div className="relative z-10 w-full px-8">
+                 <VisualEyeGym stepText={activeMission.steps[currentStep]} />
+                 <div className="flex flex-col items-center mt-4">
+                    <div className="text-5xl font-black text-primary drop-shadow-md">{timer}s</div>
+                    <div className="text-xs font-bold text-primary/70 uppercase tracking-widest">Step {currentStep + 1} of {activeMission.steps.length - 1}</div>
+                 </div>
               </div>
             </div>
             
             <div className="p-10 text-center space-y-8">
               <div className="space-y-2">
                 <h2 className="text-3xl font-black text-primary">{activeMission.title}</h2>
-                <div className="bg-primary/5 p-6 rounded-3xl border-2 border-primary/10 animate-pulse">
+                <div className="bg-primary/5 p-6 rounded-3xl border-2 border-primary/10">
                   <p className="text-2xl font-bold italic">"{activeMission.steps[currentStep]}"</p>
                 </div>
               </div>

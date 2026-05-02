@@ -21,9 +21,9 @@
     },
     {
       "id": "cockroach-image",
-      "description": "Highly realistic photorealistic top-down cockroach isolated on white",
+      "description": "Highly realistic photorealistic top-down cockroach isolated on white background",
       "imageUrl": "https://picsum.photos/seed/cockroach-macro-realistic-1/150/150",
-      "imageHint": "cockroach bug"
+      "imageHint": "realistic cockroach"
     }
   ]
 }

@@ -32,21 +32,27 @@ const ttsFlow = ai.defineFlow(
     outputSchema: TTSOutputSchema,
   },
   async (query) => {
-    // We use a try-catch block to handle transient API errors gracefully
     try {
       const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
-        // The model expects only the text to be spoken in the prompt.
+        prompt: [{ text: query }],
         config: {
           responseModalities: ['AUDIO'],
+          // We set safety thresholds to BLOCK_NONE because this model occasionally 
+          // triggers a text-based refusal which causes a 400 error on the audio-only modality.
+          safetySettings: [
+            { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
+            { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
+          ],
           speechConfig: {
             voiceConfig: {
-              // 'Achernar' is a clear, feminine voice suitable for step-by-step instructions.
+              // 'Achernar' is a clear, supportive feminine voice.
               prebuiltVoiceConfig: { voiceName: 'Achernar' }, 
             },
           },
         },
-        prompt: query,
       });
 
       if (!media || !media.url) {
@@ -57,7 +63,7 @@ const ttsFlow = ai.defineFlow(
       const pcmBase64 = media.url.substring(media.url.indexOf(',') + 1);
       const pcmData = Buffer.from(pcmBase64, 'base64');
 
-      // Convert raw PCM to WAV format so it can be played by browsers
+      // Convert raw PCM to WAV format
       const wavBase64 = await toWav(pcmData);
 
       return {

@@ -1,8 +1,8 @@
-
 {
   "name": "kidsyee",
   "version": "1.0.0",
   "private": true,
+  "description": "The Smart Screen Time Guardian - Eye Health & Digital Wellness for Kids",
   "scripts": {
     "dev": "next dev --turbopack -p 9002",
     "genkit:dev": "genkit start -- tsx src/ai/dev.ts",

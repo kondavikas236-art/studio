@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect } from "react";
@@ -108,6 +109,7 @@ export default function EyeHealthPage() {
   const playInstruction = async (text: string) => {
     try {
       const result = await textToSpeech(text);
+      // Only play if we got a valid media URI. If quota is hit, result.media will be empty.
       if (result.media) {
         const audio = new Audio(result.media);
         audio.play().catch(e => console.warn("Audio playback interrupted:", e));

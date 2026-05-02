@@ -34,8 +34,8 @@ export default function EyeHealthPage() {
     { 
       id: "blink", 
       title: "Blink Buddy", 
-      description: "Blink quickly and slowly to refresh your eyes!", 
-      duration: 60, // Updated to 60 seconds (1 minute)
+      description: "A full routine to refresh and stretch your eyes!", 
+      duration: 60, // 1 minute
       color: "bg-primary/10",
       icon: Eye,
       steps: [
@@ -44,6 +44,9 @@ export default function EyeHealthPage() {
         "Now, blink slowly...", 
         "Squeeze your eyes shut tight!", 
         "Open them wide!", 
+        "Look left... and now right!",
+        "Look up... and now down!",
+        "Roll your eyes in a big circle!",
         "Almost there!", 
         "Eyes refreshed!"
       ]

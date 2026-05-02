@@ -40,14 +40,12 @@ const ttsFlow = ai.defineFlow(
         prompt: query,
         config: {
           responseModalities: ['AUDIO'],
-          // Safety settings set to BLOCK_NONE to prevent the model from generating 
-          // text-based refusal messages which trigger 400 errors on this model.
+          // Minimal safety settings to prevent text generation refusals while avoiding 500 errors
           safetySettings: [
             { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_HARASSMENT', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_SEXUALLY_EXPLICIT', threshold: 'BLOCK_NONE' },
-            { category: 'HARM_CATEGORY_CIVIC_INTEGRITY', threshold: 'BLOCK_NONE' },
           ],
           speechConfig: {
             voiceConfig: {

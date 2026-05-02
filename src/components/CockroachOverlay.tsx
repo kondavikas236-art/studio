@@ -13,14 +13,14 @@ interface BugInstance {
 }
 
 /**
- * RealisticCockroach - A custom SVG cockroach with reddish-brown gradients,
- * long antennae, and spiky legs.
+ * RealisticCockroach - A custom SVG cockroach designed with amber gradients,
+ * long antennae, and spiky legs to mimic a real insect infestation.
  */
 function RealisticCockroach() {
   return (
     <svg 
       viewBox="0 0 100 150" 
-      className="w-full h-full drop-shadow-[0_10px_10px_rgba(0,0,0,0.5)]"
+      className="w-full h-full drop-shadow-[0_15px_15px_rgba(0,0,0,0.6)]"
       xmlns="http://www.w3.org/2000/svg"
     >
       <defs>
@@ -31,35 +31,36 @@ function RealisticCockroach() {
         </radialGradient>
       </defs>
       
-      {/* Antennae */}
-      <path d="M45 25 Q 35 0 10 5" stroke="#1A0F03" strokeWidth="1" fill="none" opacity="0.8" />
-      <path d="M55 25 Q 65 0 90 5" stroke="#1A0F03" strokeWidth="1" fill="none" opacity="0.8" />
+      {/* Long Antennae */}
+      <path d="M48 22 Q 40 -10 15 5" stroke="#1A0F03" strokeWidth="1.2" fill="none" opacity="0.9" />
+      <path d="M52 22 Q 60 -10 85 5" stroke="#1A0F03" strokeWidth="1.2" fill="none" opacity="0.9" />
 
-      {/* Legs - 3 pairs */}
-      <g stroke="#1A0F03" strokeWidth="2.5" fill="none" strokeLinecap="round">
-        {/* Front */}
-        <path d="M35 50 L10 35" />
-        <path d="M65 50 L90 35" />
-        {/* Middle */}
-        <path d="M30 75 L5 75" />
-        <path d="M70 75 L95 75" />
-        {/* Back */}
-        <path d="M35 100 L15 130" />
-        <path d="M65 100 L85 130" />
+      {/* Spiky Legs - 3 pairs */}
+      <g stroke="#1A0F03" strokeWidth="3" fill="none" strokeLinecap="round">
+        {/* Front Legs */}
+        <path d="M35 50 L12 30" />
+        <path d="M65 50 L88 30" />
+        {/* Middle Legs */}
+        <path d="M30 75 L8 75" />
+        <path d="M70 75 L92 75" />
+        {/* Back Legs */}
+        <path d="M35 105 L18 140" />
+        <path d="M65 105 L82 140" />
       </g>
 
-      {/* Body */}
-      <ellipse cx="50" cy="80" rx="22" ry="48" fill="url(#bugGradient)" />
+      {/* Main Body (Abdomen and Thorax) */}
+      <ellipse cx="50" cy="85" rx="24" ry="52" fill="url(#bugGradient)" />
       
-      {/* Texture/Wing Line */}
-      <path d="M50 35 L50 125" stroke="#000" strokeWidth="0.8" opacity="0.4" />
+      {/* Wing Texture Detail */}
+      <path d="M50 35 L50 135" stroke="#000" strokeWidth="1" opacity="0.5" />
+      <path d="M30 60 Q 50 55 70 60" stroke="#000" strokeWidth="0.5" fill="none" opacity="0.3" />
       
       {/* Head */}
-      <circle cx="50" cy="30" r="10" fill="#1A0F03" />
+      <circle cx="50" cy="32" r="11" fill="#1A0F03" />
       
-      {/* Eyes */}
-      <circle cx="45" cy="28" r="1.5" fill="#333" />
-      <circle cx="55" cy="28" r="1.5" fill="#333" />
+      {/* Beady Eyes */}
+      <circle cx="44" cy="29" r="2" fill="#333" />
+      <circle cx="56" cy="29" r="2" fill="#333" />
     </svg>
   );
 }
@@ -69,14 +70,14 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Create a swarm of realistic insects
-      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
+      // Create a swarm of lifelike insects
+      const newBugs = Array.from({ length: 18 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 90}%`,
-        left: `${Math.random() * 90}%`,
-        duration: `${Math.random() * 2 + 3}s`, // Slightly faster
-        delay: `${Math.random() * 5}s`,
-        scale: 0.2 + Math.random() * 0.15, // Better visibility
+        top: `${Math.random() * 95}%`,
+        left: `${Math.random() * 95}%`,
+        duration: `${Math.random() * 2 + 4}s`, // Varied scurry speed
+        delay: `${Math.random() * 3}s`,
+        scale: 0.25 + Math.random() * 0.2, // Realistic size variation
         rotation: Math.random() * 360,
       }));
       setBugs(newBugs);
@@ -103,12 +104,13 @@ export function CockroachOverlay({ active }: { active: boolean }) {
             height: "120px",
           }}
         >
+          {/* Leg vibration animation nested inside the scurry */}
           <div className="animate-bug-vibrate origin-center w-full h-full">
             <RealisticCockroach />
           </div>
         </div>
       ))}
-      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.2px] pointer-events-none" />
+      <div className="absolute inset-0 bg-black/10 backdrop-blur-[0.5px] pointer-events-none" />
     </div>
   );
 }

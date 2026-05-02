@@ -4,7 +4,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FocusMeter } from "@/components/FocusMeter";
 import { BarChart, Bar, ResponsiveContainer, XAxis, Cell } from "recharts";
-import { Eye, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy, Loader2 } from "lucide-react";
+import { Eye, Star, Sparkles, Timer, AlertCircle, ShieldCheck, Shield, Trophy, Loader2, Info } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { generateSmartBreakPrompt, type SmartBreakPromptOutput } from "@/ai/flows/ai-smart-break-prompt";
@@ -191,19 +191,12 @@ export default function KidDashboard() {
               </Card>
             </Link>
 
-            <Link href="/kid/story-chain">
-              <Card className="rounded-3xl border-2 border-transparent hover:border-purple-400/40 transition-all kid-card-hover cursor-pointer group">
-                <CardHeader className="flex flex-row items-center space-x-4">
-                  <div className="p-4 bg-purple-100 rounded-2xl group-hover:bg-purple-500 group-hover:text-white transition-colors">
-                    <Sparkles className="h-8 w-8" />
-                  </div>
-                  <div>
-                    <CardTitle className="text-xl">Story Chain</CardTitle>
-                    <p className="text-sm text-muted-foreground">Collaborative imagination quest</p>
-                  </div>
-                </CardHeader>
-              </Card>
-            </Link>
+            <div className="bg-muted/30 p-6 rounded-[2rem] border-2 border-dashed flex items-center gap-4 opacity-60">
+               <div className="p-3 bg-muted rounded-xl">
+                 <Info className="h-5 w-5 text-muted-foreground" />
+               </div>
+               <p className="text-sm font-bold text-muted-foreground italic">Stay tuned for new quests, {explorerName}!</p>
+            </div>
           </div>
         </section>
 

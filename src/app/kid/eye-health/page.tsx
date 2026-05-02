@@ -109,7 +109,6 @@ export default function EyeHealthPage() {
   const playInstruction = async (text: string) => {
     try {
       const result = await textToSpeech(text);
-      // Only play if we got a valid media URI. If quota is hit, result.media will be empty.
       if (result.media) {
         const audio = new Audio(result.media);
         audio.play().catch(e => console.warn("Audio playback interrupted:", e));
@@ -173,7 +172,7 @@ export default function EyeHealthPage() {
   return (
     <div className="space-y-8 max-w-3xl mx-auto pb-12">
       <div className="text-center space-y-3">
-        <h1 className="text-4xl font-black text-primary italic underline decoration-primary decoration-4">Hero HQ Eye Gym</h1>
+        <h1 className="text-4xl font-black text-primary italic underline decoration-primary decoration-4">Eye Gym</h1>
         <p className="text-muted-foreground font-semibold">Give your eyes a super-powered workout, {explorerName}!</p>
       </div>
 

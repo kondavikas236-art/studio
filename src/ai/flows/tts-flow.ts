@@ -34,12 +34,13 @@ const ttsFlow = ai.defineFlow(
   async (query) => {
     try {
       // Use the specialized TTS model. 
+      // Ensure the prompt is just the raw text to avoid triggering text-generation responses.
       const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
         prompt: query,
         config: {
           responseModalities: ['AUDIO'],
-          // Minimal safety settings to prevent text generation refusals while avoiding 500 errors
+          // Disable safety settings to prevent text-based refusals that break TTS only models
           safetySettings: [
             { category: 'HARM_CATEGORY_HATE_SPEECH', threshold: 'BLOCK_NONE' },
             { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_NONE' },
@@ -67,10 +68,8 @@ const ttsFlow = ai.defineFlow(
         media: 'data:audio/wav;base64,' + wavBase64,
       };
     } catch (error: any) {
-      // Handle quota exhaustion (429) or other API errors gracefully
       console.error('Genkit TTS Generation failed:', error);
-      
-      // Return empty media to allow the UI to continue silently rather than crashing
+      // Return empty media to allow the UI to continue silently if quota is reached (429)
       return {
         media: '',
       };

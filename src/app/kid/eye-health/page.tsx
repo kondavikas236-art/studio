@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Eye, Shield, Timer, Award, Compass, ChevronRight, CheckCircle2, Loader2 } from "lucide-react";
@@ -56,6 +56,7 @@ export default function EyeHealthPage() {
   const [currentStep, setCurrentStep] = useState(0);
   const [timer, setTimer] = useState(0);
   const [isDone, setIsDone] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   // Fetch children to get the child's name dynamically
   const childrenQuery = useMemoFirebase(() => {
@@ -110,8 +111,13 @@ export default function EyeHealthPage() {
     try {
       const result = await textToSpeech(text);
       if (result.media) {
-        const audio = new Audio(result.media);
-        audio.play().catch(e => console.warn("Audio playback interrupted:", e));
+        if (audioRef.current) {
+          audioRef.current.pause();
+          audioRef.current.src = result.media;
+        } else {
+          audioRef.current = new Audio(result.media);
+        }
+        audioRef.current.play().catch(e => console.warn("Audio playback interrupted:", e));
       }
     } catch (err) {
       console.error("TTS instruction failed:", err);

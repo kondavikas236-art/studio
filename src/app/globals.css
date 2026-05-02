@@ -117,19 +117,24 @@
 
 @keyframes eye-left-right {
   0%, 100% { transform: translate(0, -50%); }
-  25% { transform: translate(-30px, -50%); }
-  75% { transform: translate(30px, -50%); }
+  25% { transform: translate(-45px, -50%); }
+  75% { transform: translate(45px, -50%); }
 }
 
 @keyframes eye-up-down {
   0%, 100% { transform: translate(-50%, 0); }
-  25% { transform: translate(-50%, -30px); }
-  75% { transform: translate(-50%, 30px); }
+  25% { transform: translate(-50%, -45px); }
+  75% { transform: translate(-50%, 45px); }
 }
 
 @keyframes eye-roll {
-  0% { transform: rotate(0deg) translate(30px) rotate(0deg); }
-  100% { transform: rotate(360deg) translate(30px) rotate(-360deg); }
+  0% { transform: rotate(0deg) translate(40px) rotate(0deg); }
+  100% { transform: rotate(360deg) translate(40px) rotate(-360deg); }
+}
+
+@keyframes eye-focus-far {
+  0%, 100% { transform: scale(0.65); }
+  50% { transform: scale(0.55); }
 }
 
 .animate-blink-fast {
@@ -150,6 +155,10 @@
 
 .animate-eye-roll {
   animation: eye-roll 2s linear infinite;
+}
+
+.animate-eye-focus-far {
+  animation: eye-focus-far 2s ease-in-out infinite;
 }
 
 .focus-meter-glow {

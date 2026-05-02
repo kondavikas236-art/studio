@@ -1,10 +1,9 @@
-
 "use client";
 
 import { useState, useEffect, useRef } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Eye, Shield, Timer, Award, Compass, ChevronRight, CheckCircle2, Loader2 } from "lucide-react";
+import { Eye, Shield, Timer, Award, Compass, ChevronRight, CheckCircle2, Loader2, Search } from "lucide-react";
 import { PlaceHolderImages } from "@/app/lib/placeholder-images";
 import { cn } from "@/lib/utils";
 import { useFirebase, useUser, useCollection, useMemoFirebase } from "@/firebase";
@@ -12,21 +11,34 @@ import { collection } from "firebase/firestore";
 import { textToSpeech } from "@/ai/flows/tts-flow";
 
 function VisualEyeGym({ stepText }: { stepText: string }) {
-  const isBlinkFast = stepText.toLowerCase().includes("blink fast");
-  const isBlinkSlow = stepText.toLowerCase().includes("blink slowly");
-  const isShutTight = stepText.toLowerCase().includes("shut tight");
-  const isWide = stepText.toLowerCase().includes("wide");
-  const isLeftRight = stepText.toLowerCase().includes("left") || stepText.toLowerCase().includes("right");
-  const isUpDown = stepText.toLowerCase().includes("up") || stepText.toLowerCase().includes("down");
-  const isRoll = stepText.toLowerCase().includes("roll");
+  const text = stepText.toLowerCase();
+  const isBlinkFast = text.includes("blink fast");
+  const isBlinkSlow = text.includes("blink slowly");
+  const isShutTight = text.includes("shut tight");
+  const isWide = text.includes("wide");
+  const isLeftRight = text.includes("left") || text.includes("right");
+  const isUpDown = text.includes("up") || text.includes("down");
+  const isRoll = text.includes("roll");
+  
+  // Distance Detective keywords
+  const isBlue = text.includes("blue");
+  const isRound = text.includes("round");
+  const isTall = text.includes("tall");
+  const isSearching = isBlue || isRound || isTall;
 
   return (
-    <div className="flex gap-4 sm:gap-8 justify-center items-center py-4 sm:py-8">
+    <div className="flex gap-4 sm:gap-12 justify-center items-center py-6 sm:py-12 scale-110 sm:scale-150">
       {[0, 1].map((i) => (
-        <div key={i} className="relative w-24 h-24 sm:w-32 sm:h-32 bg-white rounded-full border-4 sm:border-8 border-primary shadow-inner flex items-center justify-center overflow-hidden">
+        <div key={i} className={cn(
+          "relative w-20 h-20 sm:w-28 sm:h-28 bg-white rounded-full border-[6px] sm:border-[10px] border-primary shadow-inner flex items-center justify-center overflow-hidden transition-all duration-500",
+          isSearching && "ring-8 ring-offset-4 ring-primary/20",
+          isBlue && "ring-blue-400/50",
+          isRound && "ring-accent/50",
+          isTall && "ring-primary/50"
+        )}>
           {/* Lids */}
           <div className={cn(
-            "absolute inset-0 bg-primary/30 z-20 origin-top transition-transform duration-500",
+            "absolute inset-0 bg-primary/40 z-20 origin-top transition-transform duration-500",
             isShutTight ? "scale-y-100" : "scale-y-0",
             isBlinkFast && "animate-blink-fast",
             isBlinkSlow && "animate-blink-slow"
@@ -34,14 +46,28 @@ function VisualEyeGym({ stepText }: { stepText: string }) {
           
           {/* Eye Ball Content */}
           <div className={cn(
-            "relative w-12 h-12 sm:w-16 sm:h-16 bg-foreground rounded-full transition-all duration-500",
+            "relative w-10 h-10 sm:w-14 sm:h-14 bg-foreground rounded-full transition-all duration-500",
             isWide && "scale-150",
+            isSearching && "animate-eye-focus-far",
             isLeftRight && "animate-eye-left-right left-1/2 top-1/2",
             isUpDown && "animate-eye-up-down left-1/2 top-1/2",
             isRoll && "animate-eye-roll"
           )}>
              {/* Pupil Highlight */}
-             <div className="w-3 h-3 sm:w-5 sm:h-5 bg-white rounded-full absolute top-2 left-2 opacity-40" />
+             <div className="w-2 h-2 sm:w-4 sm:h-4 bg-white rounded-full absolute top-1.5 left-1.5 opacity-60" />
+             
+             {/* Search Visual Cues */}
+             {isBlue && (
+               <div className="absolute inset-0 border-[3px] border-blue-400 rounded-full animate-ping opacity-40" />
+             )}
+             {isRound && (
+               <div className="absolute inset-0 border-[3px] border-accent rounded-full animate-pulse opacity-60" />
+             )}
+             {isTall && (
+               <div className="absolute inset-0 flex items-center justify-center">
+                 <div className="w-1 h-full bg-primary/50 animate-pulse" />
+               </div>
+             )}
           </div>
         </div>
       ))}
@@ -58,7 +84,6 @@ export default function EyeHealthPage() {
   const [isDone, setIsDone] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Fetch children to get the child's name dynamically
   const childrenQuery = useMemoFirebase(() => {
     if (!db || !user) return null;
     return collection(db, "parentProfiles", user.uid, "childProfiles");
@@ -72,7 +97,7 @@ export default function EyeHealthPage() {
     { 
       id: "blink", 
       title: "Blink Buddy", 
-      description: "A full routine to refresh and stretch your eyes!", 
+      description: "A full 1-minute routine to refresh and stretch your eyes!", 
       duration: 60,
       color: "bg-primary/10",
       icon: Eye,
@@ -93,13 +118,14 @@ export default function EyeHealthPage() {
       id: "distance", 
       title: "Distance Detective", 
       description: "Find 3 different things far away in your room.", 
-      duration: 30, 
+      duration: 45, 
       color: "bg-accent/10",
-      icon: Compass,
+      icon: Search,
       steps: [
-        "Find something BLUE far away...",
-        "Now find something ROUND far away...",
-        "Finally, find something TALL far away...",
+        "Ready...", 
+        "Find something BLUE far away...", 
+        "Now find something ROUND far away...", 
+        "Finally, find something TALL far away...", 
         "Great job, Detective!"
       ]
     }
@@ -147,7 +173,6 @@ export default function EyeHealthPage() {
         const nextStep = currentStep + 1;
         setCurrentStep(nextStep);
         // Step 0 is "Ready", so if the NEW step is > 0, it should be 10s.
-        // If we just finished step 0, currentStep becomes 1.
         setTimer(10);
       } else {
         setIsDone(true);
@@ -193,7 +218,7 @@ export default function EyeHealthPage() {
               <img src={bgImage?.imageUrl} alt="Mission BG" className="absolute inset-0 w-full h-full object-cover opacity-10" />
               <div className="relative z-10 w-full px-4 sm:px-8">
                  <VisualEyeGym stepText={activeMission.steps[currentStep]} />
-                 <div className="flex flex-col items-center mt-4 sm:mt-8">
+                 <div className="flex flex-col items-center mt-6 sm:mt-10">
                     <div className="text-4xl sm:text-6xl font-black text-primary drop-shadow-md bg-white/80 px-6 sm:px-8 py-1 sm:py-2 rounded-full border-2 sm:border-4 border-primary/20">{timer}s</div>
                     <div className="mt-2 text-[10px] sm:text-sm font-black text-primary/70 uppercase tracking-widest bg-primary/5 px-3 py-1 rounded-full">Step {currentStep + 1} of {activeMission.steps.length}</div>
                  </div>
@@ -233,7 +258,7 @@ export default function EyeHealthPage() {
           <div className="bg-white p-6 sm:p-8 rounded-[1.5rem] sm:rounded-[2.5rem] inline-block mx-auto shadow-xl relative">
              <Award className="h-16 w-16 sm:h-24 sm:w-24 text-accent-foreground" />
              <div className="absolute -top-1 -right-1 bg-primary text-white p-1.5 rounded-full shadow-lg">
-                <CheckCircle2 className="h-4 w-4 sm:h-6 sm:w-6" />
+                <CheckCircle2 className="h-4 w-4 sm:h-6 w-6" />
              </div>
           </div>
           <div className="space-y-2">

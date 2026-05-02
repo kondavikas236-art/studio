@@ -70,14 +70,15 @@ export function CockroachOverlay({ active }: { active: boolean }) {
 
   useEffect(() => {
     if (active) {
-      // Create a swarm of lifelike insects
-      const newBugs = Array.from({ length: 18 }).map((_, i) => ({
+      // Create a swarm of lifelike insects that will invade from different corners
+      const newBugs = Array.from({ length: 15 }).map((_, i) => ({
         id: i,
-        top: `${Math.random() * 95}%`,
-        left: `${Math.random() * 95}%`,
-        duration: `${Math.random() * 2 + 4}s`, // Varied scurry speed
-        delay: `${Math.random() * 3}s`,
-        scale: 0.25 + Math.random() * 0.2, // Realistic size variation
+        // Start them at random edges to make corner-to-corner crossing more varied
+        top: `${Math.random() * 100}%`,
+        left: `${Math.random() * 100}%`,
+        duration: `${Math.random() * 4 + 6}s`, 
+        delay: `${Math.random() * 5}s`,
+        scale: 0.3 + Math.random() * 0.2, 
         rotation: Math.random() * 360,
       }));
       setBugs(newBugs);
@@ -110,7 +111,7 @@ export function CockroachOverlay({ active }: { active: boolean }) {
           </div>
         </div>
       ))}
-      <div className="absolute inset-0 bg-black/10 backdrop-blur-[0.5px] pointer-events-none" />
+      <div className="absolute inset-0 bg-black/5 backdrop-blur-[0.5px] pointer-events-none" />
     </div>
   );
 }
